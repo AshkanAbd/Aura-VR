@@ -3,6 +3,6 @@
     <arg name="robotname0" default="robot0"/>
     <arg name="robotname1" default="robot1"/>
     <arg name="robotname2" default="robot2"/>
-    <arg name="robotname3" default="robot4"/>
+    <arg name="robotname3" default="robot3"/>
     <node pkg="aura" type="core.py" name="core" output="screen" args="$(arg robotname0) $(arg robotname1) $(arg robotname2) $(arg robotname3)"/>
 </launch>
