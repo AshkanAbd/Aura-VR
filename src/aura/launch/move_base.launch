@@ -9,7 +9,7 @@
 	     <!--rosparam file="$(find setup)/config/global_costmap_params.yaml" command="load" /-->
 	     <!--rosparam file="$(find setup)/config/base_local_planner_params.yaml" command="load" /-->
 	  <remap from="/cmd_vel" to="cmd_vel"/>
-      <remap from="map" to="/core"/>
+      <remap from="map" to="/core" />
       <param name="base_global_planner" type="string" value="navfn/NavfnROS" />
       <param name="conservative_reset_dist" type="double" value="3.0" />
       <param name="controller_frequency" type="double" value="7.5" />
@@ -48,40 +48,39 @@
       <rosparam>
         TrajectoryPlannerROS:
         #Robot config
-          acc_lim_x: 10
-          acc_lim_y: 10
+          acc_lim_x: 1.2
+          acc_lim_y: 0.4
           acc_lim_thta: 1.5
-          max_vel_x: 500
+          max_vel_x: 1.2
           min_vel_x: 0.3
-          max_vel_theta: 1.5
-          min_vel_theta: -1.5
-          min_in_place_vel_theta: 1.1
-          escape_vel: -0.25
+          max_vel_theta: 1
+          min_vel_theta: -1
+          min_in_place_vel_theta: 1.5
+          escape_vel: -0.1
           holonomic_robot: false
         #Goal Tolerance	
-          yaw_goal_tolerance: 0.8
-          xy_goal_tolerance: 0.8
+          yaw_goal_tolerance: 0.9
+          xy_goal_tolerance: 0.15
           latch_xy_goal_tolerance: true
         #Forward simulation
-          sim_time: 2
-          sim_granularity: 0.05
-          angular_sim_granularity: 0.9
-          vx_samples: 7
-          vtheata_samples: 22
+          sim_time: 1
+          sim_granularity: 0.03
+          angular_sim_granularity: 0.03
+          vx_samples: 3
+          vtheata_samples: 20
         #Trajectory Scoring
-          meter_scoring: true
-          pdist_scale: 2.2
-          gdist_scale: 0.85
-          occdist_scale: 0.1
-          heading_scoring: true
-          heading_scoring_timestep: 0.9
+          meter_scoring: false
+          pdist_scale: 2
+          gdist_scale: 1.8
+          occdist_scale: 0.0075
+          heading_scoring: false
           global_frame_id: /map
-          meter_scoring: true  
+          meter_scoring: true
 
 
         GlobalPlanner:
           allow_unknown: true
-          default_tolerance: 0.00
+          default_tolerance: 0.01
           visualize_potential: false
           use_dijkstra: true
           use_quadratic: true

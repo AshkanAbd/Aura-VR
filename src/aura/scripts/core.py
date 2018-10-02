@@ -7,7 +7,7 @@ import sys
 
 
 def get_map(robot_map: nav_msgs.msg.OccupancyGrid, robot: str):
-    global map_info
+    global main_map
     map_info = robot_map
     build_core_map(robot_map)
 
@@ -18,15 +18,12 @@ def build_core_map(robot_map: nav_msgs.msg.OccupancyGrid):
     if core_map.shape != reshaped_map.shape:
         core_map = reshaped_map.copy()
     map1 = reshaped_map.copy()
-    map1[map1 == 0] = -1
     core_map[map1 == 100] = 100
-    map1 = reshaped_map.copy()
-    map1[map1 == 100] = -1
     core_map[map1 == 0] = 0
 
 
 def publish_core():
-    global core_publisher, core_map, map_info
+    global core_publisher, core_map, main_map
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         data_map = map_info
@@ -36,13 +33,18 @@ def publish_core():
 
 
 core_map = np.array([])
-map_info = nav_msgs.msg.OccupancyGrid()
+main_map = nav_msgs.msg.OccupancyGrid()
+robot0 = 'robot0'
+robot1 = 'robot1'
+robot2 = 'robot2'
+robot3 = 'robot3'
 
 if __name__ == '__main__':
-    robot0 = sys.argv[1]
-    robot1 = sys.argv[2]
-    robot2 = sys.argv[3]
-    robot3 = sys.argv[4]
+    if len(sys.argv) > 5:
+        robot0 = sys.argv[1]
+        robot1 = sys.argv[2]
+        robot2 = sys.argv[3]
+        robot3 = sys.argv[4]
     rospy.init_node('core')
     rospy.Subscriber('/' + robot0 + '/map', nav_msgs.msg.OccupancyGrid, get_map, robot0)
     rospy.Subscriber('/' + robot1 + '/map', nav_msgs.msg.OccupancyGrid, get_map, robot1)
