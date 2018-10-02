@@ -53,7 +53,7 @@ def process_img():
         _, contours, _ = cv.findContours(frame_edge, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
         cnts_area = {}
         cv.waitKey(1)
-        cv.imshow('hot_final1', frame_edge)
+        cv.imshow('hot_final', frame_edge)
         if len(contours) == 0:
             continue
         for cnt in contours:

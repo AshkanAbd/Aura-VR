@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.5
+#!/usr/bin/env python
 
 import math
 import rospy
@@ -27,7 +27,8 @@ def get_map(map):
     w = map.info.width
     new_map = np.asarray(map.data)
     reshape = new_map.reshape(h, w)
-    map_info = map
+    main_map = map
+    print(convert_from_robot_to_map(0,-2))
 
 
 def get_odom(odom):
@@ -42,23 +43,22 @@ def get_odom(odom):
 
 def convert_from_robot_to_map(robot_y, robot_x):
     global main_map
-    map_x = (robot_x - map_info.info.origin.position.x) // map_info.info.resolution
-    map_y = (robot_y - map_info.info.origin.position.y) // map_info.info.resolution
+    map_x = (robot_x - main_map.info.origin.position.x) // main_map.info.resolution
+    map_y = (robot_y - main_map.info.origin.position.y) // main_map.info.resolution
     return map_y, map_x
 
 
 def convert_from_map_to_robot(map_y, map_x):
     global main_map
-    robot_x = ((map_x) * map_info.info.resolution) + map_info.info.origin.position.x
-    robot_y = ((map_y) * map_info.info.resolution) + map_info.info.origin.position.y
+    robot_x = ((map_x) * main_map.info.resolution) + main_map.info.origin.position.x
+    robot_y = ((map_y) * main_map.info.resolution) + main_map.info.origin.position.y
     return robot_y, robot_x
 
 
 main_map = None
 
 if __name__ == '__main__':
-    hot_victim_detecttor.main()
-    # rospy.init_node('a')
     # rospy.Subscriber('/robot0/odom', nav_msgs.msg.Odometry, get_odom)
-    # rospy.Subscriber('/robot0/map', nav_msgs.msg.OccupancyGrid, get_map)
-    # rospy.spin()
+    rospy.init_node('a')
+    rospy.Subscriber('/core', nav_msgs.msg.OccupancyGrid, get_map)
+    rospy.spin()
