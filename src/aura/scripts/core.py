@@ -7,7 +7,7 @@ import sys
 
 
 def get_map(robot_map: nav_msgs.msg.OccupancyGrid, robot: str):
-    global map_info
+    global main_map
     map_info = robot_map
     build_core_map(robot_map)
 
@@ -23,7 +23,7 @@ def build_core_map(robot_map: nav_msgs.msg.OccupancyGrid):
 
 
 def publish_core():
-    global core_publisher, core_map, map_info
+    global core_publisher, core_map, main_map
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         data_map = map_info
@@ -33,7 +33,7 @@ def publish_core():
 
 
 core_map = np.array([])
-map_info = nav_msgs.msg.OccupancyGrid()
+main_map = nav_msgs.msg.OccupancyGrid()
 robot0 = 'robot0'
 robot1 = 'robot1'
 robot2 = 'robot2'

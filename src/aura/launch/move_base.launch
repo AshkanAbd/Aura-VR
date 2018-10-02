@@ -60,7 +60,7 @@
           holonomic_robot: false
         #Goal Tolerance	
           yaw_goal_tolerance: 0.8
-          xy_goal_tolerance: 0.8
+          xy_goal_tolerance: 0.15
           latch_xy_goal_tolerance: true
         #Forward simulation
           sim_time: 2

@@ -59,9 +59,9 @@ def process_img():
             areas.sort(reverse=True)
             main_cnt = cnts_area[areas[0]]
             x, y, w, h = cv.boundingRect(main_cnt)
-            final_frame = cv.rectangle(final_frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             a = std_msgs.msg.Float64MultiArray()
             a.data = [x, y, w, h]
+            final_frame = cv.rectangle(final_frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             victim_info_pub.publish(a)
             cv.imshow('hot_final', final_frame)
         except Exception as e:
