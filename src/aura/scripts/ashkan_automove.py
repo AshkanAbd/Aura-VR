@@ -117,7 +117,7 @@ static_y = 0.74
 static_x = 0.1
 
 if __name__ == '__main__':
-    
+
     rospy.init_node('ashkan_movebase')
     setup_movebase()
     # rospy.Subscriber('/core', nav_msgs.msg.OccupancyGrid, get_map)
