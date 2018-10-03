@@ -26,10 +26,13 @@ def publish_core():
     global core_publisher, core_map, main_map
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
-        data_map = main_map
-        data_map.data = core_map.reshape(main_map.info.width * main_map.info.height)
-        core_publisher.publish(data_map)
-        rate.sleep()
+        try:
+            data_map = main_map
+            data_map.data = core_map.reshape(main_map.info.width * main_map.info.height)
+            core_publisher.publish(data_map)
+            rate.sleep()
+        except Exception:
+            pass
 
 
 core_map = np.array([])

@@ -14,10 +14,11 @@ def get_normal_image(image):
     frame = cv.bilateralFilter(frame, 9, 75, 75)
     frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     _, frame_thresh = cv.threshold(frame_gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
-    frame_hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
-    mask = cv.inRange(frame_hsv, lower_hot_color, upper_hot_color)
     final_frame = frame.copy()
     final_frame = cv.bitwise_and(final_frame, final_frame, mask=frame_thresh)
+    frame_hsv = cv.cvtColor(final_frame, cv.COLOR_BGR2HSV)
+    mask = cv.inRange(frame_hsv, lower_hot_color, upper_hot_color)
+    final_frame = cv.bitwise_and(final_frame, final_frame, mask=mask)
     # end!!!
     # send to process img
     normal_img = final_frame
@@ -41,31 +42,31 @@ def process_img():
     while True:
         if thermal_img is None or normal_img is None:
             continue
-        try:
-            normal_gray = cv.cvtColor(normal_img, cv.COLOR_BGR2GRAY)
-            _, normal_thresh = cv.threshold(normal_gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
-            thermal_img1 = cv.resize(thermal_img, None, fx=2, fy=2)
-            final_frame = cv.bitwise_and(normal_thresh, thermal_img1)
-            frame_edge = cv.Laplacian(final_frame, -1)
-            _, contours, _ = cv.findContours(frame_edge, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-            cnts_area = {}
-            cv.waitKey(1)
-            cv.imshow('hot_final', final_frame)
-            if len(contours) == 0:
-                continue
-            for cnt in contours:
-                cnts_area[cv.contourArea(cnt)] = cnt
-            areas = [i for i in cnts_area.keys()]
-            areas.sort(reverse=True)
-            main_cnt = cnts_area[areas[0]]
-            x, y, w, h = cv.boundingRect(main_cnt)
-            a = std_msgs.msg.Float64MultiArray()
-            a.data = [x, y, w, h]
-            final_frame = cv.rectangle(final_frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-            victim_info_pub.publish(a)
-            cv.imshow('hot_final', final_frame)
-        except Exception as e:
-            del e
+        normal_gray = cv.cvtColor(normal_img, cv.COLOR_BGR2GRAY)
+        _, normal_thresh = cv.threshold(normal_gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+        thermal_img1 = cv.pyrUp(thermal_img)
+        if thermal_img1.shape == (240, 320, 3):
+            thermal_img1 = cv.cvtColor(thermal_img1, cv.COLOR_BGR2GRAY)
+        final_frame = cv.bitwise_and(thermal_img1, thermal_img1, mask=normal_thresh)
+        final_frame = cv.medianBlur(final_frame, 5)
+        frame_edge = cv.Laplacian(final_frame, -1)
+        _, contours, _ = cv.findContours(frame_edge, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        cnts_area = {}
+        cv.waitKey(1)
+        cv.imshow('hot_final', frame_edge)
+        if len(contours) == 0:
+            continue
+        for cnt in contours:
+            cnts_area[cv.contourArea(cnt)] = cnt
+        areas = [i for i in cnts_area.keys()]
+        areas.sort(reverse=True)
+        main_cnt = cnts_area[areas[0]]
+        x, y, w, h = cv.boundingRect(main_cnt)
+        a = std_msgs.msg.Float64MultiArray()
+        a.data = [x, y, w, h]
+        final_frame = cv.rectangle(final_frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        victim_info_pub.publish(a)
+        cv.imshow('hot_final', final_frame)
 
 
 namespace = 'robot0'
