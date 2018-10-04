@@ -1,8 +1,6 @@
 import rospy
-import actionlib_msgs
 import actionlib
 import nav_msgs.msg
-import std_msgs.msg
 import move_base_msgs.msg
 import geometry_msgs.msg
 import numpy as np
@@ -43,13 +41,20 @@ def convert_from_map_to_robot(map_y, map_x):
     return robot_y, robot_x
 
 
-def get_map(map:nav_msgs.msg.OccupancyGrid):
+def get_map(map: nav_msgs.msg.OccupancyGrid):
     global map_x, map_y
-    map_x = map.info.height
-    map_y = map.info.width
+    map_info = map
+    map_x = int(map.info.width - (100 - (4 * (abs(map.info.origin.position.x) / 10))))
+    map_y = int(map.info.height - (100 - (4 * (abs(map.info.origin.position.y) / 10))))
     map_info = np.asarray(map.data)
-    print(map_info)
-
+    # print(map_info)
+    map_info = map_info.reshape(map.info.height, map.info.width)
+    b = []
+    # print(map_info)
+    for i in range(map_x):
+        for j in range(map_y):
+            b.append(map_info[i * 4:i * 4 + 4, j * 4:j * 4 + 4, ])
+    print(b)
 
 # def generate_goal():
 #     global corent_goal_x, corent_goal_y, robot_x, robot_y, goal_x, goal_y
@@ -80,9 +85,10 @@ move_base_goal = None
 
 if __name__ == '__main__':
     name = 'robot0'
-    rospy.init_node('core')
+    rospy.init_node('core1')
     setup_move_base()
+    print(map_info)
     print('hey')
-    move_base_clinet(5,5)
-    rospy.Subscriber('/core', nav_msgs.msg.OccupancyGrid)
+    move_base_clinet(5, 5)
+    rospy.Subscriber('/core', nav_msgs.msg.OccupancyGrid, get_map)
     rospy.spin()

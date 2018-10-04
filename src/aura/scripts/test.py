@@ -2,23 +2,9 @@
 
 import math
 import rospy
-import random
 import numpy as np
 import nav_msgs.msg
-import std_msgs.msg
-import actionlib.msg
-import geometry_msgs.msg
-import actionlib
-import move_base_msgs.msg
-import move_base.cfg
-import base_local_planner.msg
-import base_local_planner.cfg
-import trajectory_msgs.msg
-import actionlib_msgs.msg
-import costmap_2d.msg
-import local_planner_limits
 import tf.transformations
-import hot_victim_detecttor
 
 
 def get_map(map):
