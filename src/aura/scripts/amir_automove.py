@@ -44,16 +44,17 @@ def convert_from_map_to_robot(map_y, map_x):
 def get_map(map: nav_msgs.msg.OccupancyGrid):
     global map_x, map_y , map_info
     map_info = map
+    # print(map_info)
     map_x = map.info.width
     map_y = map.info.height
     map_info = np.asarray(map.data)
     print(map_info)
     map_info = map_info.reshape(map_y, map_x)
-    b = []
-    for i in range(map_y//62):
-        for j in range(map_x//62):
-            b.append(map_info[i * 16:i * 16+ 16, j * 16:j * 16 + 16])
-    print(b)
+    # b = []
+    # for i in range(map_y//62):
+    #     for j in range(map_x//62):
+    #         b.append(map_info[i * 16:i * 16+ 16, j * 16:j * 16 + 16])
+    # print(b)
 
 
 # def generate_goal():

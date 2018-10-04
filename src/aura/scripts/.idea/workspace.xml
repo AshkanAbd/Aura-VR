@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-<<<<<<< HEAD
-    <list default="true" id="a34e456b-55ef-4241-ab05-6cf8ddf4bca8" name="Default" comment="" />
-=======
-    <list default="true" id="fb675fd2-c611-4fec-b055-f766f1534ea2" name="Default" comment="" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
+    <list default="true" id="418fa280-2a85-492e-9bbf-fc51aa0967f1" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,113 +10,36 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-<<<<<<< HEAD
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
-      <file leaf-file-name="amir_automove.py" pinned="false" current-in-tab="true">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="amir_automove.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/amir_automove.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="990">
-              <caret line="45" selection-start-line="45" selection-end-line="45" />
-=======
-    <leaf>
-      <file leaf-file-name="core.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/core.py">
-          <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-            <state relative-caret-position="487">
-              <caret line="29" column="71" selection-start-line="29" selection-start-column="71" selection-end-line="29" selection-end-column="71" />
-=======
-            <state>
-              <caret selection-end-line="1" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
->>>>>>> af4cc4ea00a13207dadaca281da586d289723481
+            <state relative-caret-position="352">
+              <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
             </state>
           </provider>
         </entry>
       </file>
-<<<<<<< HEAD
-      <file leaf-file-name="ashkan_automove.py" pinned="false" current-in-tab="false">
-=======
-<<<<<<< HEAD
+      <file leaf-file-name="cluster.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/cluster.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="189">
+              <caret line="14" column="87" selection-start-line="14" selection-start-column="87" selection-end-line="14" selection-end-column="87" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="core.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-245">
-              <caret line="13" selection-start-line="13" selection-end-line="13" />
-=======
-      <file leaf-file-name="ashkan_automove.py" pinned="false" current-in-tab="true">
->>>>>>> af4cc4ea00a13207dadaca281da586d289723481
-        <entry file="file://$PROJECT_DIR$/ashkan_automove.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="119" selection-start-line="119" selection-end-line="119" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="auto_move_base.py" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/base_code-v2-Iranopen2018/src/setup/scripts/auto_move_base.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="34" selection-start-line="33" selection-start-column="26" selection-end-line="34" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="auto_move1.py" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/aura_ws/src/setup/scripts/auto_move1.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="660">
-              <caret line="216" column="36" lean-forward="true" selection-start-line="216" selection-start-column="36" selection-end-line="218" selection-end-column="45" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dead_victim_detector.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dead_victim_detector.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-493" />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="hot_victim_detecttor.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hot_victim_detecttor.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="87">
-              <caret line="54" column="17" selection-start-line="54" selection-start-column="17" selection-end-line="54" selection-end-column="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="45" selection-start-line="45" selection-end-line="45" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
+            <state relative-caret-position="120">
+              <caret line="15" column="19" lean-forward="true" selection-start-line="15" selection-start-column="19" selection-end-line="15" selection-end-column="19" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
-<<<<<<< HEAD
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>starting</find>
-      <find>in_start</find>
-      <find>robot_map.data</find>
-      <find>reshape</find>
-      <find>client</find>
-      <find>move_client</find>
-      <find>generate_goal</find>
-      <find>send_goal</find>
-      <find>move_base_client</find>
-      <find>map_info</find>
-      <find>robot_odometry</find>
-      <find>current_goal_x</find>
-      <find>corent_goal</find>
-=======
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -130,54 +49,39 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>my_current_goal</find>
-      <find>goal_pose</find>
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
+      <find>rospy.sleep</find>
+      <find>print</find>
+      <find>get_map</find>
+      <find>publish_core</find>
+      <find>publish_core()</find>
+      <find>data_ma</find>
+      <find>main_map</find>
+      <find>data_map.data</find>
+      <find>core_map</find>
+      <find>data_map</find>
+      <find>`</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-        <option value="$USER_HOME$/catkin_ws/src/tutorials/scripts/talker2.py" />
-        <option value="$USER_HOME$/catkin_ws/src/tutorials/scripts/listener2" />
         <option value="$PROJECT_DIR$/core.py" />
         <option value="$PROJECT_DIR$/amir_automove.py" />
-        <option value="$USER_HOME$/aura_ws/src/setup/scripts/auto_move2.py" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="y" value="31" />
-    <option name="width" value="1382" />
-    <option name="height" value="1010" />
-=======
-        <option value="$PROJECT_DIR$/core.py" />
->>>>>>> af4cc4ea00a13207dadaca281da586d289723481
-        <option value="$PROJECT_DIR$/hot_victim_detecttor.py" />
-        <option value="$PROJECT_DIR$/ashkan_automove.py" />
-        <option value="$PROJECT_DIR$/core.py" />
+        <option value="$PROJECT_DIR$/cluster.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-1" />
     <option name="y" value="31" />
-    <option name="width" value="1922" />
-    <option name="height" value="1050" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
+    <option name="width" value="1382" />
+    <option name="height" value="1010" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-<<<<<<< HEAD
-=======
       <pane id="Scope" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -189,18 +93,10 @@
           <select />
         </subPane>
       </pane>
-<<<<<<< HEAD
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/aura_ws/src/setup/scripts/auto_move2.py" />
-=======
-    </panes>
-  </component>
-  <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/aura_ws/src/setup/scripts/auto_move1.py" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -214,31 +110,8 @@
       </list>
     </option>
   </component>
-<<<<<<< HEAD
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.cluster">
     <configuration name="amir_automove" type="PythonConfigurationType" factoryName="Python" temporary="true">
-=======
-  <component name="RunManager" selected="Python.ashkan_automove">
-    <configuration name="ashkan_automove" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="scripts" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="/usr/bin/python2.7" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ashkan_automove.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="core" type="PythonConfigurationType" factoryName="Python" temporary="true">
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
       <module name="scripts" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -250,70 +123,58 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-<<<<<<< HEAD
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/amir_automove.py" />
-=======
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="cluster" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="scripts" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cluster.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="core" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="scripts" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/core.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="dead_victim_detector" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="scripts" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="/usr/bin/python2.7" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dead_victim_detector.py" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-<<<<<<< HEAD
-    <recent_temporary>
-      <list>
-        <item itemvalue="Python.amir_automove" />
-=======
-    <configuration name="hot_victim_detecttor" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="scripts" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="/usr/bin/python2.7" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hot_victim_detecttor.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
     <list>
+      <item itemvalue="Python.amir_automove" />
+      <item itemvalue="Python.cluster" />
       <item itemvalue="Python.core" />
-      <item itemvalue="Python.hot_victim_detecttor" />
-      <item itemvalue="Python.dead_victim_detector" />
-      <item itemvalue="Python.ashkan_automove" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ashkan_automove" />
-        <item itemvalue="Python.hot_victim_detecttor" />
-        <item itemvalue="Python.dead_victim_detector" />
+        <item itemvalue="Python.cluster" />
+        <item itemvalue="Python.amir_automove" />
         <item itemvalue="Python.core" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
       </list>
     </recent_temporary>
   </component>
@@ -322,279 +183,215 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-<<<<<<< HEAD
-      <changelist id="a34e456b-55ef-4241-ab05-6cf8ddf4bca8" name="Default" comment="" />
-      <created>1538330706372</created>
+      <changelist id="418fa280-2a85-492e-9bbf-fc51aa0967f1" name="Default" comment="" />
+      <created>1538654851627</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1538330706372</updated>
-=======
-      <changelist id="fb675fd2-c611-4fec-b055-f766f1534ea2" name="Default" comment="" />
-      <created>1538330139346</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1538330139346</updated>
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
+      <updated>1538654851627</updated>
     </task>
     <servers />
   </component>
   <component name="ToolWindowManager">
-<<<<<<< HEAD
-    <frame x="-1" y="31" width="1922" height="1050" extended-state="7" />
-    <editor active="true" />
-    <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24986765" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3297619" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" />
-    </layout>
-    <layout-to-restore>
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.24986765" />
-      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="10" />
-      <window_info anchor="bottom" id="Version Control" order="3" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="6" />
-      <window_info anchor="bottom" id="Find" order="5" />
-      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
-      <window_info anchor="bottom" id="Terminal" order="1" />
-      <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
-      <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="4" />
-      <window_info anchor="bottom" id="Python Console" order="0" />
-=======
     <frame x="-1" y="31" width="1922" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18114798" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Version Control" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Python Console" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.345898" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info id="Favorites" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3991131" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3292683" />
     </layout>
-    <layout-to-restore>
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Run" order="6" visible="true" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.18114798" />
-      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="10" />
-      <window_info anchor="bottom" id="Python Console" order="0" />
-      <window_info anchor="bottom" id="Message" order="4" />
-      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
-      <window_info anchor="bottom" id="Terminal" order="1" />
-      <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
-      <window_info anchor="bottom" id="Version Control" order="3" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Find" order="5" />
-      <window_info id="Favorites" order="0" side_tool="true" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
-    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
-<<<<<<< HEAD
-  <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/aura_ws/src/setup/scripts/auto_move2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5632">
-          <caret line="256" column="20" lean-forward="true" selection-start-line="256" selection-start-column="20" selection-end-line="256" selection-end-column="20" />
-=======
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="11" />
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="29" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="robot_angle" language="Python" />
-        <watch expression="(robot_map_x + ((x - 160) * 0.075))" language="Python" />
-        <watch expression="(robot_map_y + ((1 / (120 - y)) * 1800))" language="Python" />
+        <watch expression="type(result[0][0])" language="Python" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
       <expression>
-        <expression-string>(robot_map_x + ((x - 160) * 0.075))</expression-string>
+        <expression-string>type(result[0][0])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>(robot_map_x + ((x - 160) * 0.075))*math.sin(-0.3)</expression-string>
+        <expression-string>result[0][0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>(robot_map_x + ((x - 160) * 0.075))*math.cos(-0.3)</expression-string>
+        <expression-string>result[000,0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>(robot_map_y + ((1 / (120 - y)) * 1800))</expression-string>
+        <expression-string>result[0,0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>robot_angle</expression-string>
+        <expression-string>result[0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>main_map.info.resolution</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>main_map.info.origin.position.x</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>main_map.</expression-string>
+        <expression-string>list[0]</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///opt/ros/kinetic/lib/python2.7/dist-packages/actionlib/action_client.py">
+    <entry file="file://$PROJECT_DIR$/amir_automove.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="506" column="8" selection-start-line="506" selection-start-column="8" selection-end-line="506" selection-end-column="8" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
+        <state relative-caret-position="860">
+          <caret line="43" column="35" selection-start-line="43" selection-start-column="35" selection-end-line="43" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core.py">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
-        <state relative-caret-position="286">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        <state relative-caret-position="640">
+          <caret line="32" column="24" selection-start-line="32" selection-start-column="24" selection-end-line="32" selection-end-column="24" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/catkin_ws/src/tutorials/scripts/talker2.py">
+    <entry file="file://$PROJECT_DIR$/cluster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/catkin_ws/src/tutorials/scripts/listener2">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
-          <caret line="4" column="12" lean-forward="true" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-<<<<<<< HEAD
-=======
-    <entry file="file://$PROJECT_DIR$/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-245">
-          <caret line="13" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/aura_ws/src/setup/scripts/auto_move2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1165">
-          <caret line="176" column="5" selection-start-line="176" selection-start-column="5" selection-end-line="176" selection-end-column="5" />
+        <state relative-caret-position="620">
+          <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/amir_automove.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="990">
-          <caret line="45" selection-start-line="45" selection-end-line="45" />
-=======
-        <state>
-          <caret selection-end-line="1" />
+        <state relative-caret-position="1335">
+          <caret line="89" column="16" selection-start-line="89" selection-start-column="16" selection-end-line="89" selection-end-column="16" />
         </state>
       </provider>
     </entry>
->>>>>>> af4cc4ea00a13207dadaca281da586d289723481
-    <entry file="file://$USER_HOME$/aura_ws/src/setup/scripts/auto_move1.py">
+    <entry file="file://$PROJECT_DIR$/cluster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="216" column="36" lean-forward="true" selection-start-line="216" selection-start-column="36" selection-end-line="218" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/base_code-v2-Iranopen2018/src/setup/scripts/auto_move_base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="34" selection-start-line="33" selection-start-column="26" selection-end-line="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dead_victim_detector.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-493" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="45" selection-start-line="45" selection-end-line="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hot_victim_detecttor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="87">
-          <caret line="54" column="17" selection-start-line="54" selection-start-column="17" selection-end-line="54" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ashkan_automove.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-<<<<<<< HEAD
-          <caret line="119" selection-start-line="119" selection-end-line="119" />
+        <state relative-caret-position="150">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="29" column="71" selection-start-line="29" selection-start-column="71" selection-end-line="29" selection-end-column="71" />
-=======
-          <caret line="119" column="4" selection-start-line="119" selection-start-column="4" selection-end-line="119" selection-end-column="4" />
->>>>>>> 7db5c1a918e87941df27477f37426d6d72440909
->>>>>>> af4cc4ea00a13207dadaca281da586d289723481
+        <state relative-caret-position="480">
+          <caret line="32" column="24" lean-forward="true" selection-start-line="32" selection-start-column="24" selection-end-line="32" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///opt/ros/kinetic/lib/python2.7/dist-packages/rospy/timer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="165" selection-start-line="165" selection-end-line="165" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python3.5/socket.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="194" selection-start-line="194" selection-end-line="194" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ashkan_automove.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="42">
+          <caret line="96" column="29" lean-forward="true" selection-start-line="96" selection-start-column="29" selection-end-line="96" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="1663" selection-start-line="1663" selection-end-line="1663" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="152" selection-start-line="152" selection-end-line="152" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///opt/ros/kinetic/lib/python2.7/dist-packages/genpy/message.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="293" selection-start-line="293" selection-end-line="293" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///opt/ros/kinetic/lib/python2.7/dist-packages/nav_msgs/msg/_OccupancyGrid.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="101" selection-start-line="101" selection-end-line="101" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/amir_automove.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///opt/ros/kinetic/lib/python2.7/dist-packages/rospy/msg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="120" selection-start-line="120" selection-end-line="120" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="15" column="19" lean-forward="true" selection-start-line="15" selection-start-column="19" selection-end-line="15" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///opt/ros/kinetic/lib/python2.7/dist-packages/rospy/topics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="885" selection-start-line="885" selection-end-line="885" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="14" column="87" selection-start-line="14" selection-start-column="87" selection-end-line="14" selection-end-column="87" />
         </state>
       </provider>
     </entry>
