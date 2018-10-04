@@ -1,64 +1,35 @@
 #!/usr/bin/env python
 
 import math
-import rospy
-import random
+import cv2 as cv
 import numpy as np
-import nav_msgs.msg
-import std_msgs.msg
-import actionlib.msg
+import rospy
+import time
 import geometry_msgs.msg
-import actionlib
-import move_base_msgs.msg
-import move_base.cfg
-import base_local_planner.msg
-import base_local_planner.cfg
-import trajectory_msgs.msg
-import actionlib_msgs.msg
-import costmap_2d.msg
-import local_planner_limits
-import tf.transformations
-import hot_victim_detecttor
 
 
-def get_map(map):
-    global main_map
-    h = map.info.height
-    w = map.info.width
-    new_map = np.asarray(map.data)
-    reshape = new_map.reshape(h, w)
-    main_map = map
-    print(convert_from_robot_to_map(0,-2))
+def publishing(msg):
+    global pub, r
+    i = 0
+    while not rospy.is_shutdown() and i < 2:
+        pub.publish(msg)
+        i += 1
+        r.sleep()
 
-
-def get_odom(odom):
-    q = (
-        odom.pose.pose.orientation.x,
-        odom.pose.pose.orientation.y,
-        odom.pose.pose.orientation.z,
-        odom.pose.pose.orientation.w
-    )
-    print((tf.transformations.euler_from_quaternion(q)[2]) * 180 / math.pi)
-
-
-def convert_from_robot_to_map(robot_y, robot_x):
-    global main_map
-    map_x = (robot_x - main_map.info.origin.position.x) // main_map.info.resolution
-    map_y = (robot_y - main_map.info.origin.position.y) // main_map.info.resolution
-    return map_y, map_x
-
-
-def convert_from_map_to_robot(map_y, map_x):
-    global main_map
-    robot_x = ((map_x) * main_map.info.resolution) + main_map.info.origin.position.x
-    robot_y = ((map_y) * main_map.info.resolution) + main_map.info.origin.position.y
-    return robot_y, robot_x
-
-
-main_map = None
 
 if __name__ == '__main__':
-    # rospy.Subscriber('/robot0/odom', nav_msgs.msg.Odometry, get_odom)
-    rospy.init_node('a')
-    rospy.Subscriber('/core', nav_msgs.msg.OccupancyGrid, get_map)
-    rospy.spin()
+    rospy.init_node('move')
+    pub = rospy.Publisher('/robot0/cmd_vel', geometry_msgs.msg.Twist, queue_size=10)
+    twist = geometry_msgs.msg.Twist()
+    twist.linear.x = 0
+    twist.linear.y = 0
+    twist.linear.z = 0
+    twist.angular.x = 0
+    twist.angular.y = 0
+    twist.angular.z = 1
+    r = rospy.Rate(1)
+    publishing(twist)
+    time.sleep(9.28)  # ~2.32 for 90 degree
+    twist.angular.z = 0
+    publishing(twist)
+    print('published')
