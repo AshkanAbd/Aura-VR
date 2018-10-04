@@ -42,19 +42,19 @@ def convert_from_map_to_robot(map_y, map_x):
 
 
 def get_map(map: nav_msgs.msg.OccupancyGrid):
-    global map_x, map_y
+    global map_x, map_y , map_info
     map_info = map
-    map_x = int(map.info.width - (100 - (4 * (abs(map.info.origin.position.x) / 10))))
-    map_y = int(map.info.height - (100 - (4 * (abs(map.info.origin.position.y) / 10))))
+    map_x = map.info.width
+    map_y = map.info.height
     map_info = np.asarray(map.data)
-    # print(map_info)
-    map_info = map_info.reshape(map.info.height, map.info.width)
+    print(map_info)
+    map_info = map_info.reshape(map_y, map_x)
     b = []
-    # print(map_info)
-    for i in range(map_x):
-        for j in range(map_y):
-            b.append(map_info[i * 4:i * 4 + 4, j * 4:j * 4 + 4, ])
+    for i in range(map_y//62):
+        for j in range(map_x//62):
+            b.append(map_info[i * 16:i * 16+ 16, j * 16:j * 16 + 16])
     print(b)
+
 
 # def generate_goal():
 #     global corent_goal_x, corent_goal_y, robot_x, robot_y, goal_x, goal_y
@@ -77,7 +77,6 @@ def move_base_clinet(goal_x, goal_y):
     goal.pose.orientation.w = 1
     move_base_goal.target_pose = goal
     client.send_goal(move_base_goal)
-    rospy.sleep(1)
 
 
 client = None
@@ -87,8 +86,6 @@ if __name__ == '__main__':
     name = 'robot0'
     rospy.init_node('core1')
     setup_move_base()
-    print(map_info)
     print('hey')
-    move_base_clinet(5, 5)
     rospy.Subscriber('/core', nav_msgs.msg.OccupancyGrid, get_map)
     rospy.spin()

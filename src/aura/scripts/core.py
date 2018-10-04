@@ -27,7 +27,7 @@ def publish_core():
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         try:
-            data_map = main_map
+            data_map= main_map
             data_map.data = core_map.reshape(main_map.info.width * main_map.info.height)
             core_publisher.publish(data_map)
             rate.sleep()
