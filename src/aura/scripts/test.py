@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import math
+<<<<<<< HEAD
 import rospy
 import numpy as np
 import nav_msgs.msg
@@ -33,18 +34,37 @@ def convert_from_robot_to_map(robot_y, robot_x):
     map_y = (robot_y - main_map.info.origin.position.y) // main_map.info.resolution
     return map_y, map_x
 
+=======
+import cv2 as cv
+import numpy as np
+import rospy
+import time
+import geometry_msgs.msg
+>>>>>>> d8e967595b87e6c2f8621474fec2393c79a9bfb0
 
-def convert_from_map_to_robot(map_y, map_x):
-    global main_map
-    robot_x = ((map_x) * main_map.info.resolution) + main_map.info.origin.position.x
-    robot_y = ((map_y) * main_map.info.resolution) + main_map.info.origin.position.y
-    return robot_y, robot_x
 
+def publishing(msg):
+    global pub, r
+    i = 0
+    while not rospy.is_shutdown() and i < 2:
+        pub.publish(msg)
+        i += 1
+        r.sleep()
 
-main_map = None
 
 if __name__ == '__main__':
-    # rospy.Subscriber('/robot0/odom', nav_msgs.msg.Odometry, get_odom)
-    rospy.init_node('a')
-    rospy.Subscriber('/core', nav_msgs.msg.OccupancyGrid, get_map)
-    rospy.spin()
+    rospy.init_node('move')
+    pub = rospy.Publisher('/robot0/cmd_vel', geometry_msgs.msg.Twist, queue_size=10)
+    twist = geometry_msgs.msg.Twist()
+    twist.linear.x = 0
+    twist.linear.y = 0
+    twist.linear.z = 0
+    twist.angular.x = 0
+    twist.angular.y = 0
+    twist.angular.z = 1
+    r = rospy.Rate(1)
+    publishing(twist)
+    time.sleep(9.28)  # ~2.32 for 90 degree
+    twist.angular.z = 0
+    publishing(twist)
+    print('published')
