@@ -4,9 +4,6 @@ from __future__ import print_function
 import rospy
 import actionlib
 import actionlib.msg
-import actionlib_msgs.msg
-import actionlib_msgs
-import move_base
 import move_base_msgs
 import move_base_msgs.msg
 import numpy as np
@@ -14,7 +11,6 @@ import nav_msgs.msg
 import tf.transformations
 import tf.msg
 import math
-import std_msgs.msg
 import geometry_msgs.msg
 import geometry_msgs
 
