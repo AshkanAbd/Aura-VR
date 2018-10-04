@@ -345,7 +345,7 @@
             <stddev>0.007</stddev>
           </noise>
         </camera>
-        <plugin name="camera_controller" filename="libgazebo_ros_depth_camera.so">
+        <plugin name="camera_controller" filename="libgazebo_ros_openni_kinect.so">
           <!-- <robotNamespace>pioneer3at_ros4</robotNamespace> -->
           <alwaysOn>true</alwaysOn>
           <updateRate>0.0</updateRate>

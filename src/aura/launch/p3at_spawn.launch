@@ -6,14 +6,6 @@
   <arg name="initialx" default="0.0"/>
   <arg name="initialy" default="0.0"/>
 
-  <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="trajectory_$(arg robotname)">
-     <param name="target_frame_name" value="/map" />
-     <param name="source_frame_name" value="/$(arg robotname)/base_link" />
-      <remap from="/trajectory" to="/$(arg robotname)/trajectory" />
-    </node>
-
-
-
   <group ns="$(arg robotname)">
     <param name="map_merge/init_pose_x" value="$(arg initialx)"/>
     <param name="map_merge/init_pose_y" value="$(arg initialy)"/>
