@@ -25,8 +25,8 @@ def get_map(map: nav_msgs.msg.OccupancyGrid):
     map_y = map.info.height
     map_info = np.asarray(map.data)
     map_info = map_info.reshape(map_y, map_x)
-    msg = std_msgs.msg.Int32MultiArray()
     result = devide()
+    msg = std_msgs.msg.Empty(result)
     cluster_publisher.publish(msg)
 
 
@@ -35,6 +35,6 @@ if __name__ == '__main__':
     map_x = None
     map_y = None
     rospy.init_node('cluster')
-    cluster_publisher = rospy.Publisher('/cluster', std_msgs.msg.Int32MultiArray, queue_size=20)
+    cluster_publisher = rospy.Publisher('/cluster', std_msgs.msg.Empty, queue_size=20)
     rospy.Subscriber('/core', nav_msgs.msg.OccupancyGrid, get_map)
     rospy.spin()
