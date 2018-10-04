@@ -323,7 +323,7 @@
       </sensor> 
     
 <!-- CAMERA -->
-      <sensor type="depth" name="camera_ros">
+      <sensor type="camera" name="camera_ros">
         <update_rate>20</update_rate>
         <camera name="camera_ros">
           <horizontal_fov>1.047</horizontal_fov>
