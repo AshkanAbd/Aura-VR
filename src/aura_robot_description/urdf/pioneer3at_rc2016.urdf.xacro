@@ -8,16 +8,16 @@
   name="pioneer3at_rc2016"
   >
 
-  <xacro:include filename="$(find robot_description)/urdf/pioneer3at_body.xacro"/>
-  <xacro:include filename="$(find robot_description)/urdf/hokuyo_utm30lx.urdf.xacro"/>
-  <xacro:include filename="$(find robot_description)/urdf/camera_rc2016.urdf.xacro"/>
+  <xacro:include filename="$(find aura_robot_description)/urdf/pioneer3at_body.xacro"/>
+  <xacro:include filename="$(find aura_robot_description)/urdf/hokuyo_utm30lx.urdf.xacro"/>
+  <xacro:include filename="$(find aura_robot_description)/urdf/asus_camera.urdf.xacro"/>
 
   <xacro:hokuyo_utm30lx name="hokuyo" parent="base_link" ros_topic="hokuyo" update_rate="30" ray_count="181" min_angle="90" max_angle="-90">
     <origin xyz="0.13 0 0.32" rpy="0 0 0"/>
   </xacro:hokuyo_utm30lx>
 
-  <xacro:camera_rc2016 name="camera_ros" parent="base_link" ros_topic="image" update_rate="30" height="0.09">
+  <xacro:asus_camera name="camera" parent="base_link">
     <origin xyz="0.13 0 0.32" rpy="0 0 0"/>
-  </xacro:camera_rc2016>
+  </xacro:asus_camera>
 
 </robot>

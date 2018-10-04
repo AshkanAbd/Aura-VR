@@ -323,7 +323,7 @@
       </sensor> 
     
 <!-- CAMERA -->
-      <sensor type="camera" name="camera_ros">
+      <sensor type="depth" name="camera_ros">
         <update_rate>20</update_rate>
         <camera name="camera_ros">
           <horizontal_fov>1.047</horizontal_fov>
@@ -361,6 +361,8 @@
           <distortionT2>0.0</distortionT2>
         </plugin>
       </sensor>
+      
+
     </link>
     <joint name="camera_joint" type="revolute">
       <parent>base_link</parent>
