@@ -323,9 +323,9 @@
       </sensor> 
     
 <!-- CAMERA -->
-      <sensor type="depth" name="camera_ros">
+      <sensor type="depth" name="camera_depth">
         <update_rate>20</update_rate>
-        <camera name="camera_ros">
+        <camera name="camera_depth">
           <horizontal_fov>1.047</horizontal_fov>
           <image>
             <width>320</width>
@@ -349,9 +349,9 @@
           <!-- <robotNamespace>pioneer3at_ros4</robotNamespace> -->
           <alwaysOn>true</alwaysOn>
           <updateRate>0.0</updateRate>
-          <cameraName>camera_ros</cameraName>
+          <cameraName>camera_depth</cameraName>
           <imageTopicName>rgb/image</imageTopicName>
-          <cameraInfoTopicName>rgb/camera_ros_info</cameraInfoTopicName>
+          <cameraInfoTopicName>rgb/camera_depth_info</cameraInfoTopicName>
           <frameName>camera_ros_link</frameName>
           <!-- Depth camera -->
           <depthImageTopicName>depth/image_raw</depthImageTopicName>
