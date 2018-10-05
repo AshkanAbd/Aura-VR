@@ -9,7 +9,7 @@
 	     <!--rosparam file="$(find setup)/config/global_costmap_params.yaml" command="load" /-->
 	     <!--rosparam file="$(find setup)/config/base_local_planner_params.yaml" command="load" /-->
 	  <remap from="/cmd_vel" to="cmd_vel"/>
-      <remap from="map" to="/core" />
+      <remap from="map" to="/core/map" />
       <param name="base_global_planner" type="string" value="navfn/NavfnROS" />
       <param name="conservative_reset_dist" type="double" value="3.0" />
       <param name="controller_frequency" type="double" value="7.5" />

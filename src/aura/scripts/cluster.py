@@ -39,5 +39,5 @@ if __name__ == '__main__':
     map_y = None
     rospy.init_node('cluster')
     cluster_publisher = rospy.Publisher('/cluster', aura.msg.group, queue_size=20)
-    rospy.Subscriber('/core', nav_msgs.msg.OccupancyGrid, get_map)
+    rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
     rospy.spin()

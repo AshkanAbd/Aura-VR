@@ -4,5 +4,7 @@
     <arg name="robotname1" default="robot1"/>
     <arg name="robotname2" default="robot2"/>
     <arg name="robotname3" default="robot3"/>
-    <node pkg="aura" type="core.py" name="core" output="screen" args="$(arg robotname0) $(arg robotname1) $(arg robotname2) $(arg robotname3)"/>
+    <group ns="core">
+        <node pkg="aura" type="core.py" name="core_builder" output="screen" args="$(arg robotname0) $(arg robotname1) $(arg robotname2) $(arg robotname3)"/>
+    </group>
 </launch>
