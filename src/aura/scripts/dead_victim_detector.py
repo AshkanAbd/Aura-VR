@@ -51,8 +51,8 @@ victim_info_pub = None
 def main():
     global bridge, victim_info_pub
     bridge = cv_bridge.CvBridge()
-    rospy.init_node('dead_victim_detector')
-    rospy.Subscriber('/' + namespace + '/camera_ros/image', sensor_msgs.msg.Image, get_image)
+    rospy.init_node('dead_victim_detector_' + namespace)
+    rospy.Subscriber('/' + namespace + '/camera_depth/rgb/image', sensor_msgs.msg.Image, get_image)
     victim_info_pub = rospy.Publisher('/' + namespace + '/victims/dead', std_msgs.msg.Float64MultiArray, queue_size=10)
     rospy.spin()
 

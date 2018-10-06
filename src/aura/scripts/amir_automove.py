@@ -85,8 +85,8 @@ move_base_goal = None
 
 if __name__ == '__main__':
     name = 'robot0'
-    rospy.init_node('core1')
+    rospy.init_node('amir_auto_move')
     setup_move_base()
     print('hey')
-    rospy.Subscriber('/core', nav_msgs.msg.OccupancyGrid, get_map)
+    rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
     rospy.spin()

@@ -48,11 +48,11 @@ if __name__ == '__main__':
         robot1 = sys.argv[2]
         robot2 = sys.argv[3]
         robot3 = sys.argv[4]
-    rospy.init_node('core')
+    rospy.init_node('core_builder')
     rospy.Subscriber('/' + robot0 + '/map', nav_msgs.msg.OccupancyGrid, get_map, robot0)
     rospy.Subscriber('/' + robot1 + '/map', nav_msgs.msg.OccupancyGrid, get_map, robot1)
     rospy.Subscriber('/' + robot2 + '/map', nav_msgs.msg.OccupancyGrid, get_map, robot2)
     rospy.Subscriber('/' + robot3 + '/map', nav_msgs.msg.OccupancyGrid, get_map, robot3)
-    core_publisher = rospy.Publisher('/core', nav_msgs.msg.OccupancyGrid, queue_size=20)
+    core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=20)
     publish_core()
     rospy.spin()
