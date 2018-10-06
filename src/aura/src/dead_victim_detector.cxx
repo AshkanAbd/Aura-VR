@@ -12,7 +12,7 @@
 #include <algorithm>
 
 
-static std::string name_space = "robot0";
+const static std::string name_space = "robot0";
 ros::Publisher dead_victim_publisher;
 cv::Scalar lower_color1(0, 0, 0);
 cv::Scalar upper_color1(0, 50, 50);

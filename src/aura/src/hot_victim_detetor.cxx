@@ -11,7 +11,7 @@
 #include <map>
 #include <algorithm>
 
-static std::string name_space = "robot0";
+const static std::string name_space = "robot0";
 cv::Mat normal_img;
 cv::Mat thermal_img;
 ros::Publisher hot_victim_publisher;
