@@ -18,7 +18,7 @@ def devide():
             temp = np.asarray(map_info[i * 16:i * 16 + 16, j * 16:j * 16 + 16], np.int32)
             temp = temp.reshape(256).tolist()
             data.data = temp
-            group.group.append(data)
+            group.array.append(data)
     return group
 
 
