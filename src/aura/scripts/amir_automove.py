@@ -4,6 +4,7 @@ import nav_msgs.msg
 import move_base_msgs.msg
 import geometry_msgs.msg
 import numpy as np
+import aura.msg
 
 map = nav_msgs.msg.OccupancyGrid
 odometry = nav_msgs.msg.Odometry
@@ -11,6 +12,7 @@ map_info = nav_msgs.msg.OccupancyGrid.info
 goal = geometry_msgs.msg.PoseStamped()
 corent_goal_x = 10000
 corent_goal_y = 10000
+group = aura.msg.group
 
 
 def get_robot_odom(odometry):
@@ -44,21 +46,22 @@ def convert_from_map_to_robot(map_y, map_x):
 def get_map(map: nav_msgs.msg.OccupancyGrid):
     global map_x, map_y , map_info
     map_info = map
-    # print(map_info)
     map_x = map.info.width
     map_y = map.info.height
     map_info = np.asarray(map.data)
-    print(map_info)
     map_info = map_info.reshape(map_y, map_x)
-    # b = []
-    # for i in range(map_y//62):
-    #     for j in range(map_x//62):
-    #         b.append(map_info[i * 16:i * 16+ 16, j * 16:j * 16 + 16])
-    # print(b)
+
+
+def cluster(group:aura.msg.group):
+    global cluster_map
+    cluster_map = group
+    print(cluster_map.array)
+    # cluster_map = np.asarray(group.array).reshape()
+
+
 
 
 # def generate_goal():
-#     global corent_goal_x, corent_goal_y, robot_x, robot_y, goal_x, goal_y
 
 
 def setup_move_base():
@@ -66,6 +69,7 @@ def setup_move_base():
     client = actionlib.SimpleActionClient('/' + name + '/move_base', move_base_msgs.msg.MoveBaseAction)
     client.wait_for_server()
     move_base_goal = move_base_msgs.msg.MoveBaseGoal()
+
 
 
 def move_base_clinet(goal_x, goal_y):
@@ -89,4 +93,5 @@ if __name__ == '__main__':
     setup_move_base()
     print('hey')
     rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
+    rospy.Subscriber('/core/cluster' , aura.msg.group,cluster)
     rospy.spin()
