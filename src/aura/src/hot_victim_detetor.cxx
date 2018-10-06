@@ -15,6 +15,8 @@ static std::string name_space = "robot0";
 cv::Mat normal_img;
 cv::Mat thermal_img;
 ros::Publisher hot_victim_publisher;
+cv::Scalar lower_color(0, 30, 30);
+cv::Scalar upper_color(20, 255, 255);
 
 void get_normal_image(const sensor_msgs::Image &img) {
     cv::Mat frame, frame1, frame_gray, frame_thresh, frame_filter, frame2, frame_hsv, mask, final_frame2;
@@ -26,7 +28,7 @@ void get_normal_image(const sensor_msgs::Image &img) {
     frame.copyTo(frame1);
     cv::bitwise_and(frame1, frame1, frame2, frame_thresh);
     cv::cvtColor(frame, frame_hsv, cv::COLOR_BGR2HSV);
-    cv::inRange(frame_hsv, cv::Scalar(0, 30, 30), cv::Scalar(20, 255, 255), mask);
+    cv::inRange(frame_hsv, lower_color, upper_color, mask);
     cv::bitwise_and(frame2, frame2, final_frame2, mask);
     normal_img = final_frame2;
 }
@@ -57,6 +59,8 @@ void process_img() {
         cv::Laplacian(frame2, frame_edge, -1);
         cv::findContours(frame_edge, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
         std::map<double, std::vector<cv::Point>> contours_area;
+        cv::waitKey(1);
+        cv::imshow("hot frame", frame2);
         if (contours.empty()) continue;
         std::vector<double> areas;
         for (const auto &contour : contours) {
@@ -74,8 +78,7 @@ void process_img() {
         info_array.data.push_back(main_rect.width);
         hot_victim_publisher.publish(info_array);
         cv::rectangle(frame2, main_rect, cv::Scalar(255, 0, 0), 2);
-        cv::imshow("frame", frame2);
-        cv::waitKey(1);
+        cv::imshow("hot frame", frame2);
     }
 }
 
