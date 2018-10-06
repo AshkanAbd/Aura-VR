@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 import numpy as np
 import sensor_msgs.msg
 import sensor_msgs
@@ -12,11 +14,14 @@ import std_msgs.msg
 
 def get_depth_image(sensor_img):
     global bridge
-    frame = bridge.imgmsg_to_cv2(sensor_img, "32FC1")
-    img = np.array(frame, np.float64)
-    nor_img = cv.normalize(img, img, 0, 1, cv.NORM_MINMAX)
-    cv.imshow('f1', nor_img)
-    cv.waitKey(0)
+    try:
+        frame = bridge.imgmsg_to_cv2(sensor_img, "passthrough")
+        img = np.array(frame, np.float64)
+        nor_img = cv.normalize(img, img, 0, 1, cv.NORM_MINMAX)
+        cv.imshow('f1', nor_img)
+        cv.waitKey(1)
+    except cv_bridge.CvBridgeError as e:
+        pass
 
 
 if __name__ == '__main__':
