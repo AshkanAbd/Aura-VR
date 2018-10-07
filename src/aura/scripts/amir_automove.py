@@ -55,6 +55,10 @@ def find_cluster():
     robot_block_index = int((y * 16) + x)
     return robot_block_index
 
+def get_up_cluster():
+    global robot_block_index
+
+
 
 def setup_move_base():
     global client, move_base_goal
