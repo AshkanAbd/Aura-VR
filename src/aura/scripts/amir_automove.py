@@ -43,7 +43,7 @@ def convert_from_map_to_robot(map_y, map_x):
 def cluster(group: aura.msg.group):
     global robot_pose_x, robot_pose_y, map_height, map_width, blocks
     blocks = group
-    block_index = find_cluster()
+    robot_block_index = find_cluster()
 
 
 def find_cluster():
@@ -52,8 +52,8 @@ def find_cluster():
     robot_pose = convert_from_robot_to_map(robot_pose_y, robot_pose_x)
     y = robot_pose[0] // (map_height // 16)
     x = robot_pose[1] // (map_width // 16)
-    block_index = int((y * 16) + x)
-    return block_index
+    robot_block_index = int((y * 16) + x)
+    return robot_block_index
 
 
 def setup_move_base():
@@ -61,6 +61,7 @@ def setup_move_base():
     client = actionlib.SimpleActionClient('/' + namespace + '/move_base', move_base_msgs.msg.MoveBaseAction)
     client.wait_for_server()
     move_base_goal = move_base_msgs.msg.MoveBaseGoal()
+
 
 # goal status--- PENDING=0--- ACTIVE=1---PREEMPTED=2--SUCCEEDED=3--ABORTED=4---REJECTED=5--PREEMPTING=6---RECALLING=7---RECALLED=8---LOST=9
 def goal_status(data1, data2):
