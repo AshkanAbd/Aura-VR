@@ -83,7 +83,6 @@ def move_base_clinet(goal_x, goal_y):
 client = None
 move_base_goal = None
 is_published = [False, False]
-map = nav_msgs.msg.OccupancyGrid
 robot_odometry = nav_msgs.msg.Odometry
 map_info = nav_msgs.msg.OccupancyGrid.info
 current_goal_x = 10000
