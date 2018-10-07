@@ -16,7 +16,7 @@
     <origin xyz="0.13 0 0.32" rpy="0 0 0"/>
   </xacro:hokuyo_utm30lx>
 
-  <xacro:asus_camera name="camera" parent="base_link">
+  <xacro:asus_camera name="camera_ros" parent="base_link">
     <origin xyz="0.13 0 0.32" rpy="0 0 0"/>
   </xacro:asus_camera>
 

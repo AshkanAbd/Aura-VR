@@ -7,20 +7,25 @@ project(aura)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+set(CMAKE_CXX_STANDARD 11)
+
+
 find_package(catkin REQUIRED COMPONENTS
-  costmap_2d
-  cv_bridge
-  geometry_msgs
-  image_transport
-  nav_core
-  nav_msgs
-  roscpp
-  rospy
-  sensor_msgs
-  std_msgs
-  tf
-  message_generation
-)
+        costmap_2d
+        cv_bridge
+        geometry_msgs
+        image_transport
+        nav_core
+        nav_msgs
+        roscpp
+        rospy
+        sensor_msgs
+        std_msgs
+        tf
+        message_generation
+        )
+
+find_package(OpenCV REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -57,9 +62,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate messages in the 'msg' folder
 add_message_files(
-  FILES
-  data.msg
-  group.msg
+        FILES
+        data.msg
+        group.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -78,8 +83,8 @@ add_message_files(
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
-  DEPENDENCIES
-  std_msgs 
+        DEPENDENCIES
+        std_msgs
 )
 
 ################################################
@@ -113,12 +118,12 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 
-  CATKIN_DEPENDS message_runtime
+        CATKIN_DEPENDS message_runtime
 
-#  INCLUDE_DIRS include
-#  LIBRARIES aura
-#  CATKIN_DEPENDS costmap_2d cv_bridge geometry_msgs image_transport nav_core nav_msgs roscpp rospy sensor_msgs std_msgs tf
-#  DEPENDS system_lib
+        #  INCLUDE_DIRS include
+        #  LIBRARIES aura
+        #  CATKIN_DEPENDS costmap_2d cv_bridge geometry_msgs image_transport nav_core nav_msgs roscpp rospy sensor_msgs std_msgs tf
+        #  DEPENDS system_lib
 )
 
 ###########
@@ -128,8 +133,8 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
+        # include
+        ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -147,8 +152,14 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/aura_node.cpp)
 add_executable(odom_transform src/odom_transform.cxx)
+add_executable(laser_transform src/laser_transform.cxx)
+add_executable(hot_victim_detector src/hot_victim_detetor.cxx)
+add_executable(dead_victim_detector src/dead_victim_detector.cxx)
 
 target_link_libraries(odom_transform ${catkin_LIBRARIES})
+target_link_libraries(laser_transform ${catkin_LIBRARIES})
+target_link_libraries(hot_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(dead_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

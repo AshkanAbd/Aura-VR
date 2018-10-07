@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python2
 
 import rospy
 import cv2 as cv
@@ -27,7 +27,6 @@ def get_normal_image(image):
 def get_thermal_image(image):
     global bridge, thermal_img
     frame = bridge.imgmsg_to_cv2(image, "bgr8")
-    thermal_img = frame
     frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     frame = cv.bilateralFilter(frame, 9, 75, 75)
     _, frame_thresh1 = cv.threshold(frame, 180, 255, cv.THRESH_BINARY)

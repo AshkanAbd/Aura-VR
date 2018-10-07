@@ -1,34 +1,24 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-import cv2 as cv
-import numpy as np
 import rospy
-import time
-import geometry_msgs.msg
+import numpy as np
+import aura.msg
+import nav_msgs.msg
 
 
-def publishing(msg):
-    global pub, r
-    i = 0
-    while not rospy.is_shutdown() and i < 2:
-        pub.publish(msg)
-        i += 1
-        r.sleep()
+def get_block(blocks: aura.msg.group):
+    global publish
+    map = nav_msgs.msg.OccupancyGrid()
+    map.data = blocks.array[0].data
+    map.info.width = 62
+    map.info.height = 62
+    map.info.resolution = 0.2
+    publish.publish(map)
 
 
 if __name__ == '__main__':
-    rospy.init_node('move')
-    pub = rospy.Publisher('/robot0/cmd_vel', geometry_msgs.msg.Twist, queue_size=10)
-    twist = geometry_msgs.msg.Twist()
-    twist.linear.x = 0
-    twist.linear.y = 0
-    twist.linear.z = 0
-    twist.angular.x = 0
-    twist.angular.y = 0
-    twist.angular.z = 1
-    r = rospy.Rate(1)
-    publishing(twist)
-    time.sleep(9.28)  # ~2.32 for 90 degree
-    twist.angular.z = 0
-    publishing(twist)
-    print('published')
+    namespace = 'robot0'
+    rospy.init_node('test')
+    rospy.Subscriber('/core/blocks', aura.msg.group, get_block)
+    publish = rospy.Publisher('/test', nav_msgs.msg.OccupancyGrid, queue_size=10)
+    rospy.spin()
