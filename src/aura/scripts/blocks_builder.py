@@ -31,7 +31,7 @@ def get_map(map: nav_msgs.msg.OccupancyGrid):
     map_y = map.info.height
     map_info = np.asarray(map.data)
     map_info = map_info.reshape(map_y, map_x)
-    result = devide()
+    result = divide()
     cluster_publisher.publish(result)
 
 
