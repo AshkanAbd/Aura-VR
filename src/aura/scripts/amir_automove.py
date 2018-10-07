@@ -35,8 +35,8 @@ def convert_from_robot_to_map(robot_y, robot_x):
 
 def convert_from_map_to_robot(map_y, map_x):
     global map_info
-    robot_x = ((map_x) * map_info.info.resolution) + map_info.info.origin.position.x
-    robot_y = ((map_y) * map_info.info.resolution) + map_info.info.origin.position.y
+    robot_x = (map_x * map_info.info.resolution) + map_info.info.origin.position.x
+    robot_y = (map_y * map_info.info.resolution) + map_info.info.origin.position.y
     return robot_y, robot_x
 
 
@@ -44,6 +44,7 @@ def cluster(group: aura.msg.group):
     global robot_pose_x, robot_pose_y, map_height, map_width, blocks
     blocks = group
     robot_block_index = find_robot_cluster()
+    print(robot_block_index)
 
 
 def find_robot_cluster():

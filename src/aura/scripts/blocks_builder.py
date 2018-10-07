@@ -27,10 +27,10 @@ def divide():
 def get_map(map: nav_msgs.msg.OccupancyGrid):
     global map_width, map_height, map_info, cluster_publisher
     map_info = map
-    map_x = map.info.width
-    map_y = map.info.height
+    map_width = map.info.width
+    map_height = map.info.height
     map_info = np.asarray(map.data)
-    map_info = map_info.reshape(map_y, map_x)
+    map_info = map_info.reshape(map_height, map_width)
     result = divide()
     cluster_publisher.publish(result)
 
