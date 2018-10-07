@@ -74,8 +74,8 @@ void process_img() {
         std_msgs::Float64MultiArray info_array;
         info_array.data.push_back(main_rect.x);
         info_array.data.push_back(main_rect.y);
-        info_array.data.push_back(main_rect.height);
         info_array.data.push_back(main_rect.width);
+        info_array.data.push_back(main_rect.height);
         hot_victim_publisher.publish(info_array);
         cv::rectangle(frame2, main_rect, cv::Scalar(255, 0, 0), 2);
         cv::imshow("hot frame", frame2);
