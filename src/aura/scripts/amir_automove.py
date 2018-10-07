@@ -7,6 +7,7 @@ import move_base_msgs.msg
 import geometry_msgs.msg
 import numpy as np
 import aura.msg
+import math
 
 map = nav_msgs.msg.OccupancyGrid
 robot_odometry = nav_msgs.msg.Odometry
@@ -85,13 +86,13 @@ def convert_from_map_to_robot(map_y, map_x):
 #     goal_x =
 
 def cluster(group: aura.msg.group):
-    global cluster_map, robot_x, robot_y,map_y,map_x,is_published
+    global cluster_map, robot_x, robot_y, map_y, map_x, is_published
     cluster_map = group.array
     while False in is_published: pass
     a = convert_from_robot_to_map(robot_y, robot_x)
     x = a[0] // (map_y // 16)
     y = a[1] // (map_x // 16)
-    s = int(((y - 1) * 16) + (16 - x))
+    s = int(((x) * 16) + y)
     # print(s)
     print(cluster_map[s])
     # print(s)
@@ -127,7 +128,7 @@ def move_base_clinet(goal_x, goal_y):
 
 client = None
 move_base_goal = None
-is_published = [False , False ]
+is_published = [False, False]
 
 if __name__ == '__main__':
     name = 'robot0'
