@@ -11,7 +11,7 @@ map_info = nav_msgs.msg.OccupancyGrid.info
 
 
 def devide():
-    global map_info, map_x, map_y
+    global map_info, map_width, map_height
     group = aura.msg.group()
     block_size = map_x // 16
     for i in range(map_y // block_size):
@@ -25,7 +25,7 @@ def devide():
 
 
 def get_map(map: nav_msgs.msg.OccupancyGrid):
-    global map_x, map_y, map_info, cluster_publisher
+    global map_width, map_height, map_info, cluster_publisher
     map_info = map
     map_x = map.info.width
     map_y = map.info.height
@@ -37,8 +37,8 @@ def get_map(map: nav_msgs.msg.OccupancyGrid):
 
 if __name__ == '__main__':
     map_info = None
-    map_x = None
-    map_y = None
+    map_width = None
+    map_height = None
     rospy.init_node('blocks_builder')
     cluster_publisher = rospy.Publisher('/core/blocks', aura.msg.group, queue_size=20)
     rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
