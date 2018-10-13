@@ -1,4 +1,8 @@
+#!/usr/bin/env python3
+
 import rospy
+import std_msgs.msg
+import nav_msgs.msg
 from interactive_markers.interactive_marker_server import *
 from visualization_msgs.msg import *
 
@@ -11,9 +15,9 @@ def process_feedback(feedback):
 def create_marker(r, g, b, x=0, y=0):
     box_marker = Marker()
     box_marker.type = Marker.CUBE
-    box_marker.scale.x = 0.45
-    box_marker.scale.y = 0.45
-    box_marker.scale.z = 0.45
+    box_marker.scale.x = 0.85
+    box_marker.scale.y = 0.85
+    box_marker.scale.z = 0.85
     box_marker.color.r = r
     box_marker.color.g = g
     box_marker.color.b = b
@@ -28,12 +32,39 @@ def add_marker(marker):
     box_control.markers.append(marker)
 
 
+def get_mark_place(place: std_msgs.msg.Float64MultiArray):
+    print("Received")
+    pose = convert_from_map_to_robot(place.data[1], place.data[0])
+    print(pose)
+    if place.data[2] == 1:
+        marker = create_marker(255, 0, 0, pose[0], pose[1])
+        add_marker(marker)
+    else:
+        marker = create_marker(0, 0, 255, pose[0], pose[1])
+        add_marker(marker)
+
+
+def convert_from_map_to_robot(map_y, map_x):
+    global map_info
+    robot_x = (map_x * map_info.info.resolution) + map_info.info.origin.position.x
+    robot_y = (map_y * map_info.info.resolution) + map_info.info.origin.position.y
+    return robot_y, robot_x
+
+
+def convert_from_robot_to_map(robot_y, robot_x):
+    global map_info
+    map_x = (robot_x - map_info.info.origin.position.x) // map_info.info.resolution
+    map_y = (robot_y - map_info.info.origin.position.y) // map_info.info.resolution
+    return map_y, map_x
+
+
 namespace = 'robot0'
 box_control = None
+map_info = None
 
 
 def main():
-    global box_control
+    global box_control, map_info
     rospy.init_node("victim_marker")
     server = InteractiveMarkerServer("/" + namespace + "/victim_marker")
     int_marker = InteractiveMarker()
@@ -45,6 +76,8 @@ def main():
     int_marker.controls.append(box_control)
     server.insert(int_marker, process_feedback)
     server.applyChanges()
+    map_info = (rospy.wait_for_message("/core/map", nav_msgs.msg.OccupancyGrid))
+    rospy.Subscriber('/core/mark_place', std_msgs.msg.Float64MultiArray, get_mark_place)
     rospy.spin()
 
 

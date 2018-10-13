@@ -5,9 +5,10 @@
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
+  <arg name="world" default="test1"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find setup)/worlds/test1.world"/>
+    <arg name="world_name" value="$(find setup)/worlds/$(arg world).world"/>
     <remap from="tf" to="gazebo_tf"/>
     <!--arg name="world_name" value="$(find robot_gazebo)/worlds/small_world.world"/-->
     <arg name="debug" value="$(arg debug)" />

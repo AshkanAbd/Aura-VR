@@ -364,6 +364,7 @@
           <distortionK3>0.0</distortionK3>
           <distortionT1>0.0</distortionT1>
           <distortionT2>0.0</distortionT2>
+          <pointCloudCutoff>0.01</pointCloudCutoff>        
         </plugin>
       </sensor>
       <!--<sensor type="depth" name="${name}">
