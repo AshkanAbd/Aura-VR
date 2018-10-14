@@ -49,36 +49,40 @@ void process_img() {
         if (normal_img.data == nullptr || thermal_img.data == nullptr) {
             continue;
         }
-        cv::Mat frame, frame1, frame2, normal_gray, normal_thresh, thermal_img1, frame_edge;
-        std::vector<std::vector<cv::Point>> contours;
-        cv::cvtColor(normal_img, normal_gray, cv::COLOR_BGR2GRAY);
-        cv::threshold(normal_gray, normal_thresh, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
-        cv::pyrUp(thermal_img, thermal_img1);
-        cv::bitwise_and(thermal_img1, thermal_img1, frame1, normal_thresh);
-        cv::medianBlur(frame1, frame2, 5);
-        cv::Laplacian(frame2, frame_edge, -1);
-        cv::findContours(frame_edge, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-        std::map<double, std::vector<cv::Point>> contours_area;
-        cv::waitKey(1);
-        cv::imshow("hot frame", frame2);
-        if (contours.empty()) continue;
-        std::vector<double> areas;
-        for (const auto &contour : contours) {
-            double d = cv::contourArea(contour);
-            contours_area[d] = contour;
-            areas.push_back(d);
+        try {
+            cv::Mat frame, frame1, frame2, normal_gray, normal_thresh, thermal_img1, frame_edge;
+            std::vector<std::vector<cv::Point>> contours;
+            cv::cvtColor(normal_img, normal_gray, cv::COLOR_BGR2GRAY);
+            cv::threshold(normal_gray, normal_thresh, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
+            cv::pyrUp(thermal_img, thermal_img1);
+            cv::bitwise_and(thermal_img1, thermal_img1, frame1, normal_thresh);
+            cv::medianBlur(frame1, frame2, 5);
+            cv::Laplacian(frame2, frame_edge, -1);
+            cv::findContours(frame_edge, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+            std::map<double, std::vector<cv::Point>> contours_area;
+            cv::waitKey(1);
+            cv::imshow("hot frame", frame2);
+            if (contours.empty()) continue;
+            std::vector<double> areas;
+            for (const auto &contour : contours) {
+                double d = cv::contourArea(contour);
+                contours_area[d] = contour;
+                areas.push_back(d);
+            }
+            std::sort(areas.rbegin(), areas.rend());
+            std::vector<cv::Point> main_contour = contours_area[areas[0]];
+            cv::Rect main_rect = cv::boundingRect(main_contour);
+            std_msgs::Float64MultiArray info_array;
+            info_array.data.push_back(main_rect.x);
+            info_array.data.push_back(main_rect.y);
+            info_array.data.push_back(main_rect.width);
+            info_array.data.push_back(main_rect.height);
+            hot_victim_publisher.publish(info_array);
+            cv::rectangle(frame2, main_rect, cv::Scalar(255, 0, 0), 2);
+            cv::imshow("hot frame", frame2);    
+        } catch (std::exception e) {
+            std::cout << e.what() << std::endl;
         }
-        std::sort(areas.rbegin(), areas.rend());
-        std::vector<cv::Point> main_contour = contours_area[areas[0]];
-        cv::Rect main_rect = cv::boundingRect(main_contour);
-        std_msgs::Float64MultiArray info_array;
-        info_array.data.push_back(main_rect.x);
-        info_array.data.push_back(main_rect.y);
-        info_array.data.push_back(main_rect.height);
-        info_array.data.push_back(main_rect.width);
-        hot_victim_publisher.publish(info_array);
-        cv::rectangle(frame2, main_rect, cv::Scalar(255, 0, 0), 2);
-        cv::imshow("hot frame", frame2);
     }
 }
 
