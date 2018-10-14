@@ -53,6 +53,33 @@ def main():
     get_info(rospy.wait_for_message('/robot0/map', nav_msgs.msg.OccupancyGrid))
 
 
+# codes : 1) hot victim  , 2) dead victim
+# def get_victim(array):
+#     # global img_geo, const_hot_victim_x, odom_info, const_hot_victim_y, mark_publisher
+#     u = array.data[0] + (array.data[2] // 2)
+#     v = array.data[1] + array.data[3] - 3
+#     time = rospy.Time(0)
+#     listener = tf.listener.TransformListener()
+#     camera_point = img_geo.projectPixelTo3dRay((img_geo.rectifyPoint((u, v))))
+#     print(camera_point)
+#     point_msg.pose.position.x = camera_point[0] * 10
+#     point_msg.pose.position.y = camera_point[1] * 10
+#     point_msg.pose.position.z = 0
+#     point_msg.pose.orientation.x = 0
+#     point_msg.pose.orientation.y = 0
+#     point_msg.pose.orientation.z = 0
+#     point_msg.pose.orientation.w = 1
+#     point_msg.header.frame_id = img_geo.tfFrame()
+#     point_msg.header.stamp = time
+#     try:
+#         listener.waitForTransform(img_geo.tfFrame(), 'map', time, rospy.Duration(1))
+#         tf_point = listener.transformPose('map', point_msg)
+#         print(tf_point.pose.position.x, tf_point.pose.position.y)
+#         # print(convert_from_robot_to_map(tf_point.pose.position.y, tf_point.pose.position.x))
+#         print("###########################")
+#     except Exception:
+#         pass
+
 main_map = None
 namespace = 'robot0'
 if __name__ == '__main__':

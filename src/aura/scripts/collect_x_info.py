@@ -43,9 +43,11 @@ def get_victim(array):
     robot_yaw = tf.transformations.euler_from_quaternion(q)
     robot_angle = robot_yaw[2] * 180 / math.pi
     victim_pose = convert_from_map_to_robot(250, 300)
-    line = str(array.data[0]) + ' ' + str(array.data[2]) + ' ' + str(victim_pose[1]) + ' ' + str(
-        robot_odom.pose.pose.position.x) + ' ' + str(
-        abs(victim_pose[1] - robot_odom.pose.pose.position.x)) + ' ' + str(robot_angle)  + '\n'
+    line = str(array.data[0]) + ' ' + str(array.data[2]) + ' (' + str(victim_pose[1]) + ' , ' + str(
+        victim_pose[0]) + ') (' + str(robot_odom.pose.pose.position.x) + ' , ' + str(
+        robot_odom.pose.pose.position.y) + ') (' + str(
+        abs(victim_pose[1] - robot_odom.pose.pose.position.x)) + ' , ' + str(
+        abs(victim_pose[0] - robot_odom.pose.pose.position.y)) + ') ' + str(robot_angle) + '\n'
     file.write(line)
 
 
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     victim_info = std_msgs.msg.Float64MultiArray()
     namespace = 'robot0'
     y_list = []
-    file = open('x_info.aura', 'a+')
+    file = open('../data/hot_x_info.aura', 'a+')
     get_core(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
     rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, get_odom)
     rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_core)
