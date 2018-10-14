@@ -58,9 +58,9 @@ if __name__ == '__main__':
     victim_info = std_msgs.msg.Float64MultiArray()
     namespace = 'robot0'
     y_list = []
-    file = open('../data/hot_y_info.aura', 'a+')
+    file = open('../data/dead_y_info.aura', 'a+')
     get_core(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
     rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, get_odom)
     rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_core)
-    rospy.Subscriber('/' + namespace + '/victims/hot', std_msgs.msg.Float64MultiArray, get_victim)
+    rospy.Subscriber('/' + namespace + '/victims/dead', std_msgs.msg.Float64MultiArray, get_victim)
     rospy.spin()

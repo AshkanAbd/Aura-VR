@@ -39,9 +39,9 @@ def get_odom(robot_odom):
 
 # codes : 1) hot victim  , 2) dead victim
 def get_victim(array):
-    global odom_info, rate, mark_publisher, x_data_set, y_data_set, robot_angle
-    data1 = closest_pair(array.data[0], x_data_set)
-    data2 = closest_pair(array.data[1], y_data_set, array.data[3])
+    global odom_info, rate, mark_publisher, hot_x_data_set, hot_y_data_set, robot_angle
+    data1 = closest_pair(array.data[0], hot_x_data_set)
+    data2 = closest_pair(array.data[1], hot_y_data_set, array.data[3])
     split1 = data1.split(' ')
     split2 = data2.split(' ')
     if math.fabs(float(split2[1]) - array.data[3]) > 4: return
@@ -144,10 +144,10 @@ if __name__ == '__main__':
     odom_info = nav_msgs.msg.Odometry()
     rospy.init_node('victim_place')
     rate = rospy.Rate(10)
-    x_data = open('../data/normalize_x_info.aura', 'r')
-    y_data = open('../data/normalize_y_info.aura', 'r')
-    x_data_set = create_data_set(x_data)
-    y_data_set = create_data_set(y_data)
+    hot_x_data = open('../data/normalize_hot_x_info.aura', 'r')
+    hot_y_data = open('../data/normalize_hot_y_info.aura', 'r')
+    hot_x_data_set = create_data_set(hot_x_data)
+    hot_y_data_set = create_data_set(hot_y_data)
     mark_publisher = rospy.Publisher('/core/mark_place', std_msgs.msg.Float64MultiArray, queue_size=10)
     map_info = (rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
     get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))

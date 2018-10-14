@@ -50,7 +50,7 @@ void get_image(const sensor_msgs::Image &img) {
     std::sort(areas.rbegin(), areas.rend());
     std::vector<cv::Point> main_contour = contours_area[areas[0]];
     cv::Rect main_rect = cv::boundingRect(main_contour);
-    if (main_rect.height < 36) return;
+//    if (main_rect.height < 36) return;
     std_msgs::Float64MultiArray info_array;
     info_array.data.push_back(main_rect.x);
     info_array.data.push_back(main_rect.y);
