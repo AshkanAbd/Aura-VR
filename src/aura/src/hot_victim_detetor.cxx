@@ -72,6 +72,7 @@ void process_img() {
             std::sort(areas.rbegin(), areas.rend());
             std::vector<cv::Point> main_contour = contours_area[areas[0]];
             cv::Rect main_rect = cv::boundingRect(main_contour);
+            if (main_rect.height < 36) continue;
             std_msgs::Float64MultiArray info_array;
             info_array.data.push_back(main_rect.x);
             info_array.data.push_back(main_rect.y);
@@ -79,7 +80,7 @@ void process_img() {
             info_array.data.push_back(main_rect.height);
             hot_victim_publisher.publish(info_array);
             cv::rectangle(frame2, main_rect, cv::Scalar(255, 0, 0), 2);
-            cv::imshow("hot frame", frame2);    
+            cv::imshow("hot frame", frame2);
         } catch (std::exception e) {
             std::cout << e.what() << std::endl;
         }
