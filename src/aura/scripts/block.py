@@ -20,7 +20,7 @@ class Block:
         self.block_info = np.asarray(block_info)
         self.width = width
         self.height = height
-        self.reshape_block_info = np.asarray(block_info).reshape(height, width)
+        self.reshape_block_info = np.asarray(block_info).reshape(height // 16, width // 16)
 
     def get_row(self):
         return self.row
@@ -59,3 +59,7 @@ class Block:
 
     def get_unkown_reshaped(self):
         return np.where(self.reshape_block_info == -1)
+
+    def __str__(self) -> str:
+        return str(self.block_info)
+
