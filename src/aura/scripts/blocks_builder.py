@@ -13,12 +13,14 @@ map_info = nav_msgs.msg.OccupancyGrid.info
 def divide():
     global map_info, map_width, map_height
     group = aura.msg.group()
-    block_size = map_width // 16
-    for i in range(map_height // block_size):
-        for j in range(map_width // block_size):
+    block_size_col = map_width // 16
+    block_size_row = map_height // 16
+    for i in range(map_height // block_size_row):
+        for j in range(map_width // block_size_col):
             data = aura.msg.data()
-            temp = map_info[i * block_size:(i + 1) * block_size, j * block_size:(j + 1) * block_size].copy()
-            temp = temp.reshape(3844).tolist()
+            temp = map_info[i * block_size_row:(i + 1) * block_size_row,
+                   j * block_size_col:(j + 1) * block_size_row].copy()
+            temp = temp.reshape(block_size_row * block_size_col).tolist()
             data.data = temp
             group.array.append(data)
     return group
