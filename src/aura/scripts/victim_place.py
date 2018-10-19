@@ -1,6 +1,5 @@
 #!/usr/bin/env python2
 
-import numpy as np
 import rospy
 import nav_msgs.msg
 import std_msgs.msg
@@ -8,20 +7,8 @@ import tf.transformations
 import time
 import math
 import sched
-
-
-def convert_from_robot_to_map(robot_y, robot_x):
-    global map_info
-    map_x = (robot_x - map_info.info.origin.position.x) // map_info.info.resolution
-    map_y = (robot_y - map_info.info.origin.position.y) // map_info.info.resolution
-    return map_y, map_x
-
-
-def convert_from_map_to_robot(map_y, map_x):
-    global map_info
-    robot_x = (map_x * map_info.info.resolution) + map_info.info.origin.position.x
-    robot_y = (map_y * map_info.info.resolution) + map_info.info.origin.position.y
-    return robot_y, robot_x
+import numpy as np
+import core
 
 
 def get_odom(robot_odom):
@@ -44,7 +31,8 @@ def get_victim(array):
     data2 = closest_pair(array.data[1], hot_y_data_set, array.data[3])
     split1 = data1.split(' ')
     split2 = data2.split(' ')
-    if math.fabs(float(split2[1]) - array.data[3]) > 4: return
+    if math.fabs(float(split2[1]) - array.data[3]) > 4:
+        return
     angle_from_x = float(split1[11])
     y_data_dist1 = float(split2[8][1:])
     y_data_dist2 = float(split2[10][:12])
@@ -53,7 +41,7 @@ def get_victim(array):
     theta = robot_angle - angle_from_x
     new_x1 = odom_info.pose.pose.position.x + r * math.cos(math.radians(theta))
     new_y1 = odom_info.pose.pose.position.y + r * math.sin(math.radians(theta))
-    pose = convert_from_robot_to_map(new_y1, new_x1)
+    pose = core.convert_from_robot_to_map(new_y1, new_x1)
     add_victim(pose[1], pose[0], 1)
 
 
