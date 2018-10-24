@@ -59,19 +59,6 @@ class CoreMapBuilder:
         map_info = self.core_map
 
 
-def convert_from_robot_to_map(robot_y, robot_x):
-    global map_info
-    map_x = (robot_x - map_info.info.origin.position.x) // map_info.info.resolution
-    map_y = (robot_y - map_info.info.origin.position.y) // map_info.info.resolution
-    return map_y, map_x
-
-
-def convert_from_map_to_robot(map_y, map_x):
-    global map_info
-    robot_x = (map_x * map_info.info.resolution) + map_info.info.origin.position.x
-    robot_y = (map_y * map_info.info.resolution) + map_info.info.origin.position.y
-    return robot_y, robot_x
-
 
 if __name__ == '__main__':
     core_map_builder = None

@@ -13,9 +13,9 @@ class AutoMoveBase:
     move_base_goal = None
     client = None
 
-    def __init__(self, namespace='robot0'):
+    def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
         self.namespace = namespace
-        rospy.init_node('AutoMoveBase', anonymous=True)
+        rospy.init_node(node_name, anonymous=anonymous)
         self.setup_move_base()
         self.get_robot_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
         self.get_map(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))

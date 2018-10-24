@@ -9,9 +9,11 @@ import aura.msg
 class DFSAutoMove(auto_move_base.AutoMoveBase):
     block_array = []
     robot_block = None
+    goal_x = -10000
+    goal_y = -10000
 
-    def __init__(self, namespace='robot0'):
-        super().__init__(namespace)
+    def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
+        super().__init__(namespace, node_name, anonymous)
         self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group))
         rospy.Subscriber('/core/blocks', aura.msg.group, self.get_blocks)
 
@@ -34,19 +36,21 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
         return robot_block_index
 
     def generating_goal(self, block_index):
-        roboty, robotx = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y,
-                                                        self.robot_odometry.pose.pose.position.x)
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
         if len(n_shown[0]) == 0: return False
         rand = random.randint(0, len(n_shown[0]))
-        goal_y, goal_x = self.convert_from_map_to_robot(roboty + n_shown[1][rand], robotx + n_shown[0][rand])
+        map_goal_x = (self.block_array[block_index].block_width * self.block_array[block_index].column) + n_shown[0][rand]
+        map_goal_y = (self.block_array[block_index].block_height* self.block_array[block_index].row) + n_shown[1][rand]
+        goal_y, goal_x = self.convert_from_map_to_robot(map_goal_y, map_goal_x)
+        self.goal_x = goal_x
+        self.goal_y = goal_y
         self.send_goal(goal_x, goal_y)
         print("GOAL PUBLISHED " + str(goal_x) + " , " + str(goal_y))
         return True
 
     def goal_status(self, data1, data2):
-        self.goal_status(data1, data2)
         print(data1)
+        self.start(self.robot_block)
 
     def start(self, block_index):
         if self.generating_goal(block_index):
@@ -59,3 +63,6 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
                 self.generating_goal(i)
                 return
         self.start(neighbors[0])
+
+    def current_goal(self):
+        return self.goal_x, self.goal_y

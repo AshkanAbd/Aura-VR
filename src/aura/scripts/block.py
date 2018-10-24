@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 import numpy as np
 
 
@@ -12,12 +11,16 @@ class Block:
     reshape_block_info = None
     width = 0
     height = 0
+    block_width = 0
+    block_height = 0
 
     def __init__(self, block_index, block_info, height, width):
         self.block_index = block_index
         self.row = block_index // 16
         self.column = block_index % 16
         self.block_info = np.asarray(block_info)
+        self.block_height = height // 16
+        self.block_width = width // 16
         self.width = width
         self.height = height
         self.reshape_block_info = np.asarray(block_info).reshape(height // 16, width // 16)

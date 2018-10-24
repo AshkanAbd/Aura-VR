@@ -9,6 +9,7 @@ import math
 import sched
 import numpy as np
 import core
+import victim_founder
 
 
 def get_odom(robot_odom):
@@ -114,6 +115,7 @@ def publish_to_marker(x, y, code):
 
 
 def victim_tolerance():
+    global schedule
     try:
         for victim_info in victim_list:
             if victim_list[victim_info] > 100:
@@ -124,23 +126,26 @@ def victim_tolerance():
 
 
 if __name__ == '__main__':
-    namespace = 'robot0'
-    victim_list = {}
-    publish_list = []
-    robot_angle = 0.0
-    schedule = sched.scheduler(time.time, time.sleep)
-    odom_info = nav_msgs.msg.Odometry()
-    rospy.init_node('victim_place')
-    rate = rospy.Rate(10)
-    hot_x_data = open('../data/normalize_hot_x_info.aura', 'r')
-    hot_y_data = open('../data/normalize_hot_y_info.aura', 'r')
-    hot_x_data_set = create_data_set(hot_x_data)
-    hot_y_data_set = create_data_set(hot_y_data)
-    mark_publisher = rospy.Publisher('/core/mark_place', std_msgs.msg.Float64MultiArray, queue_size=10)
-    map_info = (rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
-    get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
-    rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, get_odom)
-    rospy.Subscriber('/' + namespace + '/victims/hot', std_msgs.msg.Float64MultiArray, get_victim)
-    schedule.enter(0.5, 1, victim_tolerance, ())
-    schedule.run()
+    hot_founder = victim_founder.HotVictimFounder(anonymous=False)
+    dead_founder = victim_founder.DeadVictimFounder(anonymous=False)
     rospy.spin()
+    # namespace = 'robot0'
+    # victim_list = {}
+    # publish_list = []
+    # robot_angle = 0.0
+    # schedule = sched.scheduler(time.time, time.sleep)
+    # odom_info = nav_msgs.msg.Odometry()
+    # rospy.init_node('victim_place')
+    # rate = rospy.Rate(10)
+    # hot_x_data = open('../data/normalize_hot_x_info.aura', 'r')
+    # hot_y_data = open('../data/normalize_hot_y_info.aura', 'r')
+    # hot_x_data_set = create_data_set(hot_x_data)
+    # hot_y_data_set = create_data_set(hot_y_data)
+    # mark_publisher = rospy.Publisher('/core/mark_place', std_msgs.msg.Float64MultiArray, queue_size=10)
+    # map_info = (rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
+    # get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
+    # rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, get_odom)
+    # rospy.Subscriber('/' + namespace + '/victims/hot', std_msgs.msg.Float64MultiArray, get_victim)
+    # schedule.enter(0.5, 1, victim_tolerance, ())
+    # schedule.run()
+    # rospy.spin()
