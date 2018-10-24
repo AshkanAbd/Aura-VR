@@ -11,10 +11,10 @@
         <param name="maxRange" value="30.4"/>
         <param name="linearUpdate" value="0.1"/>
         <param name="angularUpdate" value="0.1"/>
-        <param name="xmin" value="-75" />
-        <param name="xmax" value="75" />
-        <param name="ymax" value="75" />
-        <param name="ymin" value="-75" />
+        <param name="xmin" value="-100" />
+        <param name="xmax" value="100" />
+        <param name="ymax" value="100" />
+        <param name="ymin" value="-100" />
         <param name="iterations" value="1"/>
         <param name="delta" value="0.2"/>
         <param name="particles" value="5"/>
