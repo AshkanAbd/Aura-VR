@@ -10,6 +10,9 @@ import aura.msg
 import math
 import random
 import block
+import core
+import auto_move_base
+import DFSAutoMove
 
 client = None
 move_base_goal = None
@@ -24,6 +27,7 @@ robot_clu = None
 map_width = None
 map_height = None
 robot_block_ind = None
+list_of_block = None
 blocks = aura.msg.group
 
 
@@ -43,21 +47,8 @@ def get_map(map: nav_msgs.msg.OccupancyGrid):
     is_published[1] = True
 
 
-def convert_from_robot_to_map(robot_y, robot_x):
-    global map_info
-    map_x = (robot_x - map_info.info.origin.position.x) // map_info.info.resolution
-    map_y = (robot_y - map_info.info.origin.position.y) // map_info.info.resolution
-    return map_y, map_x
-
-
-def convert_from_map_to_robot(map_y, map_x):
-    global map_info
-    robot_x = (map_x * map_info.info.resolution) + map_info.info.origin.position.x
-    robot_y = (map_y * map_info.info.resolution) + map_info.info.origin.position.y
-    return robot_y, robot_x
-
-
 def blocks_info(group: aura.msg.group):
+    global list_of_block
     list_of_block = []
     blocks = group
     x = list(range(len(blocks.array)))
@@ -65,57 +56,17 @@ def blocks_info(group: aura.msg.group):
     for i in x:
         block_obj = block.Block(i, blocks.array[i].data, map_height, map_width)
         list_of_block.append(block_obj)
-    return list_of_block
-
-
-def find_robot_cluster():
-    global map_height, map_width, robot_pose_y, robot_pose_x, y, x, is_published
-    while False in is_published: pass
-    robot_pose = convert_from_robot_to_map(robot_pose_y, robot_pose_x)
-    y = robot_pose[0] // (map_height // 16)
-    x = robot_pose[1] // (map_width // 16)
-    robot_block_index = int((y * 16) + x)
-    return robot_block_index
-
-
-def setup_move_base():
-    global client, move_base_goal
-    client = actionlib.SimpleActionClient('/' + namespace + '/move_base', move_base_msgs.msg.MoveBaseAction)
-    client.wait_for_server()
-    move_base_goal = move_base_msgs.msg.MoveBaseGoal()
-
-
-# goal status--- PENDING=0--- ACTIVE=1---PREEMPTED=2--SUCCEEDED=3--ABORTED=4---REJECTED=5--PREEMPTING=6---RECALLING=7---RECALLED=8---LOST=9
-def goal_status(data1, data2):
-    print(data1)
-    if (data1 == 1):
-        pass
-    elif (data1 == 2 or data1 == 3 or data1 == 4 or data1 == 5):
-        pass
-    else:
-        pass
-
-
-def move_base_clinet(goal_x, goal_y):
-    global client, move_base_goal
-    client.cancel_all_goals()
-    goal = geometry_msgs.msg.PoseStamped()
-    goal.header.frame_id = "/map"
-    goal.header.stamp = rospy.Time.now()
-    goal.pose.position.x = goal_x
-    goal.pose.position.y = goal_y
-    goal.pose.orientation.w = 1
-    move_base_goal.target_pose = goal
-    client.send_goal(move_base_goal, goal_status)
 
 
 if __name__ == '__main__':
     namespace = 'robot0'
-    rospy.init_node('amir_auto_move')
-    setup_move_base()
-    rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
-    rospy.Subscriber('/core/blocks', aura.msg.group, blocks_info)
-    rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, get_robot_odom)
+    # rospy.init_node('amir_auto_move')
+    # rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
+    # rospy.Subscriber('/core/blocks', aura.msg.group, blocks_info)
+    # rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, get_robot_odom)
+    # rospy.spin()
+    dfs_auto_move = DFSAutoMove.DFSAutoMove(namespace)
+    dfs_auto_move.start(dfs_auto_move.robot_block)
     rospy.spin()
 
 # def cluster(group: aura.msg.group):
@@ -205,3 +156,59 @@ if __name__ == '__main__':
 # else:
 #     print(blocks_list)
 #     robot_block_ind = random.choice(blocks_list)
+
+
+#
+# # goal status--- PENDING=0--- ACTIVE=1---PREEMPTED=2--SUCCEEDED=3--ABORTED=4---REJECTED=5--PREEMPTING=6---RECALLING=7---RECALLED=8---LOST=9
+# def goal_status(data1, data2):
+#     print(data1)
+#     if (data1 == 1):
+#         pass
+#     elif (data1 == 2 or data1 == 3 or data1 == 4 or data1 == 5):
+#         pass
+#     else:
+#         pass
+
+
+# def setup_move_base():
+#     global client, move_base_goal
+#     client = actionlib.SimpleActionClient('/' + namespace + '/move_base', move_base_msgs.msg.MoveBaseAction)
+#     client.wait_for_server()
+#     move_base_goal = move_base_msgs.msg.MoveBaseGoal()
+#
+#
+#
+# def move_base_clinet(goal_x, goal_y):
+#     global client, move_base_goal
+#     client.cancel_all_goals()
+#     goal = geometry_msgs.msg.PoseStamped()
+#     goal.header.frame_id = "/map"
+#     goal.header.stamp = rospy.Time.now()
+#     goal.pose.position.x = goal_x
+#     goal.pose.position.y = goal_y
+#     goal.pose.orientation.w = 1
+#     move_base_goal.target_pose = goal
+#     client.send_goal(move_base_goal, goal_status)
+
+# def find_robot_cluster():
+#     global map_height, map_width, robot_pose_y, robot_pose_x, y, x, is_published
+#     while False in is_published: pass
+#     robot_pose = convert_from_robot_to_map(robot_pose_y, robot_pose_x)
+#     y = robot_pose[0] // (map_height // 16)
+#     x = robot_pose[1] // (map_width // 16)
+#     robot_block_index = int((y * 16) + x)
+#     return robot_block_index
+
+
+# def convert_from_robot_to_map(robot_y, robot_x):
+#     global map_info
+#     map_x = (robot_x - map_info.info.origin.position.x) // map_info.info.resolution
+#     map_y = (robot_y - map_info.info.origin.position.y) // map_info.info.resolution
+#     return map_y, map_x
+#
+#
+# def convert_from_map_to_robot(map_y, map_x):
+#     global map_info
+#     robot_x = (map_x * map_info.info.resolution) + map_info.info.origin.position.x
+#     robot_y = (map_y * map_info.info.resolution) + map_info.info.origin.position.y
+#     return robot_y, robot_x

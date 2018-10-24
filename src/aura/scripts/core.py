@@ -32,7 +32,9 @@ class CoreMapBuilder:
         rospy.spin()
 
     def get_robots_map(self, robot_map: nav_msgs.msg.OccupancyGrid):
+        global map_info
         self.main_map = robot_map
+        map_info = robot_map
         self.build_core_map(robot_map)
 
     def publish_to_core(self):
