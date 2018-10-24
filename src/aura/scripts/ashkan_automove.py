@@ -113,12 +113,11 @@ static_y = 0.74
 static_x = 0.1
 
 if __name__ == '__main__':
-
     rospy.init_node('ashkan_movebase')
     setup_movebase()
-    # rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
-    # rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, get_odom)
+    rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
+    rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, get_odom)
     # poses = build_victim_pose(70, 20, 0, 0)
-    send_goal(0,0)
+    send_goal(5, 5)
     # rospy.Subscriber('/' + namespace + '/vicims/dead', std_msgs.msg.Float64MultiArray, hot_victim)
-    # rospy.spin()
+    rospy.spin()
