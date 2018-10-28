@@ -26,7 +26,7 @@ class CoreMapBuilder:
         rospy.Subscriber('/' + self.robot2 + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map)
         rospy.Subscriber('/' + self.robot3 + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map)
         rospy.Subscriber('/' + self.robot0 + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map)
-        self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=10)
+        self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=100)
         self.rate = rospy.Rate(10)
         self.publish_to_core()
         rospy.spin()
@@ -57,7 +57,6 @@ class CoreMapBuilder:
         self.core_map[map1 == 100] = 100
         self.core_map[map1 == 0] = 0
         map_info = self.core_map
-
 
 
 if __name__ == '__main__':

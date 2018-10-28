@@ -153,7 +153,6 @@ class HotVictimFounder:
         robot_y = (map_y * self.core_map.info.resolution) + self.core_map.info.origin.position.y
         return robot_y, robot_x
 
-
 class DeadVictimFounder:
     y_data_file = None
     x_data_file = None
