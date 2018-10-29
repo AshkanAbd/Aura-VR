@@ -36,8 +36,8 @@ void get_image(const sensor_msgs::Image &img) {
     cv::cvtColor(final_frame2, frame_gray, cv::COLOR_BGR2GRAY);
     cv::Laplacian(frame_gray, frame_edge, -1);
     cv::findContours(frame_edge, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-    cv::waitKey(1);
-    cv::imshow("dead frame", final_frame2);
+//    cv::waitKey(1);
+//    cv::imshow("dead frame", final_frame2);
     if (contours.empty())
         return;
     std::map<double, std::vector<cv::Point>> contours_area;
@@ -58,15 +58,15 @@ void get_image(const sensor_msgs::Image &img) {
     info_array.data.push_back(main_rect.height);
     dead_victim_publisher.publish(info_array);
     cv::rectangle(final_frame2, main_rect, cv::Scalar(255, 0, 0), 2);
-    cv::imshow("dead frame", final_frame2);
+//    cv::imshow("dead frame", final_frame2);
 }
 
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "dead_victim_detector_" + name_space);
     ros::NodeHandle node_handler;
-    dead_victim_publisher = node_handler.advertise<std_msgs::Float64MultiArray>("/" + name_space + "/victims/dead", 10);
-    ros::Subscriber rgb_subscriber = node_handler.subscribe("/" + name_space + "/camera_depth/rgb/image", 10,
+    dead_victim_publisher = node_handler.advertise<std_msgs::Float64MultiArray>("/" + name_space + "/victims/dead", 1000);
+    ros::Subscriber rgb_subscriber = node_handler.subscribe("/" + name_space + "/camera_depth/rgb/image", 1000,
                                                             get_image);
     ros::spin();
 }

@@ -60,8 +60,8 @@ void process_img() {
             cv::Laplacian(frame2, frame_edge, -1);
             cv::findContours(frame_edge, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
             std::map<double, std::vector<cv::Point>> contours_area;
-            cv::waitKey(1);
-            cv::imshow("hot frame", frame2);
+//            cv::waitKey(1);
+//            cv::imshow("hot frame", frame2);
             if (contours.empty()) continue;
             std::vector<double> areas;
             for (const auto &contour : contours) {
@@ -72,7 +72,7 @@ void process_img() {
             std::sort(areas.rbegin(), areas.rend());
             std::vector<cv::Point> main_contour = contours_area[areas[0]];
             cv::Rect main_rect = cv::boundingRect(main_contour);
-            if (main_rect.height < 36) continue;
+//            if (main_rect.height < 36) continue;
             std_msgs::Float64MultiArray info_array;
             info_array.data.push_back(main_rect.x);
             info_array.data.push_back(main_rect.y);
@@ -80,7 +80,7 @@ void process_img() {
             info_array.data.push_back(main_rect.height);
             hot_victim_publisher.publish(info_array);
             cv::rectangle(frame2, main_rect, cv::Scalar(255, 0, 0), 2);
-            cv::imshow("hot frame", frame2);
+//            cv::imshow("hot frame", frame2);
         } catch (std::exception e) {
             std::cout << e.what() << std::endl;
         }
@@ -91,11 +91,11 @@ void process_img() {
 int main(int argc, char **argv) {
     ros::init(argc, argv, "hot_victim_detector_" + name_space);
     ros::NodeHandle node_handle;
-    ros::Subscriber rgb_subscriber = node_handle.subscribe("/" + name_space + "/camera_depth/rgb/image", 10,
+    ros::Subscriber rgb_subscriber = node_handle.subscribe("/" + name_space + "/camera_depth/rgb/image", 1000,
                                                            get_normal_image);
-    ros::Subscriber thermal_subscriber = node_handle.subscribe("/" + name_space + "/camera/thermal/image_raw", 10,
+    ros::Subscriber thermal_subscriber = node_handle.subscribe("/" + name_space + "/camera/thermal/image_raw", 1000,
                                                                get_thermal_image);
-    hot_victim_publisher = node_handle.advertise<std_msgs::Float64MultiArray>("/" + name_space + "/victims/hot", 10);
+    hot_victim_publisher = node_handle.advertise<std_msgs::Float64MultiArray>("/" + name_space + "/victims/hot", 1000);
     std::thread process_thread(process_img);
     ros::spin();
 }
