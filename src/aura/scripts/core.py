@@ -29,7 +29,6 @@ class CoreMapBuilder:
         self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=100)
         self.rate = rospy.Rate(10)
         self.publish_to_core()
-        rospy.spin()
 
     def get_robots_map(self, robot_map: nav_msgs.msg.OccupancyGrid):
         global map_info
@@ -70,3 +69,4 @@ if __name__ == '__main__':
         core_map_builder = CoreMapBuilder(_robot1, _robot2, _robot3, _robot4)
     else:
         core_map_builder = CoreMapBuilder()
+    rospy.spin()
