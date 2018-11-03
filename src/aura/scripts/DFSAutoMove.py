@@ -20,14 +20,9 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
         super().__init__(namespace, node_name, anonymous)
-<<<<<<< HEAD
         self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group_int))
         rospy.Subscriber('/core/blocks', aura.msg.group_int, self.get_blocks)
-=======
-        self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group))
-        rospy.Subscriber('/core/blocks', aura.msg.group, self.get_blocks)
         self.rotate_rate = rospy.Rate(10)
->>>>>>> 663fe1c2a2d839e48dfb2fb93888c7759d783252
 
     def get_blocks(self, blocks_array: aura.msg.group_int):
         temp_array = []
@@ -67,8 +62,8 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
             map_goal_y = (self.block_array[block_index].block_height * self.block_array[block_index].row) + n_shown[1][
                 rand]
             goal_y, goal_x = self.convert_from_map_to_robot(map_goal_y, map_goal_x)
-            temp = aura.msg.data()
-            temp.data = [goal_x, goal_y]
+            temp = aura.msg.data_int()
+            temp.data_int= [goal_x, goal_y]
             if temp not in self.black_list:
                 break
         self.goal_x = goal_x
@@ -81,8 +76,8 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
     def goal_status(self, data1, data2):
         print(data1)
         if data1 == 4:
-            temp = aura.msg.data()
-            temp.data = [self.goal_x, self.goal_y]
+            temp = aura.msg.data_int()
+            temp.data_int = [self.goal_x, self.goal_y]
             if temp not in self.black_list:
                 self.rotate()
                 self.send_goal(self.goal_x, self.goal_y)
