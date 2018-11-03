@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import nav_msgs.msg
 import numpy as np
 import random
 import block
@@ -15,11 +15,13 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
     robot_block = None
     goal_x = -10000
     goal_y = -10000
+    rotate_rate = None
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
         super().__init__(namespace, node_name, anonymous)
         self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group))
         rospy.Subscriber('/core/blocks', aura.msg.group, self.get_blocks)
+        self.rotate_rate = rospy.Rate(10)
 
     def get_blocks(self, blocks_array: aura.msg.group):
         temp_array = []
@@ -39,14 +41,23 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
         robot_block_index = int((y * 16) + x)
         return robot_block_index
 
+    def get_map(self, map: nav_msgs.msg.OccupancyGrid):
+        super().get_map(map)
+        if self.goal_x == -10000:
+            return
+        map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
+        reshape_map = np.asarray(map.data).reshape(map.info.height, map.info.width)
+        if reshape_map[int(map_goal_y), int(map_goal_x)] == 100:
+            self.client.cancel_all_goals()
+            self.generating_goal(self.robot_block)
+
     def generating_goal(self, block_index) -> bool:
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
         if len(n_shown[0]) == 0: return False
         while True:
             rand = random.randint(0, len(n_shown[0]))
             map_goal_x = (self.block_array[block_index].block_width * self.block_array[block_index].column) + \
-                         n_shown[0][
-                             rand]
+                         n_shown[0][rand]
             map_goal_y = (self.block_array[block_index].block_height * self.block_array[block_index].row) + n_shown[1][
                 rand]
             goal_y, goal_x = self.convert_from_map_to_robot(map_goal_y, map_goal_x)
@@ -73,17 +84,28 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
         self.start(self.robot_block)
 
     def rotate(self):
+        print("start rotate")
         twist = geometry_msgs.msg.Twist()
         twist.linear.x = 0
         twist.linear.y = 0
         twist.linear.z = 0
         twist.angular.x = 0
         twist.angular.y = 0
-        twist.angular.z = 1
-        self.cmd_publisher.publish(twist)
+        twist.angular.z = 2
+        for i in range(5):
+            self.cmd_publisher.publish(twist)
+            self.rotate_rate.sleep()
         time.sleep(9.3)  # ~2.32 for 90 degree
+        twist = geometry_msgs.msg.Twist()
+        twist.linear.x = 0
+        twist.linear.y = 0
+        twist.linear.z = 0
+        twist.angular.x = 0
+        twist.angular.y = 0
         twist.angular.z = 0
-        self.cmd_publisher.publish(twist)
+        for i in range(5):
+            self.cmd_publisher.publish(twist)
+            self.rotate_rate.sleep()
 
     def start(self, block_index):
         if self.generating_goal(block_index):

@@ -58,8 +58,8 @@ class AutoMoveBase:
     def goal_status(self, data1, data2):
         pass
 
-    def get_black_list(self, new_black_list: aura.msg):
-        self.black_list = new_black_list
+    def get_black_list(self, new_black_list: aura.msg.group):
+        self.black_list = new_black_list.array
 
     def convert_from_robot_to_map(self, robot_y, robot_x) -> tuple:
         map_x = (robot_x - self.map_info.info.origin.position.x) // self.map_info.info.resolution
