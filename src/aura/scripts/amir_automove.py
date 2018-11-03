@@ -28,7 +28,7 @@ map_width = None
 map_height = None
 robot_block_ind = None
 list_of_block = None
-blocks = aura.msg.group
+blocks = aura.msg.group_int
 
 
 def get_robot_odom(odometry: nav_msgs.msg.Odometry):
@@ -47,7 +47,7 @@ def get_map(map: nav_msgs.msg.OccupancyGrid):
     is_published[1] = True
 
 
-def blocks_info(group: aura.msg.group):
+def blocks_info(group: aura.msg.group_int):
     global list_of_block
     list_of_block = []
     blocks = group

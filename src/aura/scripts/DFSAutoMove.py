@@ -12,15 +12,16 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
     goal_x = -10000
     goal_y = -10000
 
+
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
         super().__init__(namespace, node_name, anonymous)
-        self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group))
-        rospy.Subscriber('/core/blocks', aura.msg.group, self.get_blocks)
+        self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group_int))
+        rospy.Subscriber('/core/blocks', aura.msg.group_int, self.get_blocks)
 
-    def get_blocks(self, blocks_array: aura.msg.group):
+    def get_blocks(self, blocks_array: aura.msg.group_int):
         temp_array = []
         for i in range(0, 256):
-            block_obj = block.Block(i, blocks_array.array[i].data, self.map_info.info.height,
+            block_obj = block.Block(i, blocks_array.array[i].data_int, self.map_info.info.height,
                                     self.map_info.info.width)
             temp_array.append(block_obj)
         self.block_array = temp_array

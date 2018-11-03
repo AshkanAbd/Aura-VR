@@ -6,11 +6,10 @@ import aura.msg
 import nav_msgs.msg
 
 
-
-def get_block(blocks: aura.msg.group):
+def get_block(blocks: aura.msg.group_int):
     global publish
     map = nav_msgs.msg.OccupancyGrid()
-    map.data = blocks.array[136].data
+    map.data = blocks.array[136].data_int
     map.info.width = 30
     map.info.height = 30
     map.info.resolution = 0.2
@@ -20,6 +19,6 @@ def get_block(blocks: aura.msg.group):
 if __name__ == '__main__':
     namespace = 'robot0'
     rospy.init_node('test')
-    rospy.Subscriber('/core/blocks', aura.msg.group, get_block)
+    rospy.Subscriber('/core/blocks', aura.msg.group_int, get_block)
     publish = rospy.Publisher('/test', nav_msgs.msg.OccupancyGrid, queue_size=10)
     rospy.spin()

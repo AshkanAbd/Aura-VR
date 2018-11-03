@@ -12,16 +12,16 @@ map_info = nav_msgs.msg.OccupancyGrid.info
 
 def divide():
     global map_info, map_width, map_height
-    group = aura.msg.group()
+    group = aura.msg.group_int()
     block_size_col = map_width // 16
     block_size_row = map_height // 16
     for i in range(map_height // block_size_row):
         for j in range(map_width // block_size_col):
-            data = aura.msg.data()
+            data = aura.msg.data_int()
             temp = map_info[i * block_size_row:(i + 1) * block_size_row,
                    j * block_size_col:(j + 1) * block_size_row].copy()
             temp = temp.reshape(block_size_row * block_size_col).tolist()
-            data.data = temp
+            data.data_int = temp
             group.array.append(data)
     return group
 
@@ -42,6 +42,6 @@ if __name__ == '__main__':
     map_width = None
     map_height = None
     rospy.init_node('blocks_builder')
-    cluster_publisher = rospy.Publisher('/core/blocks', aura.msg.group, queue_size=20)
+    cluster_publisher = rospy.Publisher('/core/blocks', aura.msg.group_int, queue_size=20)
     rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
     rospy.spin()
