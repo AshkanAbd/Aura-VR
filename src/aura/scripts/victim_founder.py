@@ -65,11 +65,11 @@ class HotVictimFounder:
         self.y_data_set = create_data_set(self.y_data_file)
         self.x_data_set = create_data_set(self.x_data_file)
         rospy.init_node(node_name, anonymous=anonymous)
-        self.mark_publisher = rospy.Publisher('/core/mark_place', std_msgs.msg.Float64MultiArray, queue_size=10)
+        self.mark_publisher = rospy.Publisher('/core/mark_place', std_msgs.msg.Float64MultiArray, queue_size=1000)
         self.core_map = rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid)
         self.get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
         rospy.Subscriber('/' + namespace + '/victims/hot', std_msgs.msg.Float64MultiArray, self.get_victim,
-                         queue_size=100)
+                         queue_size=1000)
         rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_odom)
         self.rate = rospy.Rate(10)
         self.schedule = sched.scheduler(time.time, time.sleep)
@@ -153,6 +153,7 @@ class HotVictimFounder:
         robot_y = (map_y * self.core_map.info.resolution) + self.core_map.info.origin.position.y
         return robot_y, robot_x
 
+
 class DeadVictimFounder:
     y_data_file = None
     x_data_file = None
@@ -175,11 +176,11 @@ class DeadVictimFounder:
         self.y_data_set = create_data_set(self.y_data_file)
         self.x_data_set = create_data_set(self.x_data_file)
         rospy.init_node(node_name, anonymous=anonymous)
-        self.mark_publisher = rospy.Publisher('/core/mark_place', std_msgs.msg.Float64MultiArray, queue_size=10)
+        self.mark_publisher = rospy.Publisher('/core/mark_place', std_msgs.msg.Float64MultiArray, queue_size=1000)
         self.core_map = rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid)
         self.get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
         rospy.Subscriber('/' + namespace + '/victims/dead', std_msgs.msg.Float64MultiArray, self.get_victim,
-                         queue_size=100)
+                         queue_size=1000)
         rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_odom)
         self.rate = rospy.Rate(10)
         self.schedule = sched.scheduler(time.time, time.sleep)

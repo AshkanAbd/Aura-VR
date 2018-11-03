@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import rospy
 import actionlib
 import nav_msgs.msg
@@ -12,6 +14,9 @@ class AutoMoveBase:
     map_info = None
     move_base_goal = None
     client = None
+    black_list = None
+    black_list_publisher = None
+    cmd_publisher = None
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
         self.namespace = namespace
@@ -21,6 +26,10 @@ class AutoMoveBase:
         self.get_map(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
         rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_robot_odom)
         rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, self.get_map)
+        rospy.Subscriber('/core/black_list', aura.msg.group, self.get_black_list, queue_size=1000)
+        self.black_list_publisher = rospy.Publisher('/core/add_to_black_list', aura.msg.data, queue_size=1000)
+        self.cmd_publisher = rospy.Publisher('/' + namespace + '/cmd_vel', geometry_msgs.msg.Twist, queue_size=1000)
+        self.black_list = []
 
     def get_robot_odom(self, odometry: nav_msgs.msg.Odometry):
         self.robot_odometry = odometry
@@ -49,12 +58,15 @@ class AutoMoveBase:
     def goal_status(self, data1, data2):
         pass
 
-    def convert_from_robot_to_map(self, robot_y, robot_x):
+    def get_black_list(self, new_black_list: aura.msg.group):
+        self.black_list = new_black_list.array
+
+    def convert_from_robot_to_map(self, robot_y, robot_x) -> tuple:
         map_x = (robot_x - self.map_info.info.origin.position.x) // self.map_info.info.resolution
         map_y = (robot_y - self.map_info.info.origin.position.y) // self.map_info.info.resolution
         return map_y, map_x
 
-    def convert_from_map_to_robot(self, map_y, map_x):
+    def convert_from_map_to_robot(self, map_y, map_x) -> tuple:
         robot_x = (map_x * self.map_info.info.resolution) + self.map_info.info.origin.position.x
         robot_y = (map_y * self.map_info.info.resolution) + self.map_info.info.origin.position.y
         return robot_y, robot_x

@@ -15,18 +15,18 @@
         <param name="ymin" value="-100" />
         <param name="xmax" value="100" />
         <param name="ymax" value="100" />
-        <param name="map_update_interval" value="0.2"/>
+        <param name="map_update_interval" value="0.1"/>
         <param name="maxUrange" value="29"/>
         <param name="maxRange" value="30.4"/>
         <param name="linearUpdate" value="0.1"/>
         <param name="angularUpdate" value="0.1"/>
         <param name="iterations" value="1"/>
         <param name="delta" value="0.2"/>
-        <param name="temporalUpdate" value="-1" />
+        <param name="temporalUpdate" value="1" />
         <param name="particles" value="5"/>
         <param name="sigma" value="0.05" />
         <param name="kernelSize" value="1" />
-        <param name="minimumScore" value="650" />
+        <param name="minimumScore" value="700" />
         <param name="srr" value="0.0" />
         <param name="srt" value="0.0" />
         <param name="str" value="0.0" />
