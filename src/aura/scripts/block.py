@@ -41,7 +41,7 @@ class Block:
         return self.row * 16 + self.column + 1
 
     def go_left(self):
-        return self.row * 16 + self.column + 1
+        return self.row * 16 + self.column - 1
 
     def get_neighbors(self):
         return [self.go_up(), self.go_right(), self.go_down(), self.go_left()]
