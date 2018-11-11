@@ -16,10 +16,8 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
     goal_x = -10000
     goal_y = -10000
     rotate_rate = None
-<<<<<<< HEAD
+
     random_generator = None
-=======
->>>>>>> dbe16addaf8b7a4cd253eb1e63bc88d14632bd18
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
         super().__init__(namespace, node_name, anonymous)
@@ -60,14 +58,9 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
         if len(n_shown[0]) > 20: return False
         while True:
-<<<<<<< HEAD
             self.random_generator.seed(rospy.get_time() // 0.01)
-            rand = self.random_generator.randint(0, len(n_shown[0])-1)
+            rand = self.random_generator.randint(0, len(n_shown[0]) - 1)
             map_goal_x = (self.block_array[block_index].block_width * self.block_array[block_index].column) + \
-=======
-            rand = random.randint(0, len(n_shown[0]))
-            map_goal_x = (self.block_array[block_index].block_width * (self.block_array[block_index].column)) + \
->>>>>>> dbe16addaf8b7a4cd253eb1e63bc88d14632bd18
                          n_shown[0][rand]
             map_goal_y = (self.block_array[block_index].block_height * (self.block_array[block_index].row)) + \
                          n_shown[1][
@@ -95,11 +88,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
                 self.rotate()
                 self.send_goal(self.goal_x, self.goal_y)
                 self.black_list_publisher.publish(temp)
-<<<<<<< HEAD
-        self.client.cancel_all_goals()
-=======
                 return
->>>>>>> dbe16addaf8b7a4cd253eb1e63bc88d14632bd18
         self.start(self.robot_block)
 
     def rotate(self):
