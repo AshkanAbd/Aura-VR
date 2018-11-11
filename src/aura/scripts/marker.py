@@ -19,13 +19,13 @@ class MarkerController:
         int_marker.header.frame_id = "/map"
         int_marker.name = "victim_marker"
         int_marker.description = "victim marker"
-        box_control = visualization_msgs.msg.InteractiveMarkerControl()
-        box_control.always_visible = True
-        int_marker.controls.append(box_control)
+        self.box_control = visualization_msgs.msg.InteractiveMarkerControl()
+        self.box_control.always_visible = True
+        int_marker.controls.append(self.box_control)
         server.insert(int_marker)
         server.applyChanges()
 
-    def create_and_add_marker(self, r, g, b, x=0, y=0):
+    def create_and_add_marker(self, r, g, b, x=0.0, y=0.0):
         box_marker = visualization_msgs.msg.Marker()
         box_marker.type = visualization_msgs.msg.Marker.CUBE
         box_marker.scale.x = 0.85
@@ -66,14 +66,16 @@ def get_map(core_map):
 
 
 def main():
-    global map_info
+    global map_info, marker_controller
     rospy.init_node("victim_marker")
     rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
     rospy.Subscriber('/core/mark_place', std_msgs.msg.Float64MultiArray, get_mark_place)
+    marker_controller = MarkerController('robot0')
+    marker_controller.create_and_add_marker(255, 0, 0, 12.200001671910286,-11.199998676776886)
     rospy.spin()
 
 
 if __name__ == "__main__":
     map_info = nav_msgs.msg.OccupancyGrid()
-    marker_controller = MarkerController('robot0')
+    marker_controller = None
     main()
