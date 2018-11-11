@@ -53,7 +53,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
 
     def generating_goal(self, block_index) -> bool:
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
-        if len(n_shown[0]) > 20: return False
+        if (len(n_shown[0]) < 20): return False
         while True:
             rand = random.randint(0, len(n_shown[0]))
             map_goal_x = (self.block_array[block_index].block_width * (self.block_array[block_index].column)) + \
@@ -62,8 +62,8 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
                          n_shown[1][
                              rand]
             goal_y, goal_x = self.convert_from_map_to_robot(map_goal_y, map_goal_x)
-            temp = aura.msg.data()
-            temp.data = [goal_x, goal_y]
+            temp = aura.msg.data_float()
+            temp.data_float = [goal_x, goal_y]
             if temp not in self.black_list:
                 break
         self.goal_x = goal_x
@@ -78,8 +78,8 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
     def goal_status(self, data1, data2):
         print(data1)
         if data1 == 4:
-            temp = aura.msg.data()
-            temp.data = [self.goal_x, self.goal_y]
+            temp = aura.msg.data_float()
+            temp.data_float = [self.goal_x, self.goal_y]
             if temp not in self.black_list:
                 self.rotate()
                 self.send_goal(self.goal_x, self.goal_y)
