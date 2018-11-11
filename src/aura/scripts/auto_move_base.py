@@ -26,8 +26,8 @@ class AutoMoveBase:
         self.get_map(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
         rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_robot_odom)
         rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, self.get_map)
-        rospy.Subscriber('/core/black_list', aura.msg.group, self.get_black_list, queue_size=1000)
-        self.black_list_publisher = rospy.Publisher('/core/add_to_black_list', aura.msg.data, queue_size=1000)
+        rospy.Subscriber('/core/black_list', aura.msg.group_int, self.get_black_list, queue_size=1000)
+        self.black_list_publisher = rospy.Publisher('/core/add_to_black_list', aura.msg.data_int, queue_size=1000)
         self.cmd_publisher = rospy.Publisher('/' + namespace + '/cmd_vel', geometry_msgs.msg.Twist, queue_size=1000)
         self.black_list = []
 
@@ -58,7 +58,7 @@ class AutoMoveBase:
     def goal_status(self, data1, data2):
         pass
 
-    def get_black_list(self, new_black_list: aura.msg.group):
+    def get_black_list(self, new_black_list: aura.msg.group_int):
         self.black_list = new_black_list.array
 
     def convert_from_robot_to_map(self, robot_y, robot_x) -> tuple:
