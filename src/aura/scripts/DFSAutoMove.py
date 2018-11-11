@@ -56,7 +56,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
 
     def generating_goal(self, block_index) -> bool:
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
-        if len(n_shown[0]) > 20: return False
+        if (len(n_shown[0]) < 20): return False
         while True:
             self.random_generator.seed(rospy.get_time() // 0.01)
             rand = self.random_generator.randint(0, len(n_shown[0]) - 1)
@@ -66,8 +66,13 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
                          n_shown[1][
                              rand]
             goal_y, goal_x = self.convert_from_map_to_robot(map_goal_y, map_goal_x)
+<<<<<<< HEAD
             temp = aura.msg.data_int()
             temp.data_int = [goal_x, goal_y]
+=======
+            temp = aura.msg.data_float()
+            temp.data_float = [goal_x, goal_y]
+>>>>>>> ee2b94427a9ac5d8aaa469d78503709c9b3349ab
             if temp not in self.black_list:
                 break
         self.goal_x = goal_x
@@ -82,8 +87,13 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
     def goal_status(self, data1, data2):
         print(data1)
         if data1 == 4:
+<<<<<<< HEAD
             temp = aura.msg.data_int()
             temp.data_int = [self.goal_x, self.goal_y]
+=======
+            temp = aura.msg.data_float()
+            temp.data_float = [self.goal_x, self.goal_y]
+>>>>>>> ee2b94427a9ac5d8aaa469d78503709c9b3349ab
             if temp not in self.black_list:
                 self.rotate()
                 self.send_goal(self.goal_x, self.goal_y)

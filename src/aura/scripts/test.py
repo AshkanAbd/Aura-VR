@@ -10,11 +10,15 @@ def get_block(blocks: aura.msg.group_int):
     global publish
     map = nav_msgs.msg.OccupancyGrid()
 <<<<<<< HEAD
+<<<<<<< HEAD
     map.data = blocks.array[151].data_int
     map.info.width = 992//16
     map.info.height = 992//16
 =======
     index = 137
+=======
+    index = 88
+>>>>>>> ee2b94427a9ac5d8aaa469d78503709c9b3349ab
     map.data = blocks.array[index].data_int
     map.info.width = 992 // 16
     map.info.height = 992 // 16
