@@ -4,6 +4,7 @@ import rospy
 import nav_msgs.msg
 import numpy as np
 import sys
+import aura.msg
 
 
 class CoreMapBuilder:
@@ -26,9 +27,15 @@ class CoreMapBuilder:
         rospy.Subscriber('/' + self.robot2 + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map)
         rospy.Subscriber('/' + self.robot3 + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map)
         rospy.Subscriber('/' + self.robot0 + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map)
+        rospy.Subscriber('/core/out_map', aura.msg.group_int, self.get_out_map)
         self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=100)
         self.rate = rospy.Rate(10)
         self.publish_to_core()
+
+    def get_out_map(self, out_map: aura.msg.group_int):
+        for out in out_map.array:
+            if self.core_map[out.data_int[0], out.data_int[1]] == -1:
+                self.core_map[out.data_int[0], out.data_int[1]] = 100
 
     def get_robots_map(self, robot_map):
         global map_info

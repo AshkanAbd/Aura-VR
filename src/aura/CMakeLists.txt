@@ -64,9 +64,9 @@ find_package(OpenCV REQUIRED)
 add_message_files(
         FILES
         data_int.msg
-	data_float.msg
+	    data_float.msg
         group_int.msg
-	group_float.msg
+	    group_float.msg
 )
 
 ## Generate services in the 'srv' folder
