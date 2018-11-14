@@ -3,6 +3,9 @@
 import nav_msgs.msg
 import numpy as np
 import random
+
+import std_msgs.msg
+
 import block
 import auto_move_base
 import rospy
@@ -18,6 +21,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
     goal_y = -10000
     rotate_rate = None
     random_generator = None
+    aborted_list = set()
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
         super(DFSAutoMove, self).__init__(namespace, node_name, anonymous)
@@ -54,9 +58,14 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
             self.client.cancel_all_goals()
             self.generating_goal(self.robot_block)
 
+    def allow_generating(self, allow_code):
+        if allow_code.data == 1:
+            self.generating_goal(self.robot_block)
+
     def generating_goal(self, block_index):
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
-        if len(n_shown[0]) == 0: return False
+        if len(n_shown[0]) == 0:
+            return False
         print(len(n_shown[0]))
         self.random_generator.seed(rospy.get_time() // 0.01)
         rand = self.random_generator.randint(0, len(n_shown[0]) - 1)
@@ -77,11 +86,20 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
     def goal_status(self, data1, data2):
         print(data1)
         if data1 == 4:
-            temp = aura.msg.data_float()
-            temp.data_float = [self.goal_x, self.goal_y]
-            if self.check_around():
-                self.rotate()
-                self.send_goal(self.goal_x, self.goal_y)
+            map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
+            temp = [map_goal_x, map_goal_y]
+            if temp in self.aborted_list:
+                self.start(self.robot_block)
+            else:
+                if self.check_around():
+                    self.rotate()
+                    self.aborted_list.add(temp)
+                    self.send_goal(self.goal_x, self.goal_y)
+                else:
+                    # send to core
+                    self.start(self.robot_block)
+        elif data1 == 2:
+            pass
         else:
             self.start(self.robot_block)
 

@@ -32,7 +32,7 @@ class CoreMapBuilder:
         self.rate = rospy.Rate(10)
         self.publish_to_core()
 
-    def get_out_map(self, out_map: aura.msg.group_int):
+    def get_out_map(self, out_map):
         for out in out_map.array:
             if self.core_map[out.data_int[0], out.data_int[1]] == -1:
                 self.core_map[out.data_int[0], out.data_int[1]] = 100
