@@ -54,7 +54,7 @@ def blocks_info(group: aura.msg.group_int):
     x = list(range(len(blocks.array)))
     while False in is_published: pass
     for i in x:
-        block_obj = block.Block(i, blocks.array[i].data, map_height, map_width)
+        block_obj = block.Block(i, blocks.array[i].data_int, map_height, map_width)
         list_of_block.append(block_obj)
 
 
