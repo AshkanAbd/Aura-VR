@@ -30,7 +30,7 @@ class CoreMapBuilder:
         self.rate = rospy.Rate(10)
         self.publish_to_core()
 
-    def get_robots_map(self, robot_map: nav_msgs.msg.OccupancyGrid):
+    def get_robots_map(self, robot_map):
         global map_info
         self.main_map = robot_map
         map_info = robot_map
@@ -47,7 +47,7 @@ class CoreMapBuilder:
             except Exception as e:
                 print(e)
 
-    def build_core_map(self, robot_map: nav_msgs.msg.OccupancyGrid):
+    def build_core_map(self, robot_map):
         global map_info
         reshaped_map = np.asarray(robot_map.data).reshape(robot_map.info.height, robot_map.info.width)
         if self.core_map.shape != reshaped_map.shape:

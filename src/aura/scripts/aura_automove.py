@@ -8,7 +8,6 @@ import DFSAutoMove
 import marker
 import geometry_msgs.msg
 
-
 # def get_current_goal(current_goal: geometry_msgs.msg.PoseStamped):
 #     global marker1
 #     marker1.create_and_add_marker(0, 0, 255, current_goal.pose.position.x, current_goal.pose.position.y)

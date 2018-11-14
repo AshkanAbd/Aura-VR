@@ -26,15 +26,15 @@ class AutoMoveBase:
         self.get_map(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
         rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_robot_odom)
         rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, self.get_map)
-        rospy.Subscriber('/core/black_list', aura.msg.group_int, self.get_black_list, queue_size=1000)
-        self.black_list_publisher = rospy.Publisher('/core/add_to_black_list', aura.msg.data_int, queue_size=1000)
+        rospy.Subscriber('/core/black_list', aura.msg.group_float, self.get_black_list, queue_size=1000)
+        self.black_list_publisher = rospy.Publisher('/core/add_to_black_list', aura.msg.data_float, queue_size=1000)
         self.cmd_publisher = rospy.Publisher('/' + namespace + '/cmd_vel', geometry_msgs.msg.Twist, queue_size=1000)
         self.black_list = []
 
-    def get_robot_odom(self, odometry: nav_msgs.msg.Odometry):
+    def get_robot_odom(self, odometry):
         self.robot_odometry = odometry
 
-    def get_map(self, map: nav_msgs.msg.OccupancyGrid):
+    def get_map(self, map):
         self.map_info = map
 
     def setup_move_base(self):
@@ -44,7 +44,7 @@ class AutoMoveBase:
         self.move_base_goal = move_base_msgs.msg.MoveBaseGoal()
 
     def send_goal(self, goal_x, goal_y):
-        self.client.cancel_all_goals()
+        # self.client.cancel_all_goals()
         goal = geometry_msgs.msg.PoseStamped()
         goal.header.frame_id = "/map"
         goal.header.stamp = rospy.Time.now()
@@ -58,15 +58,15 @@ class AutoMoveBase:
     def goal_status(self, data1, data2):
         pass
 
-    def get_black_list(self, new_black_list: aura.msg.group_int):
+    def get_black_list(self, new_black_list):
         self.black_list = new_black_list.array
 
-    def convert_from_robot_to_map(self, robot_y, robot_x) -> tuple:
+    def convert_from_robot_to_map(self, robot_y, robot_x):
         map_x = (robot_x - self.map_info.info.origin.position.x) // self.map_info.info.resolution
         map_y = (robot_y - self.map_info.info.origin.position.y) // self.map_info.info.resolution
         return map_y, map_x
 
-    def convert_from_map_to_robot(self, map_y, map_x) -> tuple:
+    def convert_from_map_to_robot(self, map_y, map_x):
         robot_x = (map_x * self.map_info.info.resolution) + self.map_info.info.origin.position.x
         robot_y = (map_y * self.map_info.info.resolution) + self.map_info.info.origin.position.y
         return robot_y, robot_x
