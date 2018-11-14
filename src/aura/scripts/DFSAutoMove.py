@@ -47,9 +47,9 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
             return
         map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
         reshape_map = np.asarray(map.data).reshape(map.info.height, map.info.width)
-        # if reshape_map[int(map_goal_y), int(map_goal_x)] == 100:
-        #     self.client.cancel_all_goals()
-        #     self.generating_goal(self.robot_block)
+        if reshape_map[int(map_goal_y), int(map_goal_x)] == 100:
+            self.client.cancel_all_goals()
+            self.generating_goal(self.robot_block)
 
     def generating_goal(self, block_index) -> bool:
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
@@ -80,12 +80,22 @@ class DFSAutoMove(auto_move_base.AutoMoveBase):
         if data1 == 4:
             temp = aura.msg.data_float()
             temp.data_float = [self.goal_x, self.goal_y]
-            if temp not in self.black_list:
+            if self.check_around():
                 self.rotate()
-                self.send_goal(self.goal_x, self.goal_y)
-                self.black_list_publisher.publish(temp)
-                return
-        self.start(self.robot_block)
+                if temp not in self.black_list:
+                    self.send_goal(self.goal_x, self.goal_y)
+                    self.black_list_publisher.publish(temp)
+        else:
+            self.start(self.robot_block)
+
+    def check_around(self):
+        robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.x
+                                                          , self.robot_odometry.pose.pose.position.y)
+        reshaped_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.origin)
+        robot_around_matrix = reshaped_map[robot_y - 3:robot_y + 3, robot_x - 3, robot_x + 3]
+        if robot_around_matrix.argmin() == 100:
+            return True
+        return False
 
     def rotate(self):
         print("start rotate")
