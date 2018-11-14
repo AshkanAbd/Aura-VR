@@ -63,10 +63,10 @@ class Block:
     def get_unkown_reshaped(self):
         return np.where(self.reshape_block_info == -1)
 
-    def fucked_up_block(self):
-        block_info = np.asarray(self.block_info).reshape(self.block_width , self.block_height)
-        i = np.sum(block_info , axis=0)
-        j = np.sum(block_info , axis=1)
+    def is_out_of_map(self):
+        block_info = np.asarray(self.block_info).reshape(self.block_width, self.block_height)
+        i = np.sum(block_info, axis=0)
+        j = np.sum(block_info, axis=1)
         element = 100 * self.block_height
         if element in i:
             return True

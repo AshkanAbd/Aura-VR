@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import nav_msgs.msg
 import numpy as np
 import random
@@ -10,7 +11,7 @@ import time
 import geometry_msgs.msg
 
 
-class DFSAutoMove(auto_move_base.AutoMoveBase , object):
+class DFSAutoMove(auto_move_base.AutoMoveBase, object):
     block_array = []
     robot_block = None
     goal_x = -10000
@@ -19,7 +20,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase , object):
     random_generator = None
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
-        super(DFSAutoMove, self).__init__(namespace , node_name , anonymous)
+        super(DFSAutoMove, self).__init__(namespace, node_name, anonymous)
         self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group_int))
         rospy.Subscriber('/core/blocks', aura.msg.group_int, self.get_blocks)
         self.rotate_rate = rospy.Rate(10)
@@ -44,7 +45,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase , object):
         return robot_block_index
 
     def get_map(self, map):
-        super(DFSAutoMove , self).get_map(map)
+        super(DFSAutoMove, self).get_map(map)
         if self.goal_x == -10000:
             return
         map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
@@ -55,24 +56,19 @@ class DFSAutoMove(auto_move_base.AutoMoveBase , object):
 
     def generating_goal(self, block_index):
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
-        if (len(n_shown[0]) == 0): return False
-        while True:
-            print(len(n_shown[0]))
-            self.random_generator.seed(rospy.get_time() // 0.01)
-            rand = self.random_generator.randint(0, len(n_shown[0]) - 1)
-            map_goal_x = (self.block_array[block_index].block_width * self.block_array[block_index].column) + \
-                         n_shown[1][rand]
-            map_goal_y = (self.block_array[block_index].block_height * (self.block_array[block_index].row)) + \
-                         n_shown[0][rand]
-            goal_y, goal_x = self.convert_from_map_to_robot(map_goal_y, map_goal_x)
-            temp = aura.msg.data_int()
-            temp.data_int = [goal_x, goal_y]
-            if temp not in self.black_list:
-                break
+        if len(n_shown[0]) == 0: return False
+        print(len(n_shown[0]))
+        self.random_generator.seed(rospy.get_time() // 0.01)
+        rand = self.random_generator.randint(0, len(n_shown[0]) - 1)
+        map_goal_x = (self.block_array[block_index].block_width * self.block_array[block_index].column) + \
+                     n_shown[1][rand]
+        map_goal_y = (self.block_array[block_index].block_height * (self.block_array[block_index].row)) + \
+                     n_shown[0][rand]
+        goal_y, goal_x = self.convert_from_map_to_robot(map_goal_y, map_goal_x)
+        temp = aura.msg.data_int()
+        temp.data_int = [goal_x, goal_y]
         self.goal_x = goal_x
         self.goal_y = goal_y
-        # self.client.cancel_goal()
-        # self.client.wait_for_result()
         self.send_goal(goal_x, goal_y)
         print("GOAL PUBLISHED " + str(goal_x) + " , " + str(goal_y))
         return True
@@ -85,9 +81,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase , object):
             temp.data_float = [self.goal_x, self.goal_y]
             if self.check_around():
                 self.rotate()
-                if temp not in self.black_list:
-                    self.send_goal(self.goal_x, self.goal_y)
-                    self.black_list_publisher.publish(temp)
+                self.send_goal(self.goal_x, self.goal_y)
         else:
             self.start(self.robot_block)
 
@@ -128,11 +122,9 @@ class DFSAutoMove(auto_move_base.AutoMoveBase , object):
         if self.generating_goal(block_index):
             return
         neighbors = [self.block_array[block_index].go_up(), self.block_array[block_index].go_down(),
-                  self.block_array[block_index].go_left(), self.block_array[block_index].go_right()]
+                     self.block_array[block_index].go_left(), self.block_array[block_index].go_right()]
         self.random_generator.shuffle(neighbors)
         for i in neighbors:
-            # if self.block_array[i].fucked_up_block():
-            #     continue
             if self.block_array[i].has_unkown():
                 self.generating_goal(i)
                 print(neighbors)
