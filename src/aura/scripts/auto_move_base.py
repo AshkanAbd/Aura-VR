@@ -5,7 +5,7 @@ import actionlib
 import nav_msgs.msg
 import move_base_msgs.msg
 import geometry_msgs.msg
-import aura.msg
+import std_msgs.msg
 
 
 class AutoMoveBase:
@@ -24,10 +24,14 @@ class AutoMoveBase:
         self.get_map(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
         rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_robot_odom)
         rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, self.get_map)
+        rospy.Subscriber('/' + namespace + '/allow_generating', std_msgs.msg.Int8, self.allow_generating)
         self.cmd_publisher = rospy.Publisher('/' + namespace + '/cmd_vel', geometry_msgs.msg.Twist, queue_size=1000)
 
     def get_robot_odom(self, odometry):
         self.robot_odometry = odometry
+
+    def allow_generating(self, allow_code):
+        pass
 
     def get_map(self, map):
         self.map_info = map
