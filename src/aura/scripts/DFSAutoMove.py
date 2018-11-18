@@ -3,9 +3,7 @@
 import nav_msgs.msg
 import numpy as np
 import random
-
 import std_msgs.msg
-
 import block
 import auto_move_base
 import rospy
@@ -56,7 +54,6 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         reshape_map = np.asarray(map.data).reshape(map.info.height, map.info.width)
         if reshape_map[int(map_goal_y), int(map_goal_x)] == 100:
             self.client.cancel_all_goals()
-            self.generating_goal(self.robot_block)
 
     def generating_goal(self, block_index):
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
@@ -102,9 +99,10 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
     def check_around(self):
         robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
                                                           , self.robot_odometry.pose.pose.position.x)
-        reshaped_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.origin)
-        robot_around_matrix = reshaped_map[robot_y - 3:robot_y + 3, robot_x - 3, robot_x + 3]
+        reshaped_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.width)
+        robot_around_matrix = reshaped_map[robot_y - 3:robot_y + 3, robot_x - 3: robot_x + 3]
         if robot_around_matrix.argmin() == 100:
+            print(robot_around_matrix)
             return True
         return False
 
