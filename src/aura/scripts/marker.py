@@ -42,14 +42,15 @@ class MarkerController:
 
 def get_mark_place(place):
     global marker_controller
-    pose = core.convert_from_map_to_robot(place.data[1], place.data[0])
+    pose = convert_from_map_to_robot(place.data[1], place.data[0])
     if verify_data(place.data[0], place.data[1]):
         print("Noise")
         return
-    print("Received")
     if place.data[2] == 1:
+        print("HOT Received")
         marker_controller.create_and_add_marker(255, 0, 0, pose[1], pose[0])
     else:
+        print("DEAD Received")
         marker_controller.create_and_add_marker(0, 0, 255, pose[1], pose[0])
 
 
@@ -65,13 +66,25 @@ def get_map(core_map):
     map_info = core_map
 
 
+def convert_from_robot_to_map(robot_y, robot_x):
+    map_x = (robot_x - map_info.info.origin.position.x) // map_info.info.resolution
+    map_y = (robot_y - map_info.info.origin.position.y) // map_info.info.resolution
+    return map_y, map_x
+
+
+def convert_from_map_to_robot(map_y, map_x):
+    robot_x = (map_x * map_info.info.resolution) + map_info.info.origin.position.x
+    robot_y = (map_y * map_info.info.resolution) + map_info.info.origin.position.y
+    return robot_y, robot_x
+
+
 def main():
     global map_info, marker_controller
     rospy.init_node("victim_marker")
     rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
     rospy.Subscriber('/core/mark_place', std_msgs.msg.Float64MultiArray, get_mark_place)
     marker_controller = MarkerController('robot0')
-    marker_controller.create_and_add_marker(255, 0, 0,-12.5999986976 , -19.7999988049)
+    # marker_controller.create_and_add_marker(255, 0, 0,-12.5999986976 , -19.7999988049)
     rospy.spin()
 
 

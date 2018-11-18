@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robotname" default="robot0" />
+    <arg name="initialx" default="0" />
+    <arg name="initialy" default="0" />
+    <group ns="$(arg robotname)">
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" >
+        <remap from="scan" to="/$(arg robotname)/hokuyo" />
+        <param name="base_frame" value="$(arg robotname)/base_link" />
+        <param name="map_frame" value="/map" />
+        <param name="odom_frame" value="$(arg robotname)/odom" />
+    	<param name="map_start_x" value="$(arg initialx)"/>
+    	<param name="map_start_y" value="$(arg initialy)"/> 
+        <param name="xmin" value="-100" />
+        <param name="ymin" value="-100" />
+        <param name="xmax" value="100" />
+        <param name="ymax" value="100" />
+        <param name="map_update_interval" value="0.1"/>
+        <param name="maxUrange" value="29"/>
+        <param name="maxRange" value="30.4"/>
+        <param name="linearUpdate" value="0.1"/>
+        <param name="angularUpdate" value="0.1"/>
+        <param name="iterations" value="1"/>
+        <param name="delta" value="0.2"/>
+        <param name="temporalUpdate" value="1" />
+        <param name="particles" value="5"/>
+        <param name="sigma" value="0.05" />
+        <param name="kernelSize" value="1" />
+        <param name="minimumScore" value="700" />
+        <param name="srr" value="0.0" />
+        <param name="srt" value="0.0" />
+        <param name="str" value="0.0" />
+        <param name="stt" value="0.0" />
+    </node>     
+    </group>
+</launch>
+
