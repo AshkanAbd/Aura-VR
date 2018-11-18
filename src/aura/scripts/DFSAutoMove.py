@@ -58,10 +58,6 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
             self.client.cancel_all_goals()
             self.generating_goal(self.robot_block)
 
-    def allow_generating(self, allow_code):
-        if allow_code.data == 1:
-            self.generating_goal(self.robot_block)
-
     def generating_goal(self, block_index):
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
         if len(n_shown[0]) == 0:
@@ -104,8 +100,8 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
             self.start(self.robot_block)
 
     def check_around(self):
-        robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.x
-                                                          , self.robot_odometry.pose.pose.position.y)
+        robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
+                                                          , self.robot_odometry.pose.pose.position.x)
         reshaped_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.origin)
         robot_around_matrix = reshaped_map[robot_y - 3:robot_y + 3, robot_x - 3, robot_x + 3]
         if robot_around_matrix.argmin() == 100:
