@@ -10,24 +10,21 @@
  </node>
 
  <group ns="$(arg robot_name)">
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find aura_robot_description)/urdf/pioneer3at_rc2016.urdf.xacro'"/>
-
-
-   <param name="tf_prefix" type="string" value="$(arg robot_name)"/>
-
-<node name="robot_state_publisher" pkg="robot_state_publisher"  type="state_publisher">
-   <param name="publish_frequency" type="double" value="15.0" />
-   <param name="tf_prefix" type="string" value="$(arg robot_name)"/>
-  </node>  
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find robot_description)/urdf/pioneer3at_rc2016.urdf.xacro'"/>
+<node pkg="gazebo_ros" type="spawn_model"
+          respawn="false"
+          name="spawn_model"
+          args="-file $(find robot_description)/urdf/model.sdf -sdf -x $(arg xcoordinate) -y $(arg ycoordinate) -model $(arg robot_name)" />
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
    <param name="publish_frequency" type="double" value="15.0" />
    <param name="use_gui" value="false"/>
   </node>
-  
-  <node pkg="gazebo_ros" type="spawn_model" respawn="false" name="spawn_model"
-          args="-file $(find aura_robot_description)/urdf/model.sdf -sdf -x $(arg xcoordinate) -y $(arg ycoordinate) -model $(arg robot_name)" />
-
+   <param name="tf_prefix" type="string" value="$(arg robot_name)"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher"  type="state_publisher">
+   <param name="publish_frequency" type="double" value="15.0" />
+   <param name="tf_prefix" type="string" value="$(arg robot_name)"/>
+  </node>  
  <!--node pkg="communication_node" type="registration_client" name="registration_client_node" output="screen"  args="$(arg robot_name)" > </node-->
  </group>
 

@@ -91,7 +91,7 @@ void process_img() {
 int main(int argc, char **argv) {
     ros::init(argc, argv, "hot_victim_detector_" + name_space);
     ros::NodeHandle node_handle;
-    ros::Subscriber rgb_subscriber = node_handle.subscribe("/" + name_space + "/camera_depth/rgb/image", 1000,
+    ros::Subscriber rgb_subscriber = node_handle.subscribe("/" + name_space + "/camera_ros/image", 1000,
                                                            get_normal_image);
     ros::Subscriber thermal_subscriber = node_handle.subscribe("/" + name_space + "/camera/thermal/image_raw", 1000,
                                                                get_thermal_image);
