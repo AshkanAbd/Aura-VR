@@ -95,12 +95,20 @@ class CoreMapBuilder:
                         self.tolerance_one[coordinate] = 1
                     else:
                         self.tolerance_one[coordinate] += 1
+        end = []
         for pair in self.tolerance_one.keys():
             if self.tolerance_one[pair] > 10 and self.core_map[pair[0], pair[1]] == 0:
                 self.core_map[pair[0], pair[1]] = 100
+                end.append(pair)
         for pair in self.tolerance_zero.keys():
             if self.tolerance_zero[pair] > 10 and self.core_map[pair[0], pair[1]] == 100:
+                end.append(pair)
                 self.core_map[pair[0], pair[1]] = 0
+        for pair in end:
+            if pair in self.tolerance_zero:
+                self.tolerance_zero.pop(pair)
+            if pair in self.tolerance_one:
+                self.tolerance_one.pop(pair)
         map_info = self.core_map
 
 
