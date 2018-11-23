@@ -37,9 +37,9 @@
   <param name="info_radius" value="1"/> 
   <param name="costmap_clearing_threshold" value="70"/> 
   <param name="goals_topic" value="/detected_points"/>
-  <param name="namespace_init_count" value="1"/>
+  <param name="namespace_init_count" value="2"/>
   <param name="namespace" value="/aura"/> 
-  <param name="n_robots" value="1"/>
+  <param name="n_robots" value="2"/>
   <param name="rate" value="100"/>
   </node>
   
@@ -51,8 +51,8 @@
   <param name="hysteresis_radius" value="3.0"/> 
   <param name="hysteresis_gain" value="2.0"/> 
   <param name="frontiers_topic" value="/filtered_points"/> 
-  <param name="n_robots" value="1"/>
-  <param name="namespace_init_count" value="1"/>
+  <param name="n_robots" value="2"/>
+  <param name="namespace_init_count" value="2"/>
   <param name="namespace" value="/aura"/>
   <param name="delay_after_assignement" value="0.5"/>
   <param name="rate" value="100"/>
