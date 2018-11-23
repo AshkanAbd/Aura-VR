@@ -10,46 +10,50 @@ import queue
 
 
 class SingleBFS(auto_move_base.AutoMoveBase, object):
-    list_of_nighbors = []
-    visited = []
     goal_x = 10000
     goal_y = 10000
-    q = []
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase'):
         super(SingleBFS, self).__init__(namespace, node_name)
 
-    def get_nighbors(self):
-        reshape_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.width)
-        robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
-                                                          , self.robot_odometry.pose.pose.position.x)
 
-        self.list_of_nighbors = [reshape_map[robot_y - 1], reshape_map[robot_x],
-                                 reshape_map[robot_y], reshape_map[robot_x + 1]]
+    def get_nighbors(self, y, x):
+        neighbors = [(y - 10, x),
+                     (y, x + 10),
+                     (y + 10, x),
+                     (y, x - 10)]
+        return neighbors
 
-    def generate_goal(self):
-        self.list_of_nighbors
-        goal_y, goal_x = self.convert_from_map_to_robot()
-        temp = aura.msg.data_int()
-        temp.data_int = [goal_x, goal_y]
-        self.goal_x = goal_x
-        self.goal_y = goal_y
-        self.send_goal(goal_x, goal_y)
-        print("GOAL PUBLISHED " + str(goal_x) + " , " + str(goal_y))
+    def generate_goal(self, directon):
+        self.goal_y, self.goal_x = self.convert_from_map_to_robot(directon[0], directon[1])
+        self.send_goal(self.goal_x, self.goal_y)
+        print("GOAL PUBLISHED " + str(self.goal_x) + " , " + str(self.goal_y))
         return True
 
+    # goal status--- PENDING=0--- ACTIVE=1---PREEMPTED=2--SUCCEEDED=3--ABORTED=4---REJECTED=5--PREEMPTING=6---RECALLING=7---RECALLED=8---LOST=9
+    def goal_status(self, data1, data2):
+        print(data1)
+        self.start()
+
     def start(self):
-        reshape_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.width)
         robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
                                                           , self.robot_odometry.pose.pose.position.x)
-        current = (robot_x,robot_y)
-        self.visited.append(current)
-        self.q.append(current)
-        while len(self.q) != 0:
-            if self.q.pop() == -1:
-                # self.generate_goal()
+        current = (robot_y, robot_x)
+        visited = []
+        q = []
+        visited.append(current)
+        q.append(current)
+        while len(q) != 0:
+            current_node = q.pop(0)
+            if self.reshape_map[int(current_node[0]), int(current_node[1])] == -1:
+                self.generate_goal(current_node)
                 return
-            for i in self.list_of_nighbors:
-                if i not in self.visited and i not in self.q:
-                    if i != 100:
-                        self.q.append(i)
+            for i in self.get_nighbors(int(current_node[0]), int(current_node[1])):
+                if (i not in visited) and (i not in q):
+                    if self.reshape_map[int(i[0]), int(i[1])] != 100:
+                        q.append(i)
+            visited.append(current_node)
+
+    def get_map(self, map):
+        super().get_map(map)
+        self.reshape_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.width)

@@ -86,7 +86,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         print(data1)
         if data1 == 4:
             map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
-            temp = [map_goal_x, map_goal_y]
+            temp = (map_goal_x, map_goal_y)
             if temp in self.aborted_list:
                 self.start(self.robot_block)
             else:
@@ -106,7 +106,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
                                                           , self.robot_odometry.pose.pose.position.x)
         reshaped_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.width)
-        robot_around_matrix = reshaped_map[robot_y - 3:robot_y + 3, robot_x - 3: robot_x + 3]
+        robot_around_matrix = reshaped_map[int(robot_y) - 3:int(robot_y) + 3, int(robot_x) - 3: int(robot_x) + 3]
         if robot_around_matrix.argmin() == 100:
             print(robot_around_matrix)
             return True
@@ -141,7 +141,19 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
             return
         neighbors = [self.block_array[block_index].go_up(), self.block_array[block_index].go_down(),
                      self.block_array[block_index].go_left(), self.block_array[block_index].go_right()]
-        self.random_generator.shuffle(neighbors)
+        # up = len(np.where(self.block_array[block_index].go_up()) == 100)
+        # down = len(np.where(self.block_array[block_index].go_down()) == 100)
+        # left = len(np.where(self.block_array[block_index].go_left()) == 100)
+        # right = len(np.where(self.block_array[block_index].go_right()) == 100)
+        # a = [up, down, left, right]
+        # neighbors = np.sort(a[::-1])
+        # o = np.where(neighbors) == up
+        # j = np.where(neighbors) == down
+        # k = np.where(neighbors) == right
+        # l = np.where(neighbors) == left
+        # np.put(neighbors, [o, j, l, k], [self.block_array[block_index].go_up(), self.block_array[block_index].go_down(),
+        #                                  self.block_array[block_index].go_left(),
+        #                                  self.block_array[block_index].go_right()])
         for i in neighbors:
             if self.block_array[i].has_unkown():
                 self.generating_goal(i)
