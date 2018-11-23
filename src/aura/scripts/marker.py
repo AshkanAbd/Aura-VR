@@ -6,8 +6,6 @@ import nav_msgs.msg
 import numpy as np
 import visualization_msgs.msg
 import interactive_markers.interactive_marker_server
-import core
-
 
 class MarkerController:
     box_control = None
