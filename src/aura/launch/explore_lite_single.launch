@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robotname" default="robot0" />
+    <group ns="$(arg robotname)">
+        <node pkg="explore_lite" type="explore" name="explore_lite" output="screen" >
+            <param name="robot_base_frame" value="/$(arg robotname)/base_link" />
+            <param name="costmap_topic" value="/core/map" />
+            <param name="costmap_updates_topic" value="/core/map_updates" />
+            <param name="visualize" value="true" />
+            <param name="progress_timeout" value="30" />
+        </node> 
+    </group>
+</launch>

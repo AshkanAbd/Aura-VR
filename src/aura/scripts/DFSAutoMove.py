@@ -3,9 +3,7 @@
 import nav_msgs.msg
 import numpy as np
 import random
-
 import std_msgs.msg
-
 import block
 import auto_move_base
 import rospy
@@ -56,10 +54,6 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         reshape_map = np.asarray(map.data).reshape(map.info.height, map.info.width)
         if reshape_map[int(map_goal_y), int(map_goal_x)] == 100:
             self.client.cancel_all_goals()
-
-    def allow_generating(self, allow_code):
-        if allow_code.data == 1:
-            self.generating_goal(self.robot_block)
 
     def generating_goal(self, block_index):
         n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)

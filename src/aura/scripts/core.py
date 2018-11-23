@@ -29,7 +29,7 @@ class CoreMapBuilder:
         rospy.Subscriber('/' + self.robot0 + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map)
         rospy.Subscriber('/core/out_map', aura.msg.group_int, self.get_out_map)
         self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=100)
-        self.rate = rospy.Rate(10)
+        self.rate = rospy.Rate(5)
         self.publish_to_core()
 
     def get_out_map(self, out_map):
@@ -60,8 +60,8 @@ class CoreMapBuilder:
         if self.core_map.shape != reshaped_map.shape:
             self.core_map = reshaped_map.copy()
         map1 = reshaped_map.copy()
-        self.core_map[map1 == 100] = 100
         self.core_map[map1 == 0] = 0
+        self.core_map[map1 == 100] = 100
         map_info = self.core_map
 
 
