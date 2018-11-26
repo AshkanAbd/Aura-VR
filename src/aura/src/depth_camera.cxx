@@ -11,7 +11,7 @@
 #include <map>
 #include <algorithm>
 
-const static std::string name_space = "robot0";
+const std::string name_space = "robot0";
 
 
 void get_depth_image(const sensor_msgs::Image &img) {
