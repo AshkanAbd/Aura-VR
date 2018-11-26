@@ -26,7 +26,7 @@ def divide():
     return group
 
 
-def get_map(map: nav_msgs.msg.OccupancyGrid):
+def get_map(map):
     global map_width, map_height, map_info, cluster_publisher
     map_info = map
     map_width = map.info.width
