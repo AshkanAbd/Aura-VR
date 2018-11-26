@@ -33,7 +33,7 @@ class CoreMapBuilder:
             rospy.Subscriber('/' + robot + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map, robot, 1000)
             rospy.Subscriber('/' + robot + '/odom', nav_msgs.msg.Odometry, self.get_odom, robot, 1000)
         self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=100)
-        self.rate = rospy.Rate(10)
+        self.rate = rospy.Rate(5)
         self.publish_to_core()
 
     def get_odom(self, odom, robot_id):
