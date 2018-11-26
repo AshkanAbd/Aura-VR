@@ -51,29 +51,49 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         if self.goal_x == -10000:
             return
         map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
-        reshape_map = np.asarray(map.data).reshape(map.info.height, map.info.width)
-        if reshape_map[int(map_goal_y), int(map_goal_x)] == 100:
+        self.reshape_map = np.asarray(map.data).reshape(map.info.height, map.info.width)
+        if self.reshape_map[int(map_goal_y), int(map_goal_x)] == 100:
             self.client.cancel_all_goals()
 
-    def generating_goal(self, block_index):
-        n_shown = np.where(self.block_array[block_index].get_reshaped_block() == -1)
-        if len(n_shown[0]) == 0:
-            return False
-        print(len(n_shown[0]))
-        self.random_generator.seed(rospy.get_time() // 0.01)
-        rand = self.random_generator.randint(0, len(n_shown[0]) - 1)
-        map_goal_x = (self.block_array[block_index].block_width * self.block_array[block_index].column) + \
-                     n_shown[1][rand]
-        map_goal_y = (self.block_array[block_index].block_height * (self.block_array[block_index].row)) + \
-                     n_shown[0][rand]
+    def generating_goal(self, target):
+
+        map_goal_x = target[1]
+        map_goal_y = target[0]
         goal_y, goal_x = self.convert_from_map_to_robot(map_goal_y, map_goal_x)
         temp = aura.msg.data_int()
         temp.data_int = [goal_x, goal_y]
         self.goal_x = goal_x
         self.goal_y = goal_y
         self.send_goal(goal_x, goal_y)
-        print("GOAL PUBLISHED " + str(goal_x) + " , " + str(goal_y))
+        # print("GOAL PUBLISHED " + str(goal_x) + " , " + str(goal_y))
         return True
+
+    def bfsihdir(self, blockindex):
+
+        robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
+                                                          , self.robot_odometry.pose.pose.position.x)
+        reshape_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height , self.map_info.info.width)
+        visited = []
+        q = []
+        current = (robot_y, robot_x)
+        q.append(current)
+        while len(q) != 0:
+            current_sihdir = q.pop(0)
+            visited.append(current_sihdir)
+            for i in self.get_neighbors(int(current_sihdir[0]), int(current_sihdir[1])):
+                if reshape_map[int(i[0]), int(i[1])] in self.block_array[blockindex].get_reshaped_block():
+                    if reshape_map[int(i[0]), int(i[1])] == -1:
+                        q.append(i)
+                        self.generating_goal(i)
+
+                    elif reshape_map[int(i[0]), int(i[1])] == 0:
+                        if (i not in q) and (i not in visited):
+                            q.append(i)
+
+    def get_neighbors(self, x, y):
+        neighbors = [(x + 4, y), (x, y + 4), (x + 4, y + 4), (x - 4, y), (x, y - 4), (x - 4, y - 4), (x + 4, y - 4),
+                     (x - 4, y + 4)]
+        return neighbors
 
     # goal status--- PENDING=0--- ACTIVE=1---PREEMPTED=2--SUCCEEDED=3--ABORTED=4---REJECTED=5--PREEMPTING=6---RECALLING=7---RECALLED=8---LOST=9
     def goal_status(self, data1, data2):
@@ -131,7 +151,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
             self.rotate_rate.sleep()
 
     def start(self, block_index):
-        if self.generating_goal(block_index):
+        if self.bfsihdir(block_index):
             return
         neighbors = [self.block_array[block_index].go_up(), self.block_array[block_index].go_down(),
                      self.block_array[block_index].go_left(), self.block_array[block_index].go_right()]
@@ -150,7 +170,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         #                                  self.block_array[block_index].go_right()])
         for i in neighbors:
             if self.block_array[i].has_unkown():
-                self.generating_goal(i)
+                self.bfsihdir(i)
                 print(neighbors)
                 print(i)
                 return
