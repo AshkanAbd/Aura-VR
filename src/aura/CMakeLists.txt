@@ -160,16 +160,16 @@ add_executable(laser_transform src/laser_transform.cxx)
 add_executable(hot_victim_detector src/hot_victim_detetor.cxx)
 add_executable(dead_victim_detector src/dead_victim_detector.cxx)
 add_executable(depth_camera src/depth_camera.cxx)
-add_executable(core src/core.cpp)
+#add_executable(core src/core.cpp)
 
-target_include_directories(core PUBLIC ${xtensor_INCLUDE_DIRS})
+#target_include_directories(core PUBLIC ${xtensor_INCLUDE_DIRS})
 
 target_link_libraries(odom_transform ${catkin_LIBRARIES})
 target_link_libraries(laser_transform ${catkin_LIBRARIES})
 target_link_libraries(hot_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
 target_link_libraries(dead_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
 target_link_libraries(depth_camera ${catkin_LIBRARIES} ${OpenCV_LIBS})
-target_link_libraries(core ${catkin_LIBRARIES} ${OpenCV_LIBS} xtensor)
+#target_link_libraries(core ${catkin_LIBRARIES} ${OpenCV_LIBS} xtensor)
 
 
 ## Rename C++ executable without prefix
