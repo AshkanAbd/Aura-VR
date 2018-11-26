@@ -55,6 +55,10 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         if self.reshape_map[int(map_goal_y), int(map_goal_x)] == 100:
             self.client.cancel_all_goals()
 
+    def get_neighbors(self, x, y):
+        neighbors = [(x + 10, y), (x - 10, y), (x, y - 10), (x, y + 10)]
+        return neighbors
+
     def generating_goal(self, target):
 
         map_goal_x = target[1]
@@ -65,14 +69,14 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         self.goal_x = goal_x
         self.goal_y = goal_y
         self.send_goal(goal_x, goal_y)
-        # print("GOAL PUBLISHED " + str(goal_x) + " , " + str(goal_y))
+        print("GOAL PUBLISHED " + str(goal_x) + " , " + str(goal_y))
         return True
 
     def bfsihdir(self, blockindex):
 
         robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
                                                           , self.robot_odometry.pose.pose.position.x)
-        reshape_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height , self.map_info.info.width)
+        reshape_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.width)
         visited = []
         q = []
         current = (robot_y, robot_x)
@@ -85,15 +89,11 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
                     if reshape_map[int(i[0]), int(i[1])] == -1:
                         q.append(i)
                         self.generating_goal(i)
+                        return
 
                     elif reshape_map[int(i[0]), int(i[1])] == 0:
                         if (i not in q) and (i not in visited):
                             q.append(i)
-
-    def get_neighbors(self, x, y):
-        neighbors = [(x + 4, y), (x, y + 4), (x + 4, y + 4), (x - 4, y), (x, y - 4), (x - 4, y - 4), (x + 4, y - 4),
-                     (x - 4, y + 4)]
-        return neighbors
 
     # goal status--- PENDING=0--- ACTIVE=1---PREEMPTED=2--SUCCEEDED=3--ABORTED=4---REJECTED=5--PREEMPTING=6---RECALLING=7---RECALLED=8---LOST=9
     def goal_status(self, data1, data2):
@@ -112,7 +112,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
                     # send to core
                     self.start(self.robot_block)
         elif data1 == 2:
-            pass
+            self.start(self.robot_block)
         else:
             self.start(self.robot_block)
 
@@ -155,24 +155,10 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
             return
         neighbors = [self.block_array[block_index].go_up(), self.block_array[block_index].go_down(),
                      self.block_array[block_index].go_left(), self.block_array[block_index].go_right()]
-        # up = len(np.where(self.block_array[block_index].go_up()) == 100)
-        # down = len(np.where(self.block_array[block_index].go_down()) == 100)
-        # left = len(np.where(self.block_array[block_index].go_left()) == 100)
-        # right = len(np.where(self.block_array[block_index].go_right()) == 100)
-        # a = [up, down, left, right]
-        # neighbors = np.sort(a[::-1])
-        # o = np.where(neighbors) == up
-        # j = np.where(neighbors) == down
-        # k = np.where(neighbors) == right
-        # l = np.where(neighbors) == left
-        # np.put(neighbors, [o, j, l, k], [self.block_array[block_index].go_up(), self.block_array[block_index].go_down(),
-        #                                  self.block_array[block_index].go_left(),
-        #                                  self.block_array[block_index].go_right()])
         for i in neighbors:
             if self.block_array[i].has_unkown():
                 self.bfsihdir(i)
                 print(neighbors)
-                print(i)
                 return
             else:
                 return self.start(neighbors[0])
