@@ -15,6 +15,8 @@
       <param name="controller_frequency" type="double" value="7.5" />
       <rosparam>
         local_costmap:
+          footprint: [[0.28, 0.28], [-0.28, 0.28], [-0.28, -0.28], [0.28, -0.28]]
+          #robot_radius : 0.35
           global_frame: odom
           robot_base_frame: base_link
           static_map: false
@@ -31,6 +33,8 @@
       </rosparam>
       <rosparam>
         global_costmap:
+          footprint: [[0.28, 0.28], [-0.28, 0.28], [-0.28, -0.28], [0.28, -0.28]]
+          #robot_radius : 0.35
           global_frame: /map
           robot_base_frame: base_link
           resolution: 0.2
