@@ -81,7 +81,7 @@ void process_img() {
             hot_victim_publisher.publish(info_array);
             cv::rectangle(frame2, main_rect, cv::Scalar(255, 0, 0), 2);
 //            cv::imshow("hot frame", frame2);
-        } catch (std::exception e) {
+        } catch (std::exception &e) {
             std::cout << e.what() << std::endl;
         }
     }
