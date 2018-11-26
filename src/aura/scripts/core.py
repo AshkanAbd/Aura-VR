@@ -33,7 +33,7 @@ class CoreMapBuilder:
             rospy.Subscriber('/' + robot + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map, robot, 1000)
             rospy.Subscriber('/' + robot + '/odom', nav_msgs.msg.Odometry, self.get_odom, robot, 1000)
         self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=100)
-        self.rate = rospy.Rate(5)
+        self.rate = rospy.Rate(10)
         self.publish_to_core()
 
     def get_odom(self, odom, robot_id):
@@ -61,13 +61,14 @@ class CoreMapBuilder:
         new_zero_coo = np.where(map1 == 0)[0]
         new_one_coo = np.where(map1 == 100)[0]
         for coordinate in new_zero_coo:
+            if coordinate in self.close_list:
+                continue
             if self.core_map[coordinate] == -1:
                 self.core_map[coordinate] = 0
                 self.robot_evolution[coordinate] = robot_id
                 self.node_distance[coordinate] = (robot_id, self.convert_from_robot_to_map(odom.pose.pose.position.y
                                                                                            , odom.pose.pose.position.x))
-            elif (self.core_map[coordinate] == 100) and (coordinate not in self.close_list):
-                self.close_list.add(coordinate)
+            elif self.core_map[coordinate] == 100:
                 if self.robot_evolution[coordinate] == robot_id:
                     self.core_map[coordinate] = 0
                     self.node_distance[coordinate] = (robot_id,
@@ -76,18 +77,20 @@ class CoreMapBuilder:
                 else:
                     distance = self.convert_from_robot_to_map(odom.pose.pose.position.y, odom.pose.pose.position.x)
                     if self.node_distance[coordinate][1] > distance:
+                        self.close_list.add(coordinate)
                         self.core_map[coordinate] = 0
                         self.node_distance[coordinate] = (robot_id,
                                                           self.convert_from_robot_to_map(odom.pose.pose.position.y
                                                                                          , odom.pose.pose.position.x))
         for coordinate in new_one_coo:
+            if coordinate in self.close_list:
+                continue
             if self.core_map[coordinate] == -1:
                 self.core_map[coordinate] = 100
                 self.robot_evolution[coordinate] = robot_id
                 self.node_distance[coordinate] = (robot_id, self.convert_from_robot_to_map(odom.pose.pose.position.y,
                                                                                            odom.pose.pose.position.x))
-            elif (self.core_map[coordinate] == 0) and (coordinate not in self.close_list):
-                self.close_list.add(coordinate)
+            elif self.core_map[coordinate] == 0:
                 if self.robot_evolution[coordinate] == robot_id:
                     self.core_map[coordinate] = 100
                     self.node_distance[coordinate] = (robot_id,
@@ -96,6 +99,7 @@ class CoreMapBuilder:
                 else:
                     distance = self.convert_from_robot_to_map(odom.pose.pose.position.y, odom.pose.pose.position.x)
                     if self.node_distance[coordinate][1] > distance:
+                        self.close_list.add(coordinate)
                         self.node_distance[coordinate] = (robot_id,
                                                           self.convert_from_robot_to_map(odom.pose.pose.position.y,
                                                                                          odom.pose.pose.position.x))
@@ -103,13 +107,13 @@ class CoreMapBuilder:
     def convert_from_robot_to_map(self, robot_y, robot_x):
         map_x = (robot_x - self.main_map.info.origin.position.x) // self.main_map.info.resolution
         map_y = (robot_y - self.main_map.info.origin.position.y) // self.main_map.info.resolution
-        return (map_y * self.main_map.info.width) + map_x
+        return ((map_y - 1) * self.main_map.info.width) + map_x
 
     def check_robots(self):
         for i in [self.robot0, self.robot1, self.robot2, self.robot3]:
             robot = None
             try:
-                robot = rospy.wait_for_message('/' + i + '/map', nav_msgs.msg.OccupancyGrid, 3)
+                robot = rospy.wait_for_message('/' + i + '/map', nav_msgs.msg.OccupancyGrid, 2)
             except Exception:
                 print(i + ' is not available')
             if robot is not None:
