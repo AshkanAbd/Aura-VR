@@ -27,6 +27,26 @@ float xdim, ydim, resolution, Xstartx, Xstarty, init_map_x, init_map_y;
 
 rdm r; // for genrating random numbers
 
+void addPoints() {
+//set map corners as explore area
+    geometry_msgs::Point p1, p2, p3, p4;
+    p1.x = (1 * mapData.info.resolution) + mapData.info.origin.position.x;
+    p1.y = (1 * mapData.info.resolution) + mapData.info.origin.position.y;
+    p1.z = 0;
+    points.points.push_back(p1);
+    p2.x = ((mapData.info.width - 1) * mapData.info.resolution) + mapData.info.origin.position.x;
+    p2.y = (1 * mapData.info.resolution) + mapData.info.origin.position.y;
+    p2.z = 0;
+    points.points.push_back(p2);
+    p3.x = ((mapData.info.width - 1) * mapData.info.resolution) + mapData.info.origin.position.x;
+    p3.y = ((mapData.info.height - 1) * mapData.info.resolution) + mapData.info.origin.position.y;
+    p3.z = 0;
+    points.points.push_back(p3);
+    p4.x = (1 * mapData.info.resolution) + mapData.info.origin.position.x;
+    p4.y = ((mapData.info.height - 1) * mapData.info.resolution) + mapData.info.origin.position.y;
+    p4.z = 0;
+    points.points.push_back(p4);
+}
 
 
 //Subscribers callback functions---------------------------------------
@@ -36,14 +56,14 @@ void mapCallBack(const nav_msgs::OccupancyGrid::ConstPtr &msg) {
 
 
 void rvizCallBack(const geometry_msgs::PointStamped::ConstPtr &msg) {
-
+//No need to get points
+//Only get start point
+//points add in #addPoints function
     geometry_msgs::Point p;
     p.x = msg->point.x;
     p.y = msg->point.y;
     p.z = msg->point.z;
-
     points.points.push_back(p);
-
 }
 
 
@@ -69,6 +89,11 @@ int main(int argc, char **argv) {
 
     ros::param::param<float>(ns + "/eta", eta, 0.5);
     ros::param::param<std::string>(ns + "/map_topic", map_topic, "/robot_1/map");
+//----------------------------------------------------------------
+//get one massage from map
+    mapData = *(ros::topic::waitForMessage<nav_msgs::OccupancyGrid>(map_topic, nh));
+//---------------------------------------------------------------
+    addPoints();
 //---------------------------------------------------------------
     ros::Subscriber sub = nh.subscribe(map_topic, 100, mapCallBack);
     ros::Subscriber rviz_sub = nh.subscribe("/clicked_point", 100, rvizCallBack);
