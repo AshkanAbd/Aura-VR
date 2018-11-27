@@ -118,7 +118,7 @@ class CoreMapBuilder:
             robot = None
             try:
                 robot = rospy.wait_for_message('/' + i + '/map', nav_msgs.msg.OccupancyGrid, 2)
-            except Exception:
+            except rospy.ROSException:
                 print(i + ' is not available')
             if robot is not None:
                 self.available_robots.add(i)
