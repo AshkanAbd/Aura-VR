@@ -11,10 +11,10 @@
         <param name="odom_frame" value="$(arg robotname)/odom" />
     	<param name="map_start_x" value="$(arg initialx)"/>
     	<param name="map_start_y" value="$(arg initialy)"/> 
-        <param name="xmin" value="-90" />
-        <param name="ymin" value="-50" />
-        <param name="xmax" value="90" />
-        <param name="ymax" value="50" />
+        <param name="xmin" value="-110" />
+        <param name="ymin" value="-70" />
+        <param name="xmax" value="110" />
+        <param name="ymax" value="70" />
         <param name="map_update_interval" value="0.1"/>
         <param name="maxUrange" value="29"/>
         <param name="maxRange" value="30.4"/>
