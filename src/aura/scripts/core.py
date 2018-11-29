@@ -29,9 +29,9 @@ class CoreMapBuilder:
     start = False
     publish_thread = None
 
-    def __init__(self, robots, node_name):
+    def __init__(self, map_topic, core_topic, node_name):
         rospy.init_node(node_name)
-        self.check_robots(robots)
+        self.check_robots(map_topic, core_topic)
         for robot in self.available_robots:
             self.available_odom[robot] = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
             rospy.Subscriber('/' + robot + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map, robot, 1000)
@@ -39,6 +39,7 @@ class CoreMapBuilder:
         self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=100)
         self.rate = rospy.Rate(10)
         self.publish_thread = threading.Thread(target=self.publish_to_core)
+        self.publish_thread.setName("core-publish")
         self.publish_thread.start()
 
     def get_odom(self, odom, robot_id):
@@ -159,19 +160,19 @@ class CoreMapBuilder:
         map_y = round((robot_y - self.base_map_info.origin.position.y) / self.base_map_info.resolution)
         return (map_y * self.base_map_info.width) + map_x
 
-    def check_robots(self, robots):
+    def check_robots(self, map_topic, core_topic):
+        robots = core_builder.get_topics(map_topic, core_topic)
         for i in robots:
-            if ":" in i:
-                continue
             robot = None
             try:
                 robot = rospy.wait_for_message('/' + i + '/map', nav_msgs.msg.OccupancyGrid, 2)
             except rospy.ROSException:
                 print(i + ' is not available')
             if robot is not None:
+                print(i + ' added to core')
                 self.available_robots.add(i)
 
 
 if __name__ == '__main__':
-    CoreMapBuilder(sys.argv, 'core_builder')
+    CoreMapBuilder('map', 'core', 'core_builder')
     rospy.spin()

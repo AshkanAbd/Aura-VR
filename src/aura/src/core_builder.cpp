@@ -55,6 +55,27 @@ void builder(Eigen::Ref<Eigen::VectorXd> core_map, const std::vector<ul> &coordi
     }
 }
 
+std::vector<std::string> get_topics(const std::string &map_topic, const std::string &core_topic) {
+    std::array<char, 128> buffer{};
+    std::vector<std::string> result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen("rostopic list", "r"), pclose);
+    ul index;
+    if (!pipe) throw std::runtime_error("popen() failed!");
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        std::string buf(buffer.data());
+        if ((index = buf.find(map_topic)) != std::string::npos) {
+            if (buf[index - 1] == '/' && buf[index + 3] == '\n') {
+                if (buf.find(core_topic) == std::string::npos) {
+                    result.push_back(buf.substr(buf.find('/') + 1, index - 2));
+                }
+            }
+        }
+    }
+    return result;
+}
+
 PYBIND11_MODULE(core_builder, m) {
     m.def("builder", &builder, "Core_builder");
+
+    m.def("get_topics", &get_topics, "Get_Topics");
 }
