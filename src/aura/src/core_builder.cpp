@@ -21,8 +21,10 @@
 
 namespace py = pybind11;
 
+using namespace std;
+
 void builder(Eigen::Ref<Eigen::VectorXd> core_map, const std::vector<ul> &coordinates, const int &robot_pose,
-             py::dict &&node_map, const int &condition1, const int &condition2, const py::str &robot_id) {
+             py::dict &&node_map, const int &condition1, const int &condition2, const std::string &robot_id) {
     ul *arr = (ul *) malloc(sizeof(ul) * coordinates.size());
     std::copy(coordinates.begin(), coordinates.end(), arr);
     for (ul i = 0; i < coordinates.size(); ++i) {
@@ -35,8 +37,9 @@ void builder(Eigen::Ref<Eigen::VectorXd> core_map, const std::vector<ul> &coordi
             node_map[coordinate_i] = value;
         } else if (core_map(coordinate) == condition2) {
             py::tuple old = node_map[coordinate_i];
-            py::str old_id(old[0]);
-            if (old_id.is(robot_id)) {
+            py::str old_id1(old[0]);
+            std::string old_id(old_id1);
+            if (old_id == robot_id) {
                 core_map(coordinate) = condition1;
                 node_map[coordinate_i] = value;
             } else {
