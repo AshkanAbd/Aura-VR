@@ -6,7 +6,6 @@ import rospy
 import aura.msg
 import time
 import geometry_msgs.msg
-import queue
 
 
 class SingleBFS(auto_move_base.AutoMoveBase, object):
