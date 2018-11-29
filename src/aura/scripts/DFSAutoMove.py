@@ -23,8 +23,8 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
         super(DFSAutoMove, self).__init__(namespace, node_name, anonymous)
-        self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group_int))
-        rospy.Subscriber('/core/blocks', aura.msg.group_int, self.get_blocks)
+        # self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group_int))
+        # rospy.Subscriber('/core/blocks', aura.msg.group_int, self.get_blocks)
         self.rotate_rate = rospy.Rate(10)
         self.random_generator = random.Random()
 

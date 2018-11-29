@@ -21,7 +21,6 @@
 
 namespace py = pybind11;
 
-using namespace std;
 
 void builder(Eigen::Ref<Eigen::VectorXd> core_map, const std::vector<ul> &coordinates, const int &robot_pose,
              py::dict &&node_map, const int &condition1, const int &condition2, const std::string &robot_id) {
