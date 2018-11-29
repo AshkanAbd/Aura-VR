@@ -55,10 +55,6 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         if self.reshape_map[int(map_goal_y), int(map_goal_x)] == 100:
             self.client.cancel_all_goals()
 
-    def get_neighbors(self, x, y):
-        neighbors = [(x + 10, y), (x - 10, y), (x, y - 10), (x, y + 10)]
-        return neighbors
-
     def generating_goal(self, target):
 
         map_goal_x = target[1]
@@ -72,37 +68,64 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         print("GOAL PUBLISHED " + str(goal_x) + " , " + str(goal_y))
         return True
 
+    def get_neighbors(self, x, y):
+        neighbors = [(x -1 , y), (x + 1, y), (x, y - 1), (x, y + 1)]
+        return neighbors
+
     def bfsihdir(self, blockindex):
 
         robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
                                                           , self.robot_odometry.pose.pose.position.x)
         reshape_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.width)
-        visited = []
+        visited = set()
         q = []
         current = (robot_y, robot_x)
         q.append(current)
         while len(q) != 0:
             current_sihdir = q.pop(0)
-            visited.append(current_sihdir)
+            visited.add(current_sihdir)
             for i in self.get_neighbors(int(current_sihdir[0]), int(current_sihdir[1])):
-                if reshape_map[int(i[0]), int(i[1])] in self.block_array[blockindex].get_reshaped_block():
-                    if reshape_map[int(i[0]), int(i[1])] == -1:
-                        q.append(i)
-                        self.generating_goal(i)
-                        return
+                if i not in q :
+                    try:
+                        if i not in visited:
+                            if reshape_map[int(i[0]), int(i[1])] == 100:
+                                visited.add(reshape_map[(i[0]+1 , i[1])])
+                                visited.add(reshape_map[(i[0]+1 , i[1]+1)])
+                                visited.add(reshape_map[(i[0]+2 , i[1]+2)])
+                                visited.add(reshape_map[(i[0]-2 , i[1]-2)])
+                                visited.add(reshape_map[(i[0]+2 , i[1]-2)])
+                                visited.add(reshape_map[(i[0]-2 , i[1]+2)])
+                                visited.add(reshape_map[(i[0]+1 , i[1]-1)])
+                                visited.add(reshape_map[(i[0]-1 , i[1]-1)])
+                                visited.add(reshape_map[(i[0]-1 , i[1]+1)])
+                                visited.add(reshape_map[(i[0] , i[1]+1)])
+                                visited.add(reshape_map[(i[0]-1 , i[1])])
+                                visited.add(reshape_map[(i[0], i[1]-1)])
+                                visited.add(i)
+                            elif reshape_map[int(i[0]), int(i[1])] == -1:
+                                if abs(i[0] - current[0]) + abs(i[1] - current[1]) >= 35:
+                                    q.append(i)
+                                    visited.add(i)
+                                    self.generating_goal(i)
+                                    return
+                                else:
+                                     q.append(i)
 
-                    elif reshape_map[int(i[0]), int(i[1])] == 0:
-                        if (i not in q) and (i not in visited):
-                            q.append(i)
+                            elif (reshape_map[int(i[0]), int(i[1])] == 0):
+                                    q.append(i)
+                    except Exception:
+                        print(i)
 
-    # goal status--- PENDING=0--- ACTIVE=1---PREEMPTED=2--SUCCEEDED=3--ABORTED=4---REJECTED=5--PREEMPTING=6---RECALLING=7---RECALLED=8---LOST=9
+
+
+    # goal status--- PENDING=0--- ACTIVE=1-- PREEMPTED=2-- SUCCEEDED=3-- ABORTED=4-- REJECTED=5-- PREEMPTING=6-- RECALLING=7-- RECALLED=8-- LOST=9
     def goal_status(self, data1, data2):
         print(data1)
         if data1 == 4:
             map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
             temp = (map_goal_x, map_goal_y)
             if temp in self.aborted_list:
-                self.start(self.robot_block)
+                self.bfsihdir(self.robot_block)
             else:
                 if self.check_around():
                     self.rotate()
@@ -110,11 +133,12 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
                     self.send_goal(self.goal_x, self.goal_y)
                 else:
                     # send to core
-                    self.start(self.robot_block)
+                    self.bfsihdir(self.robot_block)
         elif data1 == 2:
-            self.start(self.robot_block)
+            self.rotate()
+            self.bfsihdir(self.robot_block)
         else:
-            self.start(self.robot_block)
+            self.bfsihdir(self.robot_block)
 
     def check_around(self):
         robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
@@ -135,7 +159,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         twist.angular.x = 0
         twist.angular.y = 0
         twist.angular.z = 2
-        for i in range(5):
+        for i in xrange(5):
             self.cmd_publisher.publish(twist)
             self.rotate_rate.sleep()
         time.sleep(9.3)  # ~2.32 for 90 degree
@@ -146,22 +170,23 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         twist.angular.x = 0
         twist.angular.y = 0
         twist.angular.z = 0
-        for i in range(5):
+        for i in xrange(5):
             self.cmd_publisher.publish(twist)
             self.rotate_rate.sleep()
 
-    def start(self, block_index):
-        if self.bfsihdir(block_index):
-            return
-        neighbors = [self.block_array[block_index].go_up(), self.block_array[block_index].go_down(),
-                     self.block_array[block_index].go_left(), self.block_array[block_index].go_right()]
-        for i in neighbors:
-            if self.block_array[i].has_unkown():
-                self.bfsihdir(i)
-                print(neighbors)
-                return
-            else:
-                return self.start(neighbors[0])
+    # def start(self, block_index):
+    #     if self.bfsihdir(block_index):
+    #         return
+    #     neighbors = [self.block_array[block_index].go_up(), self.block_array[block_index].go_down(),
+    #                  self.block_array[block_index].go_left(), self.block_array[block_index].go_right()]
+    #     for i in neighbors:
+    #         if self.block_array[i].has_unkown():
+    #             self.bfsihdir(i)
+    #             print(neighbors)
+    #             print(block_index)
+    #             return
+    #         else:
+    #             return self.start(neighbors[0])
 
     def current_goal(self):
         return self.goal_x, self.goal_y

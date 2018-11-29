@@ -15,7 +15,7 @@ import geometry_msgs.msg
 
 if __name__ == '__main__':
     # marker1 = marker.MarkerController('robot0')
-    dfs_move_base = DFSAutoMove.DFSAutoMove('robot0')
+    dfs_move_base = DFSAutoMove.DFSAutoMove('robot1')
     dfs_move_base.bfsihdir(dfs_move_base.robot_block)
     # rospy.Subscriber('/robot0/move_base/current_goal', geometry_msgs.msg.PoseStamped, get_current_goal)
     rospy.spin()

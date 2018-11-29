@@ -6,7 +6,7 @@ import aura.msg
 import nav_msgs.msg
 
 
-def get_block(blocks: aura.msg.group_int):
+def get_block(blocks):
     global publish
     map = nav_msgs.msg.OccupancyGrid()
     index = 136

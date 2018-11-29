@@ -76,7 +76,7 @@
           meter_scoring: false
           pdist_scale: 2
           gdist_scale: 1.8
-          occdist_scale: 0.0075
+          occdist_scale: 0.010
           heading_scoring: false
           global_frame_id: /map
           meter_scoring: true
