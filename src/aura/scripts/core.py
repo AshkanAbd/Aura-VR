@@ -8,7 +8,7 @@ import threading
 import tf.transformations
 import math
 
-sys.path.insert(0, '../libs/')
+sys.path.insert(0, '/home/ashkan/Aura_VR/src/aura/libs')
 import core_builder
 
 
