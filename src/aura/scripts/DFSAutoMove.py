@@ -23,8 +23,8 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
         super(DFSAutoMove, self).__init__(namespace, node_name, anonymous)
-        self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group_int))
-        rospy.Subscriber('/core/blocks', aura.msg.group_int, self.get_blocks)
+        # self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group_int))
+        # rospy.Subscriber('/core/blocks', aura.msg.group_int, self.get_blocks)
         self.rotate_rate = rospy.Rate(10)
         self.random_generator = random.Random()
 
@@ -69,7 +69,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         return True
 
     def get_neighbors(self, x, y):
-        neighbors = [(x -1 , y), (x + 1, y), (x, y - 1), (x, y + 1)]
+        neighbors = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
         return neighbors
 
     def bfsihdir(self, blockindex):
@@ -85,6 +85,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
             current_sihdir = q.pop(0)
             visited.add(current_sihdir)
             for i in self.get_neighbors(int(current_sihdir[0]), int(current_sihdir[1])):
+<<<<<<< HEAD
                 if i not in q :
                     try:
                         if i not in visited:
@@ -105,22 +106,39 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
                                 visited.add([(i[0] , i[1]+1)])
                                 visited.add([(i[0]-1 , i[1])])
                                 visited.add([(i[0], i[1]-1)])
+=======
+                if i not in q:
+                    if i not in visited:
+                        if reshape_map[int(i[0]), int(i[1])] == 100:
+                            visited.add(reshape_map[(i[0] + 1, i[1])])
+                            visited.add(reshape_map[(i[0] + 1, i[1] + 1)])
+                            visited.add(reshape_map[(i[0] + 2, i[1] + 2)])
+                            visited.add(reshape_map[(i[0] - 2, i[1] - 2)])
+                            visited.add(reshape_map[(i[0] + 2, i[1] - 2)])
+                            visited.add(reshape_map[(i[0], i[1] + 2)])
+                            visited.add(reshape_map[(i[0] - 2, i[1])])
+                            visited.add(reshape_map[(i[0] + 2, i[1])])
+                            visited.add(reshape_map[(i[0], i[1] - 2)])
+                            visited.add(reshape_map[(i[0] - 2, i[1] + 2)])
+                            visited.add(reshape_map[(i[0] + 1, i[1] - 1)])
+                            visited.add(reshape_map[(i[0] - 1, i[1] - 1)])
+                            visited.add(reshape_map[(i[0] - 1, i[1] + 1)])
+                            visited.add(reshape_map[(i[0], i[1] + 1)])
+                            visited.add(reshape_map[(i[0] - 1, i[1])])
+                            visited.add(reshape_map[(i[0], i[1] - 1)])
+                            visited.add(i)
+                        elif reshape_map[int(i[0]), int(i[1])] == -1:
+                            if abs(i[0] - current[0]) + abs(i[1] - current[1]) >= 35:
+                                q.append(i)
+>>>>>>> fb2f9f0d08e817dd6ff8ad0f2cedb4ae305d4546
                                 visited.add(i)
-                            elif reshape_map[int(i[0]), int(i[1])] == -1:
-                                if abs(i[0] - current[0]) + abs(i[1] - current[1]) >= 35:
-                                    q.append(i)
-                                    visited.add(i)
-                                    self.generating_goal(i)
-                                    return
-                                else:
-                                     q.append(i)
+                                self.generating_goal(i)
+                                return
+                            else:
+                                q.append(i)
 
-                            elif (reshape_map[int(i[0]), int(i[1])] == 0):
-                                    q.append(i)
-                    except Exception:
-                        print(i)
-
-
+                        elif (reshape_map[int(i[0]), int(i[1])] == 0):
+                            q.append(i)
 
     # goal status--- PENDING=0--- ACTIVE=1-- PREEMPTED=2-- SUCCEEDED=3-- ABORTED=4-- REJECTED=5-- PREEMPTING=6-- RECALLING=7-- RECALLED=8-- LOST=9
     def goal_status(self, data1, data2):

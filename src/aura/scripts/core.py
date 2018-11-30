@@ -8,7 +8,7 @@ import threading
 import tf.transformations
 import math
 
-sys.path.insert(0, '../libs/')
+sys.path.insert(0, '/home/ashkan/Aura_VR/src/aura/libs')
 import core_builder
 
 
@@ -77,8 +77,9 @@ class CoreMapBuilder:
             self.base_map_info = robot_map.info
             self.base_map_header = robot_map.header
             self.start = True
-        if -8 > self.robot_angle[robot_id][1] > 8:
-            return
+        if robot_id in self.robot_angle:
+            if -5 > self.robot_angle[robot_id][1] > 5:
+                return
         if self.base_map_info.height != robot_map.info.height and self.base_map_info.width != robot_map.info.width:
             print("Ignore")
             return
@@ -86,10 +87,8 @@ class CoreMapBuilder:
         new_zero_coo = np.where(map1 == 0)[0]
         new_one_coo = np.where(map1 == 100)[0]
         tmp = self.core_map.astype(np.float64)
-        core_builder.builder(tmp, new_zero_coo.tolist(), int(robot_pose), self.node_map, 0,
-                             100, robot_id)
-        core_builder.builder(tmp, new_one_coo.tolist(), int(robot_pose), self.node_map, 100,
-                             0, robot_id)
+        core_builder.builder(tmp, new_zero_coo.tolist(), int(robot_pose), self.node_map, 0, 100, robot_id)
+        core_builder.builder(tmp, new_one_coo.tolist(), int(robot_pose), self.node_map, 100, 0, robot_id)
         self.core_map = tmp.astype(np.int8)
         #############################################
         ############# replace with c++ ##############
