@@ -130,7 +130,10 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
                         elif reshape_map[int(i[0]), int(i[1])] == -1:
                             if abs(i[0] - current[0]) + abs(i[1] - current[1]) >= 35:
                                 q.append(i)
+<<<<<<< HEAD
 >>>>>>> fb2f9f0d08e817dd6ff8ad0f2cedb4ae305d4546
+=======
+>>>>>>> 8eadc9a554da459a7fe631af4a2aadfe6b88a6ba
                                 visited.add(i)
                                 self.generating_goal(i)
                                 return
