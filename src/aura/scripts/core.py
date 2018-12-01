@@ -4,11 +4,12 @@ import rospy
 import nav_msgs.msg
 import numpy as np
 import sys
+import os
 import threading
 import tf.transformations
 import math
 
-sys.path.insert(0, '../libs')
+sys.path.insert(0, os.getcwd()[0:os.getcwd().index("/", 6) + 1] + 'Aura_VR/src/aura/libs')
 import functions
 
 
@@ -42,21 +43,6 @@ class CoreMapBuilder:
         self.publish_thread.setName("core-publish")
         self.publish_thread.start()
 
-    def get_odom(self, odom, robot_id):
-        self.available_odom[robot_id] = odom
-        q = (
-            odom.pose.pose.orientation.x,
-            odom.pose.pose.orientation.y,
-            odom.pose.pose.orientation.z,
-            odom.pose.pose.orientation.w
-        )
-        robot_yaw = tf.transformations.euler_from_quaternion(q)
-        robot_angle = (robot_yaw[0] * 180 / math.pi, robot_yaw[1] * 180 / math.pi, robot_yaw[2] * 180 / math.pi)
-        self.robot_angle[robot_id] = robot_angle
-
-    def get_robots_map(self, robot_map, robot_id):
-        self.build_core_map(robot_map, self.available_odom[robot_id], robot_id)
-
     def publish_to_core(self):
         while not rospy.is_shutdown():
             if not self.start:
@@ -86,10 +72,13 @@ class CoreMapBuilder:
         robot_pose = self.convert_from_robot_to_map(odom.pose.pose.position.y, odom.pose.pose.position.x)
         new_zero_coo = np.where(map1 == 0)[0]
         new_one_coo = np.where(map1 == 100)[0]
-        tmp = self.core_map.astype(np.float64)
-        functions.builder(tmp, new_zero_coo.tolist(), int(robot_pose), self.node_map, 0, 100, robot_id)
-        functions.builder(tmp, new_one_coo.tolist(), int(robot_pose), self.node_map, 100, 0, robot_id)
-        self.core_map = tmp.astype(np.int8)
+        tmp = self.core_map.astype(np.float64).copy()
+        functions.builder(tmp, new_zero_coo.tolist(), int(robot_pose), self.node_map, 0, 100, robot_id,
+                          self.base_map_info.width)
+        self.core_map = tmp.astype(np.int8).copy()
+        functions.builder(tmp, new_one_coo.tolist(), int(robot_pose), self.node_map, 100, 0, robot_id,
+                          self.base_map_info.width)
+        self.core_map = tmp.astype(np.int8).copy()
         #############################################
         ############# replace with c++ ##############
         # for coordinate in new_zero_coo.tolist():
@@ -153,6 +142,22 @@ class CoreMapBuilder:
         #             new_id = self.node_map[coordinate][0]
         #             self.node_map[coordinate] = (new_one_coo, distance)
         ######################################################
+
+    # Callbacks
+    def get_odom(self, odom, robot_id):
+        self.available_odom[robot_id] = odom
+        q = (
+            odom.pose.pose.orientation.x,
+            odom.pose.pose.orientation.y,
+            odom.pose.pose.orientation.z,
+            odom.pose.pose.orientation.w
+        )
+        robot_yaw = tf.transformations.euler_from_quaternion(q)
+        robot_angle = (robot_yaw[0] * 180 / math.pi, robot_yaw[1] * 180 / math.pi, robot_yaw[2] * 180 / math.pi)
+        self.robot_angle[robot_id] = robot_angle
+
+    def get_robots_map(self, robot_map, robot_id):
+        self.build_core_map(robot_map, self.available_odom[robot_id], robot_id)
 
     def convert_from_robot_to_map(self, robot_y, robot_x):
         map_x = round((robot_x - self.base_map_info.origin.position.x) / self.base_map_info.resolution)

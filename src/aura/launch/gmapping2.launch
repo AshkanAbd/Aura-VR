@@ -19,15 +19,15 @@
         <param name="srt" value="0.0" />
         <param name="str" value="0.0" />
         <param name="stt" value="0.0" />
-        <param name="map_update_interval" value="0.1"/>
+        <param name="map_update_interval" value="0.2"/>
         <param name="maxUrange" value="29"/>
         <param name="maxRange" value="30.4"/>
         <!---->
         <param name="linearUpdate" value="0.01"/>
         <param name="angularUpdate" value="0.01"/>
         <param name="iterations" value="0"/>
-        <param name="delta" value="0.25"/>
-        <param name="temporalUpdate" value="1" />
+        <param name="delta" value="0.3"/>
+        <!--param name="temporalUpdate" value="1" /-->
         <param name="particles" value="10"/>
         <param name="sigma" value="0.05" />
         <param name="kernelSize" value="11" />

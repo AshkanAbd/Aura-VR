@@ -23,34 +23,38 @@
 namespace py = pybind11;
 
 
+py::int_ get_euclidean_distance(int x1, int y1, int x2, int y2) {
+    return py::int_(static_cast<int>(sqrt(pow((x1 - x2), 2) + pow((y1 - y2), 2))));
+}
+
 void builder(Eigen::Ref<Eigen::VectorXd> core_map, const std::vector<ul> &coordinates, const int &robot_pose,
-             py::dict &&node_map, const int &condition1, const int &condition2, const std::string &robot_id) {
+             py::dict &&node_map, const int &condition1, const int &condition2, const std::string &robot_id,
+             int map_width) {
     ul *arr = (ul *) malloc(sizeof(ul) * coordinates.size());
+    int robot_x = robot_pose / map_width;
+    int robot_y = robot_pose % map_width;
     std::copy(coordinates.begin(), coordinates.end(), arr);
     for (ul i = 0; i < coordinates.size(); ++i) {
         ul coordinate = *(arr + i);
+        int coordinate_x = static_cast<int>(coordinate / map_width);
+        int coordinate_y = static_cast<int>(coordinate % map_width);
         auto coordinate_i = py::int_(coordinate);
-        ul distance = static_cast<unsigned long>(abs(static_cast<int>(coordinate - robot_pose)));
+        py::int_ distance = get_euclidean_distance(robot_x, robot_y, coordinate_x, coordinate_y);
         auto value = py::make_tuple(robot_id, distance);
         if (core_map(coordinate) == -1) {
             core_map(coordinate) = condition1;
             node_map[coordinate_i] = value;
         } else if (core_map(coordinate) == condition2) {
             py::tuple old = node_map[coordinate_i];
-            py::str old_id1(old[0]);
-            std::string old_id(old_id1);
-            if (old_id == robot_id) {
+            py::int_ old_dis(old[1]);
+            if (old_dis > distance) {
                 core_map(coordinate) = condition1;
                 node_map[coordinate_i] = value;
-            } else {
-                if (old[1].ref_count() > distance) {
-                    core_map(coordinate) = condition1;
-                    node_map[coordinate_i] = value;
-                }
             }
         } else {
             py::tuple old = node_map[coordinate_i];
-            if (old[1].ref_count() > distance) {
+            py::int_ old_dis(old[1]);
+            if (old_dis > distance) {
                 core_map(coordinate) = condition1;
                 node_map[coordinate_i] = value;
             }
@@ -103,8 +107,7 @@ void detect_frontiers(int start, py::set &&frontier_set, Eigen::Ref<Eigen::Vecto
                     queue.push_back(neighbor);
                 } else if (core_map(neighbor) == -1) {
                     core_map(neighbor) = 255;
-                    auto tuple = py::make_tuple(neighbor);
-                    frontier_set.add(tuple);
+                    frontier_set.add(neighbor);
                 }
             }
         }
