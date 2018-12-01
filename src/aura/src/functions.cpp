@@ -18,6 +18,7 @@
 #include <Python.h>
 
 #define ul unsigned long
+#define int_pair std::pair<int,int>
 
 namespace py = pybind11;
 
@@ -76,8 +77,46 @@ std::vector<std::string> get_topics(const std::string &map_topic, const std::str
     return result;
 }
 
-PYBIND11_MODULE(core_builder, m) {
+
+std::vector<int> get_neighbors(int x, int col_count) {
+    std::vector<int> des;
+    des.emplace_back(x - col_count);
+    des.emplace_back(x + 1);
+    des.emplace_back(x + col_count);
+    des.emplace_back(x - 1);
+    return des;
+}
+
+void detect_frontiers(int start, py::set &&frontier_set, Eigen::Ref<Eigen::VectorXd> core_map, int col_count) {
+    std::vector<int> queue;
+    std::vector<int> visited;
+    int start_node(start);
+    queue.push_back(start_node);
+    int current;
+    while (!queue.empty()) {
+        current = queue.front();
+        queue.erase(queue.begin());
+        for (const auto neighbor : get_neighbors(current, col_count)) {
+            if ((std::find(queue.begin(), queue.end(), neighbor) == queue.end()) &&
+                (std::find(visited.begin(), visited.end(), neighbor) == visited.end())) {
+                if (core_map(neighbor) == 0) {
+                    queue.push_back(neighbor);
+                } else if (core_map(neighbor) == -1) {
+                    core_map(neighbor) = 255;
+                    auto tuple = py::make_tuple(neighbor);
+                    frontier_set.add(tuple);
+                }
+            }
+        }
+        visited.push_back(current);
+    }
+}
+
+
+PYBIND11_MODULE(functions, m) {
     m.def("builder", &builder, "Core_builder");
 
     m.def("get_topics", &get_topics, "Get_Topics");
+
+    m.def("detect_frontiers", &detect_frontiers, "BFS_Algorithm");
 }

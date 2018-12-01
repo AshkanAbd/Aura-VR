@@ -9,7 +9,7 @@ import tf.transformations
 import math
 
 sys.path.insert(0, '../libs')
-import core_builder
+import functions
 
 
 class CoreMapBuilder:
@@ -87,8 +87,8 @@ class CoreMapBuilder:
         new_zero_coo = np.where(map1 == 0)[0]
         new_one_coo = np.where(map1 == 100)[0]
         tmp = self.core_map.astype(np.float64)
-        core_builder.builder(tmp, new_zero_coo.tolist(), int(robot_pose), self.node_map, 0, 100, robot_id)
-        core_builder.builder(tmp, new_one_coo.tolist(), int(robot_pose), self.node_map, 100, 0, robot_id)
+        functions.builder(tmp, new_zero_coo.tolist(), int(robot_pose), self.node_map, 0, 100, robot_id)
+        functions.builder(tmp, new_one_coo.tolist(), int(robot_pose), self.node_map, 100, 0, robot_id)
         self.core_map = tmp.astype(np.int8)
         #############################################
         ############# replace with c++ ##############
@@ -160,7 +160,7 @@ class CoreMapBuilder:
         return (map_y * self.base_map_info.width) + map_x
 
     def check_robots(self, map_topic, core_topic):
-        robots = core_builder.get_topics(map_topic, core_topic)
+        robots = functions.get_topics(map_topic, core_topic)
         for i in robots:
             robot = None
             try:
@@ -173,5 +173,5 @@ class CoreMapBuilder:
 
 
 if __name__ == '__main__':
-    CoreMapBuilder('map', 'core', 'core_builder')
+    CoreMapBuilder('map', 'core', 'functions')
     rospy.spin()
