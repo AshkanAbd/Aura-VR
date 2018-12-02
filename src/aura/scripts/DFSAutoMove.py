@@ -10,6 +10,7 @@ import rospy
 import aura.msg
 import time
 import geometry_msgs.msg
+import math
 
 
 class DFSAutoMove(auto_move_base.AutoMoveBase, object):
@@ -69,79 +70,73 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         return True
 
     def get_neighbors(self, x, y):
-        neighbors = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
+        neighbors = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1), (x - 1, y + 1), (x + 1, y - 1), (x + 1, y + 1),
+                     (x - 1, y - 1)]
         return neighbors
 
     def bfsihdir(self, blockindex):
-
         robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
                                                           , self.robot_odometry.pose.pose.position.x)
         reshape_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.width)
         visited = set()
         q = []
+        p = []
         current = (robot_y, robot_x)
         q.append(current)
         while len(q) != 0:
             current_sihdir = q.pop(0)
             visited.add(current_sihdir)
             for i in self.get_neighbors(int(current_sihdir[0]), int(current_sihdir[1])):
-<<<<<<< HEAD
-                if i not in q :
-                    try:
-                        if i not in visited:
-                            if reshape_map[int(i[0]), int(i[1])] == 100:
-                                visited.add([(i[0]+1 , i[1])])
-                                visited.add([(i[0]+1 , i[1]+1)])
-                                visited.add([(i[0]+2 , i[1]+2)])
-                                visited.add([(i[0]-2 , i[1]-2)])
-                                visited.add([(i[0]+2 , i[1]-2)])
-                                visited.add([(i[0] , i[1]+2)])
-                                visited.add([(i[0]-2 , i[1])])
-                                visited.add([(i[0]+2 , i[1])])
-                                visited.add([(i[0] , i[1]-2)])
-                                visited.add([(i[0]-2 , i[1]+2)])
-                                visited.add([(i[0]+1 , i[1]-1)])
-                                visited.add([(i[0]-1 , i[1]-1)])
-                                visited.add([(i[0]-1 , i[1]+1)])
-                                visited.add([(i[0] , i[1]+1)])
-                                visited.add([(i[0]-1 , i[1])])
-                                visited.add([(i[0], i[1]-1)])
-=======
-                if i not in q:
+                if i not in q and i not in p:
                     if i not in visited:
                         if reshape_map[int(i[0]), int(i[1])] == 100:
-                            visited.add(reshape_map[(i[0] + 1, i[1])])
-                            visited.add(reshape_map[(i[0] + 1, i[1] + 1)])
-                            visited.add(reshape_map[(i[0] + 2, i[1] + 2)])
-                            visited.add(reshape_map[(i[0] - 2, i[1] - 2)])
-                            visited.add(reshape_map[(i[0] + 2, i[1] - 2)])
-                            visited.add(reshape_map[(i[0], i[1] + 2)])
-                            visited.add(reshape_map[(i[0] - 2, i[1])])
-                            visited.add(reshape_map[(i[0] + 2, i[1])])
-                            visited.add(reshape_map[(i[0], i[1] - 2)])
-                            visited.add(reshape_map[(i[0] - 2, i[1] + 2)])
-                            visited.add(reshape_map[(i[0] + 1, i[1] - 1)])
-                            visited.add(reshape_map[(i[0] - 1, i[1] - 1)])
-                            visited.add(reshape_map[(i[0] - 1, i[1] + 1)])
-                            visited.add(reshape_map[(i[0], i[1] + 1)])
-                            visited.add(reshape_map[(i[0] - 1, i[1])])
-                            visited.add(reshape_map[(i[0], i[1] - 1)])
-                            visited.add(i)
+                            for k in xrange(-3, 3):
+                                for l in range(-3, 3):
+                                    visited.add((i[0] + k, i[1] + l))
                         elif reshape_map[int(i[0]), int(i[1])] == -1:
                             if abs(i[0] - current[0]) + abs(i[1] - current[1]) >= 35:
-                                q.append(i)
-<<<<<<< HEAD
->>>>>>> fb2f9f0d08e817dd6ff8ad0f2cedb4ae305d4546
-=======
->>>>>>> 8eadc9a554da459a7fe631af4a2aadfe6b88a6ba
-                                visited.add(i)
-                                self.generating_goal(i)
-                                return
+                                if self.da_sihdir_da(i) == True:
+                                    if self.fucking_block(i) == True:
+                                        self.generating_goal(i)
+                                        return
+                                    else:
+                                        p.append(i)
                             else:
                                 q.append(i)
-
                         elif (reshape_map[int(i[0]), int(i[1])] == 0):
                             q.append(i)
+        min = 1000000
+        index = -1
+        i = 0
+        for node in p:
+            distance = math.sqrt(math.pow(node[1] - robot_x, 2) + math.pow(node[0] - robot_y, 2))
+            if distance < min:
+                min = distance
+                index = i
+            i += 1
+        self.generating_goal(p[index])
+
+    def da_sihdir_da(self, k):
+        a = []
+        reshape_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.width)
+        for i in xrange(-2, 2):
+            for j in xrange(-2, 2):
+                a.append(reshape_map[(k[0] + i), (k[1] + j)])
+        b = np.asarray(a)
+        n_shown = np.where(b == 100)
+        if len(n_shown[0]) == 0:
+            return True
+
+    def fucking_block(self, k):
+        a = []
+        reshape_map = np.asarray(self.map_info.data).reshape(self.map_info.info.height, self.map_info.info.width)
+        for i in xrange(-4, 4):
+            for j in xrange(-4, 4):
+                a.append(reshape_map[(k[0] + i), (k[1] + j)])
+        b = np.asarray(a)
+        n_shown = np.where(b == -1)
+        if len(n_shown[0]) >= 15:
+            return True
 
     # goal status--- PENDING=0--- ACTIVE=1-- PREEMPTED=2-- SUCCEEDED=3-- ABORTED=4-- REJECTED=5-- PREEMPTING=6-- RECALLING=7-- RECALLED=8-- LOST=9
     def goal_status(self, data1, data2):
