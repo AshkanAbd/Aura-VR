@@ -29,15 +29,17 @@ class CoreMapBuilder:
     rate = None
     start = False
     publish_thread = None
+    publish_map = None
 
     def __init__(self, map_topic, core_topic, node_name):
         rospy.init_node(node_name)
         self.check_robots(map_topic, core_topic)
         for robot in self.available_robots:
             self.available_odom[robot] = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
-            rospy.Subscriber('/' + robot + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map, robot, 1000)
-            rospy.Subscriber('/' + robot + '/odom', nav_msgs.msg.Odometry, self.get_odom, robot, 1000)
-        self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=100)
+            rospy.Subscriber('/' + robot + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map, robot,
+                             queue_size=100000)
+            rospy.Subscriber('/' + robot + '/odom', nav_msgs.msg.Odometry, self.get_odom, robot, queue_size=100000)
+        self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=1000)
         self.rate = rospy.Rate(10)
         self.publish_thread = threading.Thread(target=self.publish_to_core)
         self.publish_thread.setName("core-publish")
@@ -45,12 +47,12 @@ class CoreMapBuilder:
 
     def publish_to_core(self):
         while not rospy.is_shutdown():
-            if not self.start:
+            if not self.start or self.publish_map is None:
                 continue
             data_map = nav_msgs.msg.OccupancyGrid()
             data_map.header = self.base_map_header
             data_map.info = self.base_map_info
-            data_map.data = self.core_map.tolist()
+            data_map.data = self.publish_map.tolist()
             data_map.header.stamp = rospy.Time.now()
             self.core_publisher.publish(data_map)
             self.rate.sleep()
@@ -72,6 +74,7 @@ class CoreMapBuilder:
         robot_pose = self.convert_from_robot_to_map(odom.pose.pose.position.y, odom.pose.pose.position.x)
         new_zero_coo = np.where(map1 == 0)[0]
         new_one_coo = np.where(map1 == 100)[0]
+        self.publish_map = self.core_map.copy()
         tmp = self.core_map.astype(np.float64).copy()
         functions.builder(tmp, new_zero_coo.tolist(), int(robot_pose), self.node_map, 0, 100, robot_id,
                           self.base_map_info.width)
@@ -79,6 +82,7 @@ class CoreMapBuilder:
         functions.builder(tmp, new_one_coo.tolist(), int(robot_pose), self.node_map, 100, 0, robot_id,
                           self.base_map_info.width)
         self.core_map = tmp.astype(np.int8).copy()
+        self.publish_map = self.core_map.copy()
         #############################################
         ############# replace with c++ ##############
         # for coordinate in new_zero_coo.tolist():

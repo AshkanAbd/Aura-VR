@@ -30,15 +30,15 @@ find_package(OpenCV REQUIRED)
 ##################################
 # for pybind temprary
 
-find_package(pybind11 REQUIRED)
-
-add_executable(core_builder src/functions.cpp)
-
-include_directories(core_builder ${PYTHON_INCLUDE_DIRS})
-
-target_link_libraries(core_builder ${PYTHON_LIBRARIES})
-
-target_include_directories(core_builder PUBLIC ${PYTHON_INCLUDE_DIRS})
+#find_package(pybind11 REQUIRED)
+#
+#add_executable(core_builder src/functions.cpp)
+#
+#include_directories(core_builder ${PYTHON_INCLUDE_DIRS})
+#
+#target_link_libraries(core_builder ${PYTHON_LIBRARIES})
+#
+#target_include_directories(core_builder PUBLIC ${PYTHON_INCLUDE_DIRS})
 
 ##################################
 
