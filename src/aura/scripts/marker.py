@@ -82,7 +82,7 @@ def main():
     rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
     rospy.Subscriber('/core/mark_place', std_msgs.msg.Float64MultiArray, get_mark_place)
     marker_controller = MarkerController('robot0')
-    marker_controller.create_and_add_marker(255, 0, 0, -19.9999988079 , 34.00000199682)
+    marker_controller.create_and_add_marker(255, 0, 0, -4.25,-5.0)
     rospy.spin()
 
 

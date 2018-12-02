@@ -125,7 +125,6 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
                                 q.append(i)
                         elif (self.reshaped_map[int(i[0]), int(i[1])] == 0):
                             q.append(i)
-
         min = 1000000
         index = -1
         i = 0
@@ -135,7 +134,6 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
                 min = distance
                 index = i
             i += 1
-        # if index != -1:
         self.generating_goal(p[index])
 
     def da_sihdir_da(self, k):

@@ -14,9 +14,10 @@ import functions
 
 
 class CoreMapBuilder:
-    available_odom = {}
-    robot_angle = {}
     available_robots = set()
+    available_odom = {}
+    available_maps = {}
+    robot_angle = {}
     core_map = np.array([])
     # robot_evolution = {}
     node_map = {}
@@ -34,16 +35,34 @@ class CoreMapBuilder:
     def __init__(self, map_topic, core_topic, node_name):
         rospy.init_node(node_name)
         self.check_robots(map_topic, core_topic)
-        for robot in self.available_robots:
-            self.available_odom[robot] = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
-            rospy.Subscriber('/' + robot + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map, robot,
-                             queue_size=100000)
-            rospy.Subscriber('/' + robot + '/odom', nav_msgs.msg.Odometry, self.get_odom, robot, queue_size=100000)
-        self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=1000)
-        self.rate = rospy.Rate(10)
-        self.publish_thread = threading.Thread(target=self.publish_to_core)
-        self.publish_thread.setName("core-publish")
-        self.publish_thread.start()
+        # for robot in self.available_robots:
+        #     self.available_odom[robot] = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
+        #     rospy.Subscriber('/' + robot + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map, robot,
+        #                      queue_size=100000)
+        #     rospy.Subscriber('/' + robot + '/odom', nav_msgs.msg.Odometry, self.get_odom, robot, queue_size=100000)
+        # self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=1000)
+        # self.rate = rospy.Rate(10)
+        # self.publish_thread = threading.Thread(target=self.publish_to_core)
+        # self.publish_thread.setName("core-publish")
+        # self.publish_thread.start()
+        self.rate = rospy.Rate(3)
+        self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=10000)
+        self.start_building()
+
+    def start_building(self):
+        while not rospy.is_shutdown():
+            for robot in self.available_robots:
+                self.get_odom(rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry),robot)
+                self.available_maps[robot] = rospy.wait_for_message('/' + robot + '/map', nav_msgs.msg.OccupancyGrid)
+            for robot in self.available_robots:
+                self.build_core_map(self.available_maps[robot], self.available_odom[robot], robot)
+            data_map = nav_msgs.msg.OccupancyGrid()
+            data_map.header = self.base_map_header
+            data_map.info = self.base_map_info
+            data_map.data = self.publish_map.tolist()
+            data_map.header.stamp = rospy.Time.now()
+            self.core_publisher.publish(data_map)
+            self.rate.sleep()
 
     def publish_to_core(self):
         while not rospy.is_shutdown():
