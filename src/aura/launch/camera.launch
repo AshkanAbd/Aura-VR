@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robotname" default="robot0"/>
+    <group ns="$(arg robotname)">
+        <node pkg="aura" type="dead_victim_detector" name="dead_victim_detector" respawn="true" output="screen">
+            <param name="robotname" value="$(arg robotname)"/>
+        </node>
+        <node pkg="aura" type="hot_victim_detector" name="hot_victim_detector" respawn="true" output="screen">
+            <param name="robotname" value="$(arg robotname)"/>
+        </node>
+    </group>
+</launch>

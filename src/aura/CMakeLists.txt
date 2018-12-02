@@ -32,7 +32,7 @@ find_package(OpenCV REQUIRED)
 
 #find_package(pybind11 REQUIRED)
 #
-#add_executable(core_builder src/core_builder.cpp)
+#add_executable(core_builder src/functions.cpp)
 #
 #include_directories(core_builder ${PYTHON_INCLUDE_DIRS})
 #
