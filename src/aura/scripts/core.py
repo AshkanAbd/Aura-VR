@@ -31,6 +31,7 @@ class CoreMapBuilder:
     map_shape = None
     rate = None
     cmd_controller = {}
+    move_thread_lock = {}
     start = False
     publish_thread = None
     publish_map = None
@@ -61,11 +62,12 @@ class CoreMapBuilder:
             for robot in self.available_robots:
                 self.get_odom(rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry), robot)
                 self.available_maps[robot] = rospy.wait_for_message('/' + robot + '/map', nav_msgs.msg.OccupancyGrid)
+                self.move_thread_lock[robot] = False
             for robot in self.available_robots:
                 self.build_core_map(self.available_maps[robot], self.available_odom[robot], robot)
             data_map.header = self.base_map_header
             data_map.info = self.base_map_info
-            data_map.data = self.publish_map.tolist()
+            data_map.data = self.core_map.tolist()
             data_map.header.stamp = rospy.Time.now()
             self.core_publisher.publish(data_map)
             self.rate.sleep()
@@ -91,8 +93,9 @@ class CoreMapBuilder:
             self.base_map_header = robot_map.header
             self.start = True
         if robot_id in self.robot_angle:
-            if -5 > self.robot_angle[robot_id][1] > 5:
-                self.build_cmd_thread(robot_id)
+            if abs(self.robot_angle[robot_id][1]) > 25:
+                if not self.move_thread_lock[robot_id]:
+                    self.build_cmd_thread(robot_id)
                 return
         if self.base_map_info.height != robot_map.info.height and self.base_map_info.width != robot_map.info.width:
             print("Ignore")
@@ -192,32 +195,10 @@ class CoreMapBuilder:
                 self.available_robots.add(i)
 
     def build_cmd_thread(self, robot):
-        cmd_thread = threading.Thread(target=self.move_forward, name=robot + "_move_forward", args=robot)
+        self.move_thread_lock[robot] = True
+        cmd_thread = threading.Thread(target=move_forward, name=robot + "_move_forward"
+                                      , args=(robot, self.cmd_controller, self.move_thread_lock))
         cmd_thread.start()
-
-    def move_forward(self, robot):
-        print("moving forward")
-        twist = geometry_msgs.msg.Twist()
-        twist.linear.x = 0.3
-        twist.linear.y = 0
-        twist.linear.z = 0
-        twist.angular.x = 0
-        twist.angular.y = 0
-        twist.angular.z = 0
-        for i in xrange(5):
-            self.cmd_controller[robot][0].publish(twist)
-            self.cmd_controller[robot][1].sleep()
-        time.sleep(4.5)
-        twist = geometry_msgs.msg.Twist()
-        twist.linear.x = 0
-        twist.linear.y = 0
-        twist.linear.z = 0
-        twist.angular.x = 0
-        twist.angular.y = 0
-        twist.angular.z = 0
-        for i in xrange(5):
-            self.cmd_controller[robot][0].publish(twist)
-            self.cmd_controller[robot][1].sleep()
 
     # Callbacks
     def get_odom(self, odom, robot_id):
@@ -246,6 +227,32 @@ class CoreMapBuilder:
         map_x = round((robot_x - self.base_map_info.origin.position.x) // self.base_map_info.resolution)
         map_y = round((robot_y - self.base_map_info.origin.position.y) // self.base_map_info.resolution)
         return map_y, map_x
+
+
+def move_forward(robot, cmd_controller, move_thread_lock):
+    print(robot+" moving forward")
+    twist = geometry_msgs.msg.Twist()
+    twist.linear.x = 0.5
+    twist.linear.y = 0
+    twist.linear.z = 0
+    twist.angular.x = 0
+    twist.angular.y = 0
+    twist.angular.z = 0
+    for i in xrange(5):
+        cmd_controller[robot][0].publish(twist)
+        cmd_controller[robot][1].sleep()
+    time.sleep(4)
+    twist = geometry_msgs.msg.Twist()
+    twist.linear.x = 0
+    twist.linear.y = 0
+    twist.linear.z = 0
+    twist.angular.x = 0
+    twist.angular.y = 0
+    twist.angular.z = 0
+    for i in xrange(5):
+        cmd_controller[robot][0].publish(twist)
+        cmd_controller[robot][1].sleep()
+    move_thread_lock[robot] = False
 
 
 if __name__ == '__main__':

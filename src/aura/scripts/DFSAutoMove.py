@@ -57,7 +57,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
         if self.reshaped_map[int(map_goal_y), int(map_goal_x)] != -1:
             self.client.cancel_all_goals()
-        if not self.da_sihdir_da((self.goal_y, self.goal_x)):
+        if not self.da_sihdir_da((map_goal_y, map_goal_x)):
             self.aborted_list.add((self.goal_x, self.goal_y))
             self.client.cancel_all_goals()
 
@@ -137,22 +137,19 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         self.generating_goal(p[index])
 
     def da_sihdir_da(self, k):
-        a = []
+        a = np.empty((5, 5), np.int8)
         for i in xrange(-2, 3):
             for j in xrange(-2, 3):
-                a.append(self.reshaped_map[int(k[0] + i), int(k[1] + j)])
-        b = np.asarray(a)
-        n_shown = np.where(b == 100)
-        if len(n_shown[0]) == 0:
+                a[i + 2, j + 2] = self.reshaped_map[int(k[0] + i), int(k[1] + j)]
+        if a.max() != 100:
             return True
         return False
 
     def fucking_block(self, k):
-        a = []
+        b = np.empty((8, 8), np.int8)
         for i in xrange(-4, 4):
             for j in xrange(-4, 4):
-                a.append(self.reshaped_map[(k[0] + i), (k[1] + j)])
-        b = np.asarray(a)
+                b[i + 4, j + 4] = self.reshaped_map[(k[0] + i), (k[1] + j)]
         n_shown = np.where(b == -1)
         if len(n_shown[0]) >= 15:
             return True
