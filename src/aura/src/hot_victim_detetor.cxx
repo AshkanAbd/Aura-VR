@@ -60,7 +60,9 @@ void process_img1() {
             cv::Mat frame3;
             cv::UMat frame, frame1, frame2, normal_gray, normal_thresh, thermal_img1, frame_edge;
             std::vector<std::vector<cv::Point>> contours;
-            cv::cvtColor(normal_img, frame1, cv::COLOR_BGR2GRAY);
+            try {
+                cv::cvtColor(normal_img, frame1, cv::COLOR_BGR2GRAY);
+            } catch (std::exception &e) {}
             cv::medianBlur(frame1, frame2, 5);
 //            cv::Laplacian(frame2, frame_edge, -1);
             cv::Canny(frame2, frame_edge, 100, 200);
@@ -79,7 +81,7 @@ void process_img1() {
             std::sort(areas.rbegin(), areas.rend());
             std::vector<cv::Point> main_contour = contours_area[areas[0]];
             cv::Rect main_rect = cv::boundingRect(main_contour);
-            if (main_rect.height < 36) continue;
+//            if (main_rect.height < 36) continue;
             std_msgs::Float64MultiArray info_array;
             info_array.data.push_back(main_rect.x);
             info_array.data.push_back(main_rect.y);
@@ -103,12 +105,15 @@ void process_img() {
             cv::Mat frame3;
             cv::UMat frame, frame1, frame2, normal_gray, normal_thresh, thermal_img1, frame_edge;
             std::vector<std::vector<cv::Point>> contours;
-            cv::cvtColor(normal_img, normal_gray, cv::COLOR_BGR2GRAY);
+            try {
+                cv::cvtColor(normal_img, normal_gray, cv::COLOR_BGR2GRAY);
+            } catch (std::exception &e) {}
             cv::threshold(normal_gray, normal_thresh, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
             cv::pyrUp(thermal_img, thermal_img1);
             cv::bitwise_and(thermal_img1, thermal_img1, frame1, normal_thresh);
             cv::medianBlur(frame1, frame2, 5);
-            cv::Laplacian(frame2, frame_edge, -1);
+//            cv::Laplacian(frame2, frame_edge, -1);
+            cv::Canny(frame2, frame_edge, 100, 200);
             cv::findContours(frame_edge, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
             std::map<double, std::vector<cv::Point>> contours_area;
             frame2.copyTo(frame3);
@@ -150,6 +155,6 @@ int main(int argc, char **argv) {
     ros::Subscriber thermal_subscriber = node_handle.subscribe("/" + name_space + "/camera/thermal/image_raw", 1000,
                                                                get_thermal_image);
     hot_victim_publisher = node_handle.advertise<std_msgs::Float64MultiArray>("/" + name_space + "/victims/hot", 1000);
-    std::thread process_thread(process_img1);
+    std::thread process_thread(process_img);
     ros::spin();
 }
