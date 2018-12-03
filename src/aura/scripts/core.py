@@ -56,13 +56,13 @@ class CoreMapBuilder:
         self.start_building()
 
     def start_building(self):
+        data_map = nav_msgs.msg.OccupancyGrid()
         while not rospy.is_shutdown():
             for robot in self.available_robots:
                 self.get_odom(rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry), robot)
                 self.available_maps[robot] = rospy.wait_for_message('/' + robot + '/map', nav_msgs.msg.OccupancyGrid)
             for robot in self.available_robots:
                 self.build_core_map(self.available_maps[robot], self.available_odom[robot], robot)
-            data_map = nav_msgs.msg.OccupancyGrid()
             data_map.header = self.base_map_header
             data_map.info = self.base_map_info
             data_map.data = self.publish_map.tolist()
