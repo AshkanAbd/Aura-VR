@@ -109,8 +109,8 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
                 if i not in q and i not in p:
                     if i not in visited:
                         if self.reshaped_map[int(i[0]), int(i[1])] == 100:
-                            for k in xrange(-3, 3):
-                                for l in range(-3, 3):
+                            for k in xrange(-3, 4):
+                                for l in xrange(-3, 4):
                                     visited.add((i[0] + k, i[1] + l))
                         elif self.reshaped_map[int(i[0]), int(i[1])] == -1:
                             if abs(i[0] - current[0]) + abs(i[1] - current[1]) >= 25:
@@ -138,8 +138,8 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
 
     def da_sihdir_da(self, k):
         a = []
-        for i in xrange(-2, 2):
-            for j in xrange(-2, 2):
+        for i in xrange(-2, 3):
+            for j in xrange(-2, 3):
                 a.append(self.reshaped_map[int(k[0] + i), int(k[1] + j)])
         b = np.asarray(a)
         n_shown = np.where(b == 100)

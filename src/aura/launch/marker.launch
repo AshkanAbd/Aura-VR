@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robotname" default="robot0"/>
+    <group ns="core">
+        <node pkg="aura" type="marker.py" name="$(arg robotname)_victim_marker" args="$(arg robotname)"
+              output="screen"/>
+    </group>
+</launch>
+

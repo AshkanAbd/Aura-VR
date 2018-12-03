@@ -26,11 +26,7 @@
         <param name="linearUpdate" value="0.01"/>
         <param name="angularUpdate" value="0.01"/>
         <param name="iterations" value="0"/>
-<<<<<<< HEAD
         <param name="delta" value="0.3"/>
-=======
-        <param name="delta" value="0.25"/>
->>>>>>> 520d9e124552658f3234c195513358c76d63e241
         <!--param name="temporalUpdate" value="1" /-->
         <param name="particles" value="10"/>
         <param name="sigma" value="0.05" />

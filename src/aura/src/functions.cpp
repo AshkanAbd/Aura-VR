@@ -28,35 +28,35 @@ double get_euclidean_distance(long x1, long y1, long x2, long y2) {
 }
 
 void builder(Eigen::Ref<Eigen::VectorXd> core_map, const std::vector<ul> &coordinates, const long &robot_pose,
-             py::dict &&node_map, const int &condition1, const int &condition2, const std::string &robot_id,
+             py::dict &&node_map, const int &condition, const std::string &robot_id,
              long map_width) {
     ul *arr = (ul *) malloc(sizeof(ul) * coordinates.size());
-    long robot_x = robot_pose / map_width;
-    long robot_y = robot_pose % map_width;
+    long robot_y = robot_pose / map_width;
+    long robot_x = robot_pose % map_width;
     std::copy(coordinates.begin(), coordinates.end(), arr);
     ul *end = (arr + coordinates.size());
     while (arr != end) {
         ul coordinate = *(arr++);
-        int coordinate_x = static_cast<int>(coordinate / map_width);
-        int coordinate_y = static_cast<int>(coordinate % map_width);
+        long coordinate_y = (coordinate / map_width);
+        long coordinate_x = (coordinate % map_width);
         auto coordinate_i = py::int_(coordinate);
         double distance = get_euclidean_distance(robot_x, robot_y, coordinate_x, coordinate_y);
         auto value = py::make_tuple(robot_id, distance);
         if (core_map(coordinate) == -1) {
-            core_map(coordinate) = condition1;
+            core_map(coordinate) = condition;
             node_map[coordinate_i] = value;
-        } else if (core_map(coordinate) == condition2) {
+        } /*else if (core_map(coordinate) == condition2) {
             py::tuple old = node_map[coordinate_i];
             double old_dis = py::float_(old[1]);
             if (old_dis >= distance) {
                 core_map(coordinate) = condition1;
                 node_map[coordinate_i] = value;
             }
-        } else {
+        } */else {
             py::tuple old = node_map[coordinate_i];
             double old_dis = py::float_(old[1]);
             if (old_dis >= distance) {
-                core_map(coordinate) = condition1;
+                core_map(coordinate) = condition;
                 node_map[coordinate_i] = value;
             }
         }

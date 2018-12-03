@@ -4,6 +4,7 @@ import rospy
 import std_msgs.msg
 import nav_msgs.msg
 import numpy as np
+import sys
 import visualization_msgs.msg
 import interactive_markers.interactive_marker_server
 
@@ -81,8 +82,8 @@ def main():
     rospy.init_node("victim_marker")
     rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, get_map)
     rospy.Subscriber('/core/mark_place', std_msgs.msg.Float64MultiArray, get_mark_place)
-    marker_controller = MarkerController('robot0')
-    marker_controller.create_and_add_marker(255, 0, 0, -4.25,-5.0)
+    marker_controller = MarkerController(sys.argv[1])
+    # marker_controller.create_and_add_marker(255, 0, 0, -4.25,-5.0)
     rospy.spin()
 
 

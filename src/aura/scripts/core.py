@@ -7,7 +7,9 @@ import sys
 import os
 import threading
 import tf.transformations
+import geometry_msgs.msg
 import math
+import time
 
 sys.path.insert(0, os.getcwd()[0:os.getcwd().index("/", 6) + 1] + 'Aura_VR/src/aura/libs')
 import functions
@@ -28,6 +30,7 @@ class CoreMapBuilder:
     core_publisher = None
     map_shape = None
     rate = None
+    cmd_publishers = {}
     start = False
     publish_thread = None
     publish_map = None
@@ -45,14 +48,17 @@ class CoreMapBuilder:
         # self.publish_thread = threading.Thread(target=self.publish_to_core)
         # self.publish_thread.setName("core-publish")
         # self.publish_thread.start()
-        self.rate = rospy.Rate(3)
+        self.rate = rospy.Rate(10)
         self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=10000)
+        for robot in self.available_robots:
+            self.cmd_publishers[robot] = (rospy.Publisher('/' + robot + '/cmd_vel', geometry_msgs.msg.Twist
+                                                          , queue_size=1000), rospy.Rate(10))
         self.start_building()
 
     def start_building(self):
         while not rospy.is_shutdown():
             for robot in self.available_robots:
-                self.get_odom(rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry),robot)
+                self.get_odom(rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry), robot)
                 self.available_maps[robot] = rospy.wait_for_message('/' + robot + '/map', nav_msgs.msg.OccupancyGrid)
             for robot in self.available_robots:
                 self.build_core_map(self.available_maps[robot], self.available_odom[robot], robot)
@@ -95,11 +101,17 @@ class CoreMapBuilder:
         new_one_coo = np.where(map1 == 100)[0]
         self.publish_map = self.core_map.copy()
         tmp = self.core_map.astype(np.float64).copy()
-        functions.builder(tmp, new_zero_coo.tolist(), int(robot_pose), self.node_map, 0, 100, robot_id,
+        functions.builder(tmp, new_zero_coo.tolist(), int(robot_pose), self.node_map, 0, robot_id,
                           self.base_map_info.width)
-        self.core_map = tmp.astype(np.int8).copy()
-        functions.builder(tmp, new_one_coo.tolist(), int(robot_pose), self.node_map, 100, 0, robot_id,
+        # self.core_map = tmp.astype(np.int8).copy()
+        functions.builder(tmp, new_one_coo.tolist(), int(robot_pose), self.node_map, 100, robot_id,
                           self.base_map_info.width)
+        map_y, map_x = self.convert_from_robot_to_map1(odom.pose.pose.position.y, odom.pose.pose.position.x)
+        for i in xrange(-1, 2):
+            for j in xrange(-1, 2):
+                coordinate = int(((map_y + i) * self.base_map_info.width) + (map_x + j))
+                if tmp[coordinate] != -1:
+                    tmp[coordinate] = 0
         self.core_map = tmp.astype(np.int8).copy()
         self.publish_map = self.core_map.copy()
         #############################################
@@ -166,6 +178,42 @@ class CoreMapBuilder:
         #             self.node_map[coordinate] = (new_one_coo, distance)
         ######################################################
 
+    def check_robots(self, map_topic, core_topic):
+        robots = functions.get_topics(map_topic, core_topic)
+        for i in robots:
+            robot = None
+            try:
+                robot = rospy.wait_for_message('/' + i + '/map', nav_msgs.msg.OccupancyGrid, 2)
+            except rospy.ROSException:
+                print(i + ' is not available')
+            if robot is not None:
+                print(i + ' added to core')
+                self.available_robots.add(i)
+
+    def move_forward(self, robot):
+        print("moving forward")
+        twist = geometry_msgs.msg.Twist()
+        twist.linear.x = 2
+        twist.linear.y = 0
+        twist.linear.z = 0
+        twist.angular.x = 0
+        twist.angular.y = 0
+        twist.angular.z = 0
+        for i in xrange(5):
+            self.cmd_publishers[robot][0].publish(twist)
+            self.cmd_publishers[robot][1].sleep()
+        time.sleep(9.3)  # ~2.32 for 90 degree
+        twist = geometry_msgs.msg.Twist()
+        twist.linear.x = 0
+        twist.linear.y = 0
+        twist.linear.z = 0
+        twist.angular.x = 0
+        twist.angular.y = 0
+        twist.angular.z = 0
+        for i in xrange(5):
+            self.cmd_publishers[robot][0].publish(twist)
+            self.cmd_publishers[robot][1].sleep()
+
     # Callbacks
     def get_odom(self, odom, robot_id):
         self.available_odom[robot_id] = odom
@@ -182,22 +230,17 @@ class CoreMapBuilder:
     def get_robots_map(self, robot_map, robot_id):
         self.build_core_map(robot_map, self.available_odom[robot_id], robot_id)
 
+    #############
+    # Converts
     def convert_from_robot_to_map(self, robot_y, robot_x):
         map_x = round((robot_x - self.base_map_info.origin.position.x) / self.base_map_info.resolution)
         map_y = round((robot_y - self.base_map_info.origin.position.y) / self.base_map_info.resolution)
         return (map_y * self.base_map_info.width) + map_x
 
-    def check_robots(self, map_topic, core_topic):
-        robots = functions.get_topics(map_topic, core_topic)
-        for i in robots:
-            robot = None
-            try:
-                robot = rospy.wait_for_message('/' + i + '/map', nav_msgs.msg.OccupancyGrid, 2)
-            except rospy.ROSException:
-                print(i + ' is not available')
-            if robot is not None:
-                print(i + ' added to core')
-                self.available_robots.add(i)
+    def convert_from_robot_to_map1(self, robot_y, robot_x):
+        map_x = round((robot_x - self.base_map_info.origin.position.x) // self.base_map_info.resolution)
+        map_y = round((robot_y - self.base_map_info.origin.position.y) // self.base_map_info.resolution)
+        return map_y, map_x
 
 
 if __name__ == '__main__':

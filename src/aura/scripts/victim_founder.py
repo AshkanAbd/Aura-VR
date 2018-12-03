@@ -7,6 +7,7 @@ import tf.transformations
 import time
 import math
 import sched
+import os
 
 
 def in_range(victim, x, y, tolerance=2):
@@ -43,6 +44,10 @@ def create_data_set(data):
     return data_set
 
 
+def generate_dataset_path():
+    return os.getcwd()[0:os.getcwd().index("/", 6) + 1] + 'Aura_VR/src/aura/data/'
+
+
 class HotVictimFounder:
     y_data_file = None
     x_data_file = None
@@ -60,8 +65,8 @@ class HotVictimFounder:
 
     def __init__(self, namespace='robot0'):
         self.namespace = namespace
-        self.x_data_file = open('../data/normalize_hot_x_info.aura', 'r')
-        self.y_data_file = open('../data/normalize_hot_y_info.aura', 'r')
+        self.x_data_file = open(generate_dataset_path() + 'normalize_hot_x_info.aura', 'r')
+        self.y_data_file = open(generate_dataset_path() + 'normalize_hot_y_info.aura', 'r')
         self.y_data_set = create_data_set(self.y_data_file)
         self.x_data_set = create_data_set(self.x_data_file)
         self.schedule = sched.scheduler(time.time, time.sleep)
@@ -168,8 +173,8 @@ class DeadVictimFounder:
 
     def __init__(self, namespace='robot0'):
         self.namespace = namespace
-        self.x_data_file = open('../data/normalize_dead_x_info.aura', 'r')
-        self.y_data_file = open('../data/normalize_dead_y_info.aura', 'r')
+        self.x_data_file = open(generate_dataset_path() + 'normalize_dead_x_info.aura', 'r')
+        self.y_data_file = open(generate_dataset_path() + 'normalize_dead_y_info.aura', 'r')
         self.y_data_set = create_data_set(self.y_data_file)
         self.x_data_set = create_data_set(self.x_data_file)
         self.schedule = sched.scheduler(time.time, time.sleep)
