@@ -100,7 +100,7 @@ class CoreMapBuilder:
         robot_pose = self.convert_from_robot_to_map(odom.pose.pose.position.y, odom.pose.pose.position.x)
         new_zero_coo = np.where(map1 == 0)[0]
         new_one_coo = np.where(map1 == 100)[0]
-        self.publish_map = self.core_map.copy()
+        # self.publish_map = self.core_map.copy()
         tmp = self.core_map.astype(np.float64).copy()
         functions.builder(tmp, new_zero_coo.tolist(), int(robot_pose), self.node_map, 0, robot_id,
                           self.base_map_info.width)
@@ -114,7 +114,7 @@ class CoreMapBuilder:
                 if tmp[coordinate] != -1:
                     tmp[coordinate] = 0
         self.core_map = tmp.astype(np.int8).copy()
-        self.publish_map = self.core_map.copy()
+        # self.publish_map = self.core_map.copy()
         #############################################
         ############# replace with c++ ##############
         # for coordinate in new_zero_coo.tolist():

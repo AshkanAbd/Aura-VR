@@ -22,25 +22,20 @@
 
 namespace py = pybind11;
 
-
-double get_euclidean_distance(long x1, long y1, long x2, long y2) {
-    return (sqrt(pow((x1 - x2), 2) + pow((y1 - y2), 2)));
-}
-
 void builder(Eigen::Ref<Eigen::VectorXd> core_map, const std::vector<ul> &coordinates, const long &robot_pose,
              py::dict &&node_map, const int &condition, const std::string &robot_id,
              long map_width) {
     ul *arr = (ul *) malloc(sizeof(ul) * coordinates.size());
-    long robot_y = robot_pose / map_width;
-    long robot_x = robot_pose % map_width;
     std::copy(coordinates.begin(), coordinates.end(), arr);
     ul *end = (arr + coordinates.size());
+    long robot_y = robot_pose / map_width;
+    long robot_x = robot_pose % map_width;
     while (arr != end) {
         ul coordinate = *(arr++);
         long coordinate_y = (coordinate / map_width);
         long coordinate_x = (coordinate % map_width);
         auto coordinate_i = py::int_(coordinate);
-        double distance = get_euclidean_distance(robot_x, robot_y, coordinate_x, coordinate_y);
+        double distance = sqrt(pow((robot_x - coordinate_x), 2) + pow((robot_y - coordinate_y), 2));
         auto value = py::make_tuple(robot_id, distance);
         if (core_map(coordinate) == -1) {
             core_map(coordinate) = condition;
