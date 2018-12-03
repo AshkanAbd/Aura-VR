@@ -30,7 +30,7 @@ class CoreMapBuilder:
     core_publisher = None
     map_shape = None
     rate = None
-    cmd_publishers = {}
+    cmd_controller = {}
     start = False
     publish_thread = None
     publish_map = None
@@ -51,8 +51,8 @@ class CoreMapBuilder:
         self.rate = rospy.Rate(10)
         self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=10000)
         for robot in self.available_robots:
-            self.cmd_publishers[robot] = (rospy.Publisher('/' + robot + '/cmd_vel', geometry_msgs.msg.Twist
-                                                          , queue_size=1000), rospy.Rate(10))
+            self.cmd_controller[robot] = (rospy.Publisher('/' + robot + '/cmd_vel'
+                                                          , geometry_msgs.msg.Twist, queue_size=1000), rospy.Rate(10))
         self.start_building()
 
     def start_building(self):
@@ -92,6 +92,7 @@ class CoreMapBuilder:
             self.start = True
         if robot_id in self.robot_angle:
             if -5 > self.robot_angle[robot_id][1] > 5:
+                self.build_cmd_thread(robot_id)
                 return
         if self.base_map_info.height != robot_map.info.height and self.base_map_info.width != robot_map.info.width:
             print("Ignore")
@@ -190,19 +191,23 @@ class CoreMapBuilder:
                 print(i + ' added to core')
                 self.available_robots.add(i)
 
+    def build_cmd_thread(self, robot):
+        cmd_thread = threading.Thread(target=self.move_forward, name=robot + "_move_forward", args=robot)
+        cmd_thread.start()
+
     def move_forward(self, robot):
         print("moving forward")
         twist = geometry_msgs.msg.Twist()
-        twist.linear.x = 2
+        twist.linear.x = 0.3
         twist.linear.y = 0
         twist.linear.z = 0
         twist.angular.x = 0
         twist.angular.y = 0
         twist.angular.z = 0
         for i in xrange(5):
-            self.cmd_publishers[robot][0].publish(twist)
-            self.cmd_publishers[robot][1].sleep()
-        time.sleep(9.3)  # ~2.32 for 90 degree
+            self.cmd_controller[robot][0].publish(twist)
+            self.cmd_controller[robot][1].sleep()
+        time.sleep(4.5)
         twist = geometry_msgs.msg.Twist()
         twist.linear.x = 0
         twist.linear.y = 0
@@ -211,8 +216,8 @@ class CoreMapBuilder:
         twist.angular.y = 0
         twist.angular.z = 0
         for i in xrange(5):
-            self.cmd_publishers[robot][0].publish(twist)
-            self.cmd_publishers[robot][1].sleep()
+            self.cmd_controller[robot][0].publish(twist)
+            self.cmd_controller[robot][1].sleep()
 
     # Callbacks
     def get_odom(self, odom, robot_id):
