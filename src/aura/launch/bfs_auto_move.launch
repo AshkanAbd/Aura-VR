@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robotname" default="robot0"/>
+    <group ns="$(arg robotname)">
+        <node pkg="aura" type="bfs_auto_move.py" name="$(arg robotname)_automove" output="screen" args="$(arg robotname)"/>
+    </group>
+</launch>

@@ -2,7 +2,7 @@
 <launch>
 	<arg name="robotname" default="robot0"/>
   <group ns="$(arg robotname)">
-		<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
 		 <!--<rosparam file="$(find setup)/config/costmap_common_params.yaml" command="load" ns="global_costmap"/>-->
 	     <!--<rosparam file="$(find setup)/config/costmap_common_params.yaml" command="load" ns="local_costmap"/>-->
 	     <!--rosparam file="$(find setup)/config/local_costmap_params.yaml" command="load" /-->
@@ -104,12 +104,12 @@
  <rosparam>
          TrajectoryPlannerROS:
            #Robot Configuration Parameters
-             max_vel_x: 0.8
+             max_vel_x: 1.0
              min_vel_x: 0.1
              max_vel_theta: 2.9
              min_vel_theta: -2.9
-             min_in_place_vel_theta: 0.4
-             escape_vel: -0.15
+             min_in_place_vel_theta: 0.3
+             escape_vel: -0.2
            #Forward Simulation Parameters
              sim_time: 1.2
              vx_samples: 8
@@ -117,15 +117,15 @@
              sim_granularity: 0.01
              angular_sim_granularity: 0.015
 
-             acc_lim_theta: 2
-             acc_lim_x: 0.4
+             acc_lim_theta: 4.9
+             acc_lim_x: 0.8
              acc_lim_y: 0.0
 
              holonomic_robot: false
 
            #Goal Tolerance Parameters
              yaw_goal_tolerance: 0.5 #default 0.05
-             xy_goal_tolerance: 1.0 #default 0.1
+             xy_goal_tolerance: 0.6 #default 0.1
            #Trajectory Scoring Parameters
              pdist_scale:  0.6
              gdist_scale:  0.8
@@ -148,12 +148,11 @@
             # Robot
 
             max_vel_x: 0.6
-            max_vel_x_backwards: 0.15
+            max_vel_x_backwards: 0.3
             max_vel_theta: 1.2
             acc_lim_x: 0.8
-            acc_lim_theta: 1
-            min_turning_radius: 0.115
-            inflation_dist: 40
+            acc_lim_theta: 1.6
+            min_turning_radius: 0.0
             footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
                 type: "polygon"
                 radius: 0.2 # for type "circular"
@@ -173,7 +172,7 @@
 
             # Obstacles
 
-            min_obstacle_dist: 0.15
+            min_obstacle_dist: 0.6
             include_costmap_obstacles: true
             costmap_obstacles_behind_robot_dist: 1.0
             obstacle_poses_affected: 30

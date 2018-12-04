@@ -1,58 +1,30 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(aura)
+project(communication_node)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+## Add support for C++11, supported in ROS Kinetic and newer
+# add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-set(CMAKE_CXX_STANDARD 11)
-
-
 find_package(catkin REQUIRED COMPONENTS
-        costmap_2d
-        cv_bridge
-        geometry_msgs
-        image_transport
-        nav_core
-        nav_msgs
-        roscpp
-        rospy
-        sensor_msgs
-        std_msgs
-        tf
-        message_generation
-        )
-
-find_package(OpenCV REQUIRED)
-
-##################################
-# for pybind temprary
-
-#find_package(pybind11 REQUIRED)
-#
-#add_executable(core_builder src/functions.cpp)
-#
-#include_directories(core_builder ${PYTHON_INCLUDE_DIRS})
-#
-#target_link_libraries(core_builder ${PYTHON_LIBRARIES})
-#
-#target_include_directories(core_builder PUBLIC ${PYTHON_INCLUDE_DIRS})
-
-##################################
-
-#find_package(xtensor REQUIRED)
-
+  actionlib
+  actionlib_msgs
+  message_generation
+  roscpp
+  rospy
+  sensor_msgs
+  std_msgs
+  nav_msgs
+)
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
+catkin_python_setup()
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -79,16 +51,12 @@ find_package(OpenCV REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-        FILES
-        data_int.msg
-        data_int64.msg
-	    data_float.msg
-        group_int.msg
-        group_int64.msg
-	    group_float.msg
-	    goal.msg
-	    multi_goal.msg
+add_message_files(FILES
+  Data_Image.msg
+  Data_Map.msg
+  Data_Odom.msg
+  Data_Goal.msg
+
 )
 
 ## Generate services in the 'srv' folder
@@ -105,11 +73,22 @@ add_message_files(
 #   Action2.action
 # )
 
-## Generate added messages and services with any dependencies listed here
-generate_messages(
-        DEPENDENCIES
-        std_msgs
+add_action_files(
+  DIRECTORY action
+  FILES Registration.action
 )
+
+## Generate added messages and services with any dependencies listed here
+# generate_messages(
+#   DEPENDENCIES
+#   std_msgs
+# )
+
+generate_messages(
+  DEPENDENCIES
+  actionlib_msgs std_msgs sensor_msgs  nav_msgs
+)
+
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -136,18 +115,16 @@ generate_messages(
 ###################################
 ## The catkin_package macro generates cmake config files for your package
 ## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if your package contains header files
+## INCLUDE_DIRS: uncomment this if you package contains header files
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-
-        CATKIN_DEPENDS message_runtime
-
-        #  INCLUDE_DIRS include
-        #  LIBRARIES aura
-        #  CATKIN_DEPENDS costmap_2d cv_bridge geometry_msgs image_transport nav_core nav_msgs roscpp rospy sensor_msgs std_msgs tf
-        #  DEPENDS system_lib
+#  INCLUDE_DIRS include
+#  LIBRARIES communication_node
+#  CATKIN_DEPENDS roscpp rospy std_msgs
+  CATKIN_DEPENDS actionlib_msgs message_runtime
+#  DEPENDS system_lib
 )
 
 ###########
@@ -156,14 +133,14 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
+# include_directories(include)
 include_directories(
-        # include
-        ${catkin_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/aura.cpp
+#   src/${PROJECT_NAME}/communication_node.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -171,23 +148,40 @@ include_directories(
 ## either from message generation or dynamic reconfigure
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/aura_node.cpp)
-add_executable(odom_transform src/odom_transform.cxx)
-add_executable(laser_transform src/laser_transform.cxx)
-add_executable(hot_victim_detector src/hot_victim_detetor.cxx)
-add_executable(dead_victim_detector src/dead_victim_detector.cxx)
-add_executable(depth_camera src/depth_camera.cxx)
+# add_executable(${PROJECT_NAME}_node src/communication_node_node.cpp)
+
+## registration_server
+add_executable(
+registration_server src/registration_server.cpp
+${catkin_LIBRARIES}
+)
+add_dependencies(
+  registration_server
+  ${communication_node_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}
+)
+target_link_libraries(
+   registration_server
+   ${catkin_LIBRARIES}
+ )
 
 
-target_link_libraries(odom_transform ${catkin_LIBRARIES})
-target_link_libraries(laser_transform ${catkin_LIBRARIES})
-target_link_libraries(hot_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
-target_link_libraries(dead_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
-target_link_libraries(depth_camera ${catkin_LIBRARIES} ${OpenCV_LIBS})
-
+# registration_client
+add_executable(
+registration_client src/registration_client.cpp
+${catkin_LIBRARIES}
+)
+add_dependencies(
+  registration_client
+  ${communication_node_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}
+)
+target_link_libraries(
+   registration_client
+   ${catkin_LIBRARIES}
+ )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -199,10 +193,12 @@ target_link_libraries(depth_camera ${catkin_LIBRARIES} ${OpenCV_LIBS})
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+
 
 #############
 ## Install ##
@@ -239,12 +235,14 @@ target_link_libraries(depth_camera ${catkin_LIBRARIES} ${OpenCV_LIBS})
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
+
+
 #############
 ## Testing ##
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_aura.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_communication_node.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

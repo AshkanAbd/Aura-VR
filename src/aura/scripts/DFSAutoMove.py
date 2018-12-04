@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 
 import nav_msgs.msg
 import numpy as np
@@ -21,6 +21,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
     rotate_rate = None
     random_generator = None
     aborted_list = set()
+    robots_goal = {}
     reshaped_map = None
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
@@ -108,23 +109,26 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
             for i in self.get_neighbors(int(current_sihdir[0]), int(current_sihdir[1])):
                 if i not in q and i not in p:
                     if i not in visited:
-                        if self.reshaped_map[int(i[0]), int(i[1])] == 100:
-                            for k in xrange(-3, 4):
-                                for l in xrange(-3, 4):
-                                    visited.add((i[0] + k, i[1] + l))
-                        elif self.reshaped_map[int(i[0]), int(i[1])] == -1:
-                            if abs(i[0] - current[0]) + abs(i[1] - current[1]) >= 25:
+                        # if self.reshaped_map[int(i[0]), int(i[1])] == 100:
+                        #     for k in xrange(-3, 4):
+                        #         for l in xrange(-3, 4):
+                        #             visited.add((i[0] + k, i[1] + l))
+                        # el
+                        if self.reshaped_map[int(i[0]), int(i[1])] == -1:
+                            if math.sqrt(((i[0] - current[0]) ** 2) + ((i[1] - current[1]) ** 2)) >= 12:
                                 if self.da_sihdir_da(i):
                                     if self.fucking_block(i):
                                         if self.in_range(i[1], i[0]):
-                                            self.generating_goal(i)
-                                        return
+                                            if self.check_other_goals(i[1], i[0]):
+                                                self.generating_goal(i)
+                                                return
                                     else:
                                         p.append(i)
                             else:
                                 q.append(i)
-                        elif (self.reshaped_map[int(i[0]), int(i[1])] == 0):
-                            q.append(i)
+                        elif self.reshaped_map[int(i[0]), int(i[1])] == 0:
+                            if self.zero_width(i):
+                                q.append(i)
         min = 1000000
         index = -1
         i = 0
@@ -136,6 +140,19 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
             i += 1
         self.generating_goal(p[index])
 
+    def zero_width(self, k):
+        if self.reshaped_map[int(k[0]), int(k[1] + 1)] == 0 and self.reshaped_map[int(k[0]), int(k[1] - 1)] == 0:
+            return True
+        if self.reshaped_map[int(k[0] + 1), int(k[1])] == 0 and self.reshaped_map[int(k[0] - 1), int(k[1])] == 0:
+            return True
+        if self.reshaped_map[int(k[0] + 1), int(k[1] + 1)] == 0 and \
+                self.reshaped_map[int(k[0] - 1), int(k[1] - 1)] == 0:
+            return True
+        if self.reshaped_map[int(k[0] - 1), int(k[1] + 1)] == 0 and \
+                self.reshaped_map[int(k[0] + 1), int(k[1] - 1)] == 0:
+            return True
+        return False
+
     def da_sihdir_da(self, k):
         a = np.empty((5, 5), np.int8)
         for i in xrange(-2, 3):
@@ -146,14 +163,26 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         return False
 
     def fucking_block(self, k):
-        b = np.empty((8, 8), np.int8)
-        for i in xrange(-4, 4):
-            for j in xrange(-4, 4):
-                b[i + 4, j + 4] = self.reshaped_map[(k[0] + i), (k[1] + j)]
+        b = np.empty((7, 7), np.int8)
+        for i in xrange(-3, 4):
+            for j in xrange(-3, 4):
+                b[i + 3, j + 3] = self.reshaped_map[(k[0] + i), (k[1] + j)]
         n_shown = np.where(b == -1)
-        if len(n_shown[0]) >= 15:
+        if len(n_shown[0]) >= 10:
             return True
         return False
+
+    def check_other_goals(self, goal_x, goal_y):
+        for robot in self.robots_goal.keys():
+            if robot == self.namespace:
+                continue
+            y, x = self.convert_from_robot_to_map(self.robots_goal[robot][1], self.robots_goal[robot][0])
+            if self.euclidean_distance(int(goal_x), int(goal_y), int(x), int(y)) < 30:
+                return False
+        return True
+
+    def euclidean_distance(self, x1, y1, x2, y2):
+        return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
 
     # goal status--- PENDING=0--- ACTIVE=1-- PREEMPTED=2-- SUCCEEDED=3-- ABORTED=4-- REJECTED=5-- PREEMPTING=6-- RECALLING=7-- RECALLED=8-- LOST=9
     def goal_status(self, data1, data2):
@@ -199,9 +228,14 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         twist.angular.x = 0
         twist.angular.y = 0
         twist.angular.z = 0
+        # 09144208960 ghanbari
         for i in xrange(5):
             self.cmd_publisher.publish(twist)
             self.rotate_rate.sleep()
+
+    def all_goals(self, goals):
+        for i in xrange(len(goals.sources)):
+            self.robots_goal[goals.sources[i]] = goals.poses.array[i].data_float
 
     # def start(self, block_index):
     #     if self.bfsihdir(block_index):

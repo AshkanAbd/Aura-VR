@@ -5,11 +5,12 @@ import actionlib
 import nav_msgs.msg
 import move_base_msgs.msg
 import geometry_msgs.msg
-import std_msgs.msg
+import aura.msg
 
 
 class AutoMoveBase:
     namespace = 'robot0'
+    goal_publisher = None
     robot_odometry = None
     map_info = None
     move_base_goal = None
@@ -25,6 +26,8 @@ class AutoMoveBase:
         rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_robot_odom)
         rospy.Subscriber('/core/map', nav_msgs.msg.OccupancyGrid, self.get_map)
         self.cmd_publisher = rospy.Publisher('/' + namespace + '/cmd_vel', geometry_msgs.msg.Twist, queue_size=1000)
+        self.goal_publisher = rospy.Publisher('/' + namespace + '/goal_pose', aura.msg.goal, queue_size=1000)
+        rospy.Subscriber('/core/goal_publisher', aura.msg.multi_goal, self.all_goals, queue_size=1000)
 
     def get_robot_odom(self, odometry):
         self.robot_odometry = odometry
@@ -40,6 +43,10 @@ class AutoMoveBase:
 
     def send_goal(self, goal_x, goal_y):
         # self.client.cancel_all_goals()
+        goal_pose = aura.msg.goal()
+        goal_pose.source = self.namespace
+        goal_pose.pose.data_float = [goal_x, goal_y]
+        self.goal_publisher.publish(goal_pose)
         goal = geometry_msgs.msg.PoseStamped()
         goal.header.frame_id = "/map"
         goal.header.stamp = rospy.Time.now()
@@ -51,6 +58,9 @@ class AutoMoveBase:
 
     # goal status--- PENDING=0--- ACTIVE=1---PREEMPTED=2--SUCCEEDED=3--ABORTED=4---REJECTED=5--PREEMPTING=6---RECALLING=7---RECALLED=8---LOST=9
     def goal_status(self, data1, data2):
+        pass
+
+    def all_goals(self, goals):
         pass
 
     def convert_from_robot_to_map(self, robot_y, robot_x):
