@@ -51,7 +51,7 @@ class CoreMapBuilder:
         # self.publish_thread = threading.Thread(target=self.publish_to_core)
         # self.publish_thread.setName("core-publish")
         # self.publish_thread.start()
-        self.rate = rospy.Rate(5)
+        self.rate = rospy.Rate(10)
         self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=10000)
         for robot in self.available_robots:
             self.cmd_controller[robot] = (rospy.Publisher('/' + robot + '/cmd_vel'
