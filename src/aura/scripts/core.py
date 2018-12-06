@@ -203,7 +203,7 @@ class CoreMapBuilder:
         past_time = past[0]
         distance = euclidean_distance(map_x, map_y, past[1], past[2])
         if distance < 2:
-            if (time_stomp - past_time) < 20:
+            if (time_stomp - past_time) < 2000000:
                 pass
             else:
                 self.build_cmd_thread(robot, 3)
@@ -271,6 +271,7 @@ class CoreMapBuilder:
 
 def move_with_check(robot, cmd_controller, move_thread_lock, self):
     odom = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
+    core_map = rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid)
     twist = geometry_msgs.msg.Twist()
     print(robot + " moving forward")
     twist.linear.x = 1
@@ -294,8 +295,8 @@ def move_with_check(robot, cmd_controller, move_thread_lock, self):
         cmd_controller[robot][0].publish(twist)
         cmd_controller[robot][1].sleep()
     new_odom = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
-    old_y, old_x = self.convert_from_robot_to_map(odom.pose.pose.position.y, odom.pose.pose.position.x)
-    new_y, new_x = self.convert_from_robot_to_map(new_odom.pose.pose.position.y, new_odom.pose.pose.position.x)
+    old_y, old_x = convert_from_robot_to_map(core_map, odom.pose.pose.position.y, odom.pose.pose.position.x)
+    new_y, new_x = convert_from_robot_to_map(core_map, new_odom.pose.pose.position.y, new_odom.pose.pose.position.x)
     if abs(old_y - new_y) < 2 and abs(old_x - new_x) < 2:
         twist = geometry_msgs.msg.Twist()
         print(robot + " moving backward")
@@ -357,6 +358,12 @@ def move_forward(robot, cmd_controller, move_thread_lock, flag, self):
 
 def euclidean_distance(x1, y1, x2, y2):
     return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
+
+
+def convert_from_robot_to_map(map, robot_y, robot_x):
+    map_x = round((robot_x - map.info.origin.position.x) / map.info.resolution)
+    map_y = round((robot_y - map.info.origin.position.y) / map.info.resolution)
+    return (map_y * map.info.width) + map_x
 
 
 if __name__ == '__main__':
