@@ -3,8 +3,6 @@
 import nav_msgs.msg
 import numpy as np
 import random
-import std_msgs.msg
-import block
 import auto_move_base
 import rospy
 import aura.msg
@@ -13,9 +11,11 @@ import geometry_msgs.msg
 import math
 
 
-class DFSAutoMove(auto_move_base.AutoMoveBase, object):
-    block_array = []
-    robot_block = None
+def euclidean_distance(x1, y1, x2, y2):
+    return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
+
+
+class BFSAutoMove(auto_move_base.AutoMoveBase, object):
     goal_x = -10000
     goal_y = -10000
     rotate_rate = None
@@ -25,21 +25,10 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
     reshaped_map = None
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
-        super(DFSAutoMove, self).__init__(namespace, node_name, anonymous)
-        # self.get_blocks(rospy.wait_for_message('/core/blocks', aura.msg.group_int))
-        # rospy.Subscriber('/core/blocks', aura.msg.group_int, self.get_blocks)
+        super(BFSAutoMove, self).__init__(namespace, node_name, anonymous)
         self.rotate_rate = rospy.Rate(10)
         self.random_generator = random.Random()
         self.get_map(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
-
-    def get_blocks(self, blocks_array):
-        temp_array = []
-        for i in range(0, 256):
-            block_obj = block.Block(i, blocks_array.array[i].data_int, self.map_info.info.height,
-                                    self.map_info.info.width)
-            temp_array.append(block_obj)
-        self.block_array = temp_array
-        self.robot_block = self.find_robot_block()
 
     def find_robot_block(self):
         robot_pose_y = self.robot_odometry.pose.pose.position.y
@@ -51,7 +40,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         return robot_block_index
 
     def get_map(self, map):
-        super(DFSAutoMove, self).get_map(map)
+        super(BFSAutoMove, self).get_map(map)
         self.reshaped_map = np.asarray(map.data, np.int8).reshape(map.info.height, map.info.width)
         if self.goal_x == -10000:
             return
@@ -89,7 +78,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
                      (x - 1, y - 1)]
         return neighbors
 
-    def bfsihdir(self, blockindex):
+    def bfsihdir(self):
         robot_y, robot_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y
                                                           , self.robot_odometry.pose.pose.position.x)
         visited = set()
@@ -177,30 +166,28 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
             if robot == self.namespace:
                 continue
             y, x = self.convert_from_robot_to_map(self.robots_goal[robot][1], self.robots_goal[robot][0])
-            if self.euclidean_distance(int(goal_x), int(goal_y), int(x), int(y)) < 30:
+            if euclidean_distance(int(goal_x), int(goal_y), int(x), int(y)) < 30:
                 return False
         return True
 
-    def euclidean_distance(self, x1, y1, x2, y2):
-        return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
-
-    # goal status--- PENDING=0--- ACTIVE=1-- PREEMPTED=2-- SUCCEEDED=3-- ABORTED=4-- REJECTED=5-- PREEMPTING=6-- RECALLING=7-- RECALLED=8-- LOST=9
+    # goal status--- PENDING=0--- ACTIVE=1-- PREEMPTED=2-- SUCCEEDED=3-- ABORTED=4-- REJECTED=5-- PREEMPTING=6--
+    # RECALLING=7-- RECALLED=8-- LOST=9
     def goal_status(self, data1, data2):
         print(data1)
         if data1 == 4:
             map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
             temp = (self.goal_x, self.goal_y)
             if self.in_range(self.goal_x, self.goal_y):
-                self.bfsihdir(self.robot_block)
+                self.bfsihdir()
             else:
                 if self.check_around(map_goal_x, map_goal_y):
                     self.rotate()
                     self.send_goal(self.goal_x, self.goal_y)
                 else:
                     self.aborted_list.add(temp)
-                    self.bfsihdir(self.robot_block)
+                    self.bfsihdir()
         else:
-            self.bfsihdir(self.robot_block)
+            self.bfsihdir()
 
     def check_around(self, robot_x, robot_y):
         robot_around_matrix = self.reshaped_map[int(robot_y) - 2:int(robot_y) + 2, int(robot_x) - 2: int(robot_x) + 2]
@@ -228,28 +215,19 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
         twist.angular.x = 0
         twist.angular.y = 0
         twist.angular.z = 0
-        # 09144208960 ghanbari
         for i in xrange(5):
             self.cmd_publisher.publish(twist)
             self.rotate_rate.sleep()
 
+    def start(self):
+        print("Wait for click point")
+        rospy.wait_for_message('/clicked_point', geometry_msgs.msg.PointStamped)
+        print("start!!!")
+        self.bfsihdir()
+
     def all_goals(self, goals):
         for i in xrange(len(goals.sources)):
             self.robots_goal[goals.sources[i]] = goals.poses.array[i].data_float
-
-    # def start(self, block_index):
-    #     if self.bfsihdir(block_index):
-    #         return
-    #     neighbors = [self.block_array[block_index].go_up(), self.block_array[block_index].go_down(),
-    #                  self.block_array[block_index].go_left(), self.block_array[block_index].go_right()]
-    #     for i in neighbors:
-    #         if self.block_array[i].has_unkown():
-    #             self.bfsihdir(i)
-    #             print(neighbors)
-    #             print(block_index)
-    #             return
-    #         else:
-    #             return self.start(neighbors[0])
 
     def current_goal(self):
         return self.goal_x, self.goal_y
