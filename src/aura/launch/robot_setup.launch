@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robotname" default="robot0"/>
+    <include file="$(find aura)/launch/gmapping2.launch">
+        <arg name="robotname" value="$(arg robotname)"/>
+    </include>
+    <include file="$(find aura)/launch/move_base2.launch">
+        <arg name="robotname" value="$(arg robotname)"/>
+    </include>
+</launch>

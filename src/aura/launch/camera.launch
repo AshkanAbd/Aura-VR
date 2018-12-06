@@ -8,5 +8,8 @@
         <node pkg="aura" type="hot_victim_detector" name="hot_victim_detector" respawn="true" output="screen">
             <param name="robotname" value="$(arg robotname)"/>
         </node>
+        <node pkg="aura" type="alive_victim_detector" name="alive_victim_detector" respawn="true" output="screen">
+            <param name="robotname" value="$(arg robotname)"/>
+        </node>
     </group>
 </launch>

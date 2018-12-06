@@ -19,6 +19,7 @@ class CoreMapBuilder:
     available_robots = set()
     available_odom = {}
     available_maps = {}
+    robot_moving = {}
     robot_angle = {}
     core_map = np.array([])
     # robot_evolution = {}
@@ -74,6 +75,7 @@ class CoreMapBuilder:
                 #     for j in xrange(-1, 2):
                 if self.core_map[int(((map_y) * self.base_map_info.width) + (map_x))] != -1:
                     self.core_map[int(((map_y) * self.base_map_info.width) + (map_x))] = 0
+                self.check_robot_moving(rospy, map_x, map_y, self.available_odom[robot].header.stamp.secs)
             data_map.header = self.base_map_header
             data_map.info = self.base_map_info
             data_map.data = self.core_map.tolist()
@@ -190,6 +192,21 @@ class CoreMapBuilder:
         #             self.node_map[coordinate] = (new_one_coo, distance)
         ######################################################
 
+    def check_robot_moving(self, robot, map_x, map_y, time_stomp):
+        if robot not in self.robot_moving:
+            self.robot_moving[robot] = (time_stomp, map_x, map_y)
+            return
+        past = self.robot_moving[robot]
+        past_time = past[0]
+        distance = euclidean_distance(map_x, map_y, past[1], past[2])
+        if distance < 2:
+            if (time_stomp - past_time) < 20:
+                pass
+            else:
+                self.build_cmd_thread(robot, 3)
+        else:
+            self.robot_moving[robot] = (time_stomp, map_x, map_y)
+
     def publish_to_core(self):
         while not rospy.is_shutdown():
             if not self.start or self.publish_map is None:
@@ -209,9 +226,9 @@ class CoreMapBuilder:
             try:
                 robot = rospy.wait_for_message('/' + i + '/map', nav_msgs.msg.OccupancyGrid, 2)
             except rospy.ROSException:
-                print(self.node_name + " " + i + ' is not available')
+                print(self.node_name + ": " + i + ' is not available')
             if robot is not None:
-                print(self.node_name + " " + i + ' added to core')
+                print(self.node_name + ": " + i + ' added to core')
                 self.available_robots.add(i)
 
     def build_cmd_thread(self, robot, flag):
@@ -334,6 +351,10 @@ def move_forward(robot, cmd_controller, move_thread_lock, flag):
     move_thread_lock[robot] = False
 
 
+def euclidean_distance(x1, y1, x2, y2):
+    return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
+
+
 if __name__ == '__main__':
-    CoreMapBuilder('map', 'core', 'functions')
+    CoreMapBuilder('map', 'core', 'core')
     rospy.spin()

@@ -21,7 +21,7 @@ cv::Scalar upper_color2(0, 0, 255);
 
 
 void get_image(const sensor_msgs::Image &img) {
-    cv::Mat frame, frame2;
+    cv::Mat frame/*, frame2*/;
     cv::UMat frame1, frame_blur, frame_hsv1, frame_hsv2, mask1, mask2, final_frame1, final_frame2, frame_edge, frame_gray;
     cv::UMat mask3, mask4, mask5;
     std::vector<std::vector<cv::Point>> contours;
@@ -44,9 +44,9 @@ void get_image(const sensor_msgs::Image &img) {
     cv::cvtColor(final_frame2, frame_gray, cv::COLOR_BGR2GRAY);
     cv::Canny(frame_gray, frame_edge, 100, 200);
     cv::findContours(frame_edge, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-    final_frame2.copyTo(frame2);
-    cv::waitKey(1);
-    cv::imshow("dead frame1", frame_edge);
+//    final_frame2.copyTo(frame2);
+//    cv::waitKey(1);
+//    cv::imshow("dead frame1", frame_edge);
     if (contours.empty())
         return;
     std::map<double, std::vector<cv::Point>> contours_area;
@@ -66,8 +66,8 @@ void get_image(const sensor_msgs::Image &img) {
     info_array.data.push_back(main_rect.width);
     info_array.data.push_back(main_rect.height);
     dead_victim_publisher.publish(info_array);
-    cv::rectangle(frame2, main_rect, cv::Scalar(255, 0, 0), 2);
-    cv::imshow("dead frame", frame2);
+//    cv::rectangle(frame2, main_rect, cv::Scalar(255, 0, 0), 2);
+//    cv::imshow("dead frame", frame2);
 }
 
 

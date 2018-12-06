@@ -8,6 +8,7 @@ import sys
 import visualization_msgs.msg
 import interactive_markers.interactive_marker_server
 
+
 class MarkerController:
     box_control = None
 
@@ -48,9 +49,12 @@ def get_mark_place(place):
     if place.data[2] == 1:
         print("HOT Received")
         marker_controller.create_and_add_marker(255, 0, 0, pose[1], pose[0])
-    else:
+    elif place.data[2] == 2:
         print("DEAD Received")
         marker_controller.create_and_add_marker(0, 0, 255, pose[1], pose[0])
+    elif place.data[2] == 3:
+        print("ALIVE Received")
+        marker_controller.create_and_add_marker(0, 255, 0, pose[1], pose[0])
 
 
 def verify_data(x, y):

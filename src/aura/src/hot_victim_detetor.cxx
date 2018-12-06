@@ -51,58 +51,13 @@ void get_thermal_image(const sensor_msgs::Image &img) {
     thermal_flag = true;
 }
 
-void process_img1() {
-    while (true) {
-        if (!normal_flag) {
-            continue;
-        }
-        try {
-            cv::Mat frame3;
-            cv::UMat frame, frame1, frame2, normal_gray, normal_thresh, thermal_img1, frame_edge;
-            std::vector<std::vector<cv::Point>> contours;
-            try {
-                cv::cvtColor(normal_img, frame1, cv::COLOR_BGR2GRAY);
-            } catch (std::exception &e) {}
-            cv::medianBlur(frame1, frame2, 5);
-//            cv::Laplacian(frame2, frame_edge, -1);
-            cv::Canny(frame2, frame_edge, 100, 200);
-            cv::findContours(frame_edge, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-            std::map<double, std::vector<cv::Point>> contours_area;
-            frame2.copyTo(frame3);
-            cv::waitKey(1);
-            cv::imshow(name_space, frame3);
-            if (contours.empty()) continue;
-            std::vector<double> areas;
-            for (const auto &contour : contours) {
-                double d = cv::contourArea(contour);
-                contours_area[d] = contour;
-                areas.push_back(d);
-            }
-            std::sort(areas.rbegin(), areas.rend());
-            std::vector<cv::Point> main_contour = contours_area[areas[0]];
-            cv::Rect main_rect = cv::boundingRect(main_contour);
-//            if (main_rect.height < 36) continue;
-            std_msgs::Float64MultiArray info_array;
-            info_array.data.push_back(main_rect.x);
-            info_array.data.push_back(main_rect.y);
-            info_array.data.push_back(main_rect.width);
-            info_array.data.push_back(main_rect.height);
-            hot_victim_publisher.publish(info_array);
-            cv::rectangle(frame3, main_rect, cv::Scalar(255, 0, 0), 2);
-            cv::imshow(name_space, frame3);
-        } catch (std::exception &e) {
-            std::cout << e.what() << std::endl;
-        }
-    }
-}
-
 void process_img() {
     while (true) {
         if (!normal_flag && !thermal_flag) {
             continue;
         }
         try {
-            cv::Mat frame3;
+//            cv::Mat frame3;
             cv::UMat frame, frame1, frame2, normal_gray, normal_thresh, thermal_img1, frame_edge;
             std::vector<std::vector<cv::Point>> contours;
             try {
@@ -116,9 +71,9 @@ void process_img() {
             cv::Canny(frame2, frame_edge, 100, 200);
             cv::findContours(frame_edge, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
             std::map<double, std::vector<cv::Point>> contours_area;
-            frame2.copyTo(frame3);
-            cv::waitKey(1);
-            cv::imshow(name_space, frame3);
+//            frame2.copyTo(frame3);
+//            cv::waitKey(1);
+//            cv::imshow(name_space, frame3);
             if (contours.empty()) continue;
             std::vector<double> areas;
             for (const auto &contour : contours) {
@@ -136,8 +91,8 @@ void process_img() {
             info_array.data.push_back(main_rect.width);
             info_array.data.push_back(main_rect.height);
             hot_victim_publisher.publish(info_array);
-            cv::rectangle(frame3, main_rect, cv::Scalar(255, 0, 0), 2);
-            cv::imshow(name_space, frame3);
+//            cv::rectangle(frame3, main_rect, cv::Scalar(255, 0, 0), 2);
+//            cv::imshow(name_space, frame3);
         } catch (std::exception &e) {
             std::cout << e.what() << std::endl;
         }

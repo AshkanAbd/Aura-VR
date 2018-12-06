@@ -34,9 +34,9 @@ class GoalHandler:
             try:
                 robot = rospy.wait_for_message('/' + i + '/map', nav_msgs.msg.OccupancyGrid, 2)
             except rospy.ROSException:
-                print(self.node_name + " " + i + ' is not available')
+                print(self.node_name + ": " + i + ' is not available')
             if robot is not None:
-                print(self.node_name + " " + i + ' found')
+                print(self.node_name + ": " + i + ' found')
                 self.available_robots.add(i)
 
     def publish_goals(self):

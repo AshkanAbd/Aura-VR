@@ -40,14 +40,7 @@ void builder(Eigen::Ref<Eigen::VectorXd> core_map, const std::vector<ul> &coordi
         if (core_map(coordinate) == -1) {
             core_map(coordinate) = condition;
             node_map[coordinate_i] = value;
-        } /*else if (core_map(coordinate) == condition2) {
-            py::tuple old = node_map[coordinate_i];
-            double old_dis = py::float_(old[1]);
-            if (old_dis >= distance) {
-                core_map(coordinate) = condition1;
-                node_map[coordinate_i] = value;
-            }
-        } */else {
+        } else {
             py::tuple old = node_map[coordinate_i];
             double old_dis = py::float_(old[1]);
             if (old_dis >= distance) {

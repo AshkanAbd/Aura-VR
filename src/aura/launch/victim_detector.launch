@@ -17,4 +17,8 @@
     <include file="$(find aura)/launch/marker.launch">
         <arg name="robotname" value="$(arg robotname)"/>
     </include>
+
+    <include file="$(find aura)/launch/alive_victim_place.launch">
+        <arg name="robotname" value="$(arg robotname)"/>
+    </include>
 </launch>
