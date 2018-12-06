@@ -55,8 +55,8 @@ class CoreMapBuilder:
         self.rate = rospy.Rate(10)
         self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=10000)
         for robot in self.available_robots:
-            self.cmd_controller[robot] = (rospy.Publisher('/' + robot + '/cmd_vel'
-                                                          , geometry_msgs.msg.Twist, queue_size=1000), rospy.Rate(10))
+            self.cmd_controller[robot] = (
+                rospy.Publisher('/' + robot + '/cmd_vel', geometry_msgs.msg.Twist, queue_size=1000), rospy.Rate(10))
         self.start_building()
 
     def start_building(self):
@@ -68,18 +68,21 @@ class CoreMapBuilder:
                 self.move_thread_lock[robot] = False
             for robot in self.available_robots:
                 self.build_core_map(self.available_maps[robot], self.available_odom[robot], robot)
+                data_map.header = self.base_map_header
+                data_map.info = self.base_map_info
+                data_map.header.stamp = rospy.Time.now()
+                data_map.data = self.core_map.tolist()
+                self.core_publisher.publish(data_map)
             for robot in self.available_odom.keys():
                 odom = self.available_odom[robot]
                 map_y, map_x = self.convert_from_robot_to_map1(odom.pose.pose.position.y, odom.pose.pose.position.x)
-                # for i in xrange(-1, 2):
-                #     for j in xrange(-1, 2):
-                if self.core_map[int(((map_y) * self.base_map_info.width) + (map_x))] != -1:
-                    self.core_map[int(((map_y) * self.base_map_info.width) + (map_x))] = 0
+                if self.core_map[int((map_y * self.base_map_info.width) + map_x)] != -1:
+                    self.core_map[int((map_y * self.base_map_info.width) + map_x)] = 0
                 self.check_robot_moving(robot, map_x, map_y, self.available_odom[robot].header.stamp.secs)
             data_map.header = self.base_map_header
             data_map.info = self.base_map_info
-            data_map.data = self.core_map.tolist()
             data_map.header.stamp = rospy.Time.now()
+            data_map.data = self.core_map.tolist()
             self.core_publisher.publish(data_map)
             self.rate.sleep()
 
@@ -233,8 +236,8 @@ class CoreMapBuilder:
 
     def build_cmd_thread(self, robot, flag):
         self.move_thread_lock[robot] = True
-        cmd_thread = threading.Thread(target=move_forward, name=robot + "_move_forward"
-                                      , args=(robot, self.cmd_controller, self.move_thread_lock, flag))
+        cmd_thread = threading.Thread(target=move_forward, name=robot + "_move_forward",
+                                      args=(robot, self.cmd_controller, self.move_thread_lock, flag, self))
         cmd_thread.start()
 
     # Callbacks
@@ -266,7 +269,7 @@ class CoreMapBuilder:
         return map_y, map_x
 
 
-def move_with_check(robot, cmd_controller, move_thread_lock):
+def move_with_check(robot, cmd_controller, move_thread_lock, self):
     odom = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
     twist = geometry_msgs.msg.Twist()
     print(robot + " moving forward")
@@ -291,8 +294,9 @@ def move_with_check(robot, cmd_controller, move_thread_lock):
         cmd_controller[robot][0].publish(twist)
         cmd_controller[robot][1].sleep()
     new_odom = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
-    if abs(odom.pose.pose.position.x - new_odom.pose.pose.position.x) < 0.05 and abs(
-            odom.pose.pose.position.y - new_odom.pose.pose.position.y) < 0.05:
+    old_y, old_x = self.convert_from_robot_to_map(odom.pose.pose.position.y, odom.pose.pose.position.x)
+    new_y, new_x = self.convert_from_robot_to_map(new_odom.pose.pose.position.y, new_odom.pose.pose.position.x)
+    if abs(old_y - new_y) < 2 and abs(old_x - new_x) < 2:
         twist = geometry_msgs.msg.Twist()
         print(robot + " moving backward")
         twist.linear.x = -1
@@ -318,9 +322,9 @@ def move_with_check(robot, cmd_controller, move_thread_lock):
     move_thread_lock[robot] = False
 
 
-def move_forward(robot, cmd_controller, move_thread_lock, flag):
+def move_forward(robot, cmd_controller, move_thread_lock, flag, self):
     if flag == 3:
-        move_with_check(robot, cmd_controller, move_thread_lock)
+        move_with_check(robot, cmd_controller, move_thread_lock, self)
         return
     twist = geometry_msgs.msg.Twist()
     if flag == 1:
