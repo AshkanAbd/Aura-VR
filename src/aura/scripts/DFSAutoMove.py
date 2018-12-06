@@ -115,7 +115,7 @@ class DFSAutoMove(auto_move_base.AutoMoveBase, object):
                         #             visited.add((i[0] + k, i[1] + l))
                         # el
                         if self.reshaped_map[int(i[0]), int(i[1])] == -1:
-                            if math.sqrt(((i[0] - current[0]) ** 2) + ((i[1] - current[1]) ** 2)) >= 12:
+                            if math.sqrt(((i[0] - current[0]) ** 2) + ((i[1] - current[1]) ** 2)) >= 6:
                                 if self.da_sihdir_da(i):
                                     if self.fucking_block(i):
                                         if self.in_range(i[1], i[0]):

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
     <group ns="core">
-        <node pkg="aura" type="core.py" name="core_builder" output="screen"/>
+        <node pkg="aura" type="core.py" name="core_builder" output="screen" respawn="true"/>
 
-        <node pkg="aura" type="goal_handler.py" name="goal_handler" output="screen"/>
+        <node pkg="aura" type="goal_handler.py" name="goal_handler" output="screen" respawn="true"/>
     </group>
 </launch>

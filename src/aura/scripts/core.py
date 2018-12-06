@@ -75,7 +75,7 @@ class CoreMapBuilder:
                 #     for j in xrange(-1, 2):
                 if self.core_map[int(((map_y) * self.base_map_info.width) + (map_x))] != -1:
                     self.core_map[int(((map_y) * self.base_map_info.width) + (map_x))] = 0
-                self.check_robot_moving(rospy, map_x, map_y, self.available_odom[robot].header.stamp.secs)
+                self.check_robot_moving(robot, map_x, map_y, self.available_odom[robot].header.stamp.secs)
             data_map.header = self.base_map_header
             data_map.info = self.base_map_info
             data_map.data = self.core_map.tolist()

@@ -50,8 +50,11 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
 
   <build_depend>message_generation</build_depend>
+  <build_depend>teb_local_planner</build_depend>
+  <build_depend>dwa_local_planner</build_depend>
   <exec_depend>message_runtime</exec_depend>
-  
+  <exec_depend>teb_local_planner</exec_depend>  
+  <exec_depend>dwa_local_planner</exec_depend>
 
 
   <buildtool_depend>catkin</buildtool_depend>

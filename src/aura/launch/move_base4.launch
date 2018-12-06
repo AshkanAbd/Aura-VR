@@ -13,7 +13,7 @@
           <param name="base_global_planner" type="string" value="global_planner/GlobalPlanner" />
           <param name="conservative_reset_dist" type="double" value="3.0" />
           <param name="controller_frequency" type="double" value="7.5" />
-          <param name="base_local_planner" type="string" value="teb_local_planner/TebLocalPlannerROS" />   
+          <param name="base_local_planner" type="string" value="dwa_local_planner/DWAPlannerROS" />   
           <param name="planner_frequency" type="double" value="1"/>  
         <rosparam>
         local_costmap:
