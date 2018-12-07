@@ -11,7 +11,7 @@ import geometry_msgs.msg
 import math
 import time
 
-sys.path.insert(0, os.getcwd()[0:os.getcwd().index("/", 6) + 1] + 'Aura_VR/src/aura/libs')
+sys.path.insert(0, os.getcwd()[0:os.getcwd().index("/", 5) + 1] + 'Aura_VR/src/aura/libs')
 import functions
 
 

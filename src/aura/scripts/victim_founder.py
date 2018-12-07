@@ -45,7 +45,7 @@ def create_data_set(data):
 
 
 def generate_dataset_path():
-    return os.getcwd()[0:os.getcwd().index("/", 6) + 1] + 'Aura_VR/src/aura/data/'
+    return os.getcwd()[0:os.getcwd().index("/", 5) + 1] + 'Aura_VR/src/aura/data/'
 
 
 class HotVictimFounder:
