@@ -10,7 +10,8 @@
 	     <!--rosparam file="$(find setup)/config/base_local_planner_params.yaml" command="load" /-->
 	  <remap from="/cmd_vel" to="cmd_vel"/>
       <remap from="map" to="/core/map" />
-      <param name="base_global_planner" type="string" value="navfn/NavfnROS" />
+      <param name="base_global_planner" type="string" value="global_planner/GlobalPlanner" />
+      <param name="base_local_planner" type="string" value="base_local_planner/TrajectoryPlannerROS" />
       <param name="conservative_reset_dist" type="double" value="3.0" />
       <param name="controller_frequency" type="double" value="7.5" />
       <rosparam>
@@ -221,9 +222,9 @@
            visualize_potential: true   # false
 
          GlobalPlanner:
-             allow_unknown: false
-             use_dijkstra: false
-             use_quadratic: true
+             allow_unknown: true
+             use_dijkstra: true
+             use_quadratic: false
              visualize_potential: false
              use_grid_path: false
              old_navfn_behavior: false
