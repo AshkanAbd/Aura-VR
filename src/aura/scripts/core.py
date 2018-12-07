@@ -366,7 +366,7 @@ def euclidean_distance(x1, y1, x2, y2):
 def convert_from_robot_to_map(core_map, robot_y, robot_x):
     map_x = round((robot_x - core_map.info.origin.position.x) / core_map.info.resolution)
     map_y = round((robot_y - core_map.info.origin.position.y) / core_map.info.resolution)
-    return (map_y * core_map.info.width) + map_x
+    return map_y, map_x
 
 
 if __name__ == '__main__':
