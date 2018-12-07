@@ -23,9 +23,7 @@ class CoreMapBuilder:
     robot_moving = {}
     robot_angle = {}
     core_map = np.array([])
-    # robot_evolution = {}
     node_map = {}
-    # node_distance = {}
     close_list = set()
     base_map_info = None
     base_map_header = None
@@ -45,11 +43,11 @@ class CoreMapBuilder:
         self.check_robots(map_topic, core_topic)
         for robot in self.available_robots:
             self.available_odom[robot] = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
+            self.available_maps[robot] = rospy.wait_for_message('/' + robot + '/map', nav_msgs.msg.OccupancyGrid)
             rospy.Subscriber('/' + robot + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map, robot,
                              queue_size=100000)
             rospy.Subscriber('/' + robot + '/odom', nav_msgs.msg.Odometry, self.get_odom, robot, queue_size=100000)
         # self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=1000)
-        # self.rate = rospy.Rate(10)
         # self.publish_thread = threading.Thread(target=self.publish_to_core)
         # self.publish_thread.setName("core-publish")
         # self.publish_thread.start()
@@ -61,6 +59,7 @@ class CoreMapBuilder:
         self.auto_move_lock_thread = threading.Thread(target=self.wait_for_click)
         self.auto_move_lock_thread.start()
         self.start_building()
+        rospy.spin()
 
     def start_building(self):
         data_map = nav_msgs.msg.OccupancyGrid()
