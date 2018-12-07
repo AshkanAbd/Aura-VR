@@ -130,7 +130,7 @@
            #Trajectory Scoring Parameters
              pdist_scale:  0.6
              gdist_scale:  0.8
-             occdist_scal: 0.0025 #default 0.01 #pre 0.075
+             occdist_scal: 0.00015 #default 0.01 #pre 0.075
 
          TebLocalPlannerROS:
 

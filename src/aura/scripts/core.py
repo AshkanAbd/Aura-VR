@@ -65,7 +65,7 @@ class CoreMapBuilder:
             for robot in self.available_robots:
                 self.get_odom(rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry), robot)
                 self.available_maps[robot] = rospy.wait_for_message('/' + robot + '/map', nav_msgs.msg.OccupancyGrid)
-                self.move_thread_lock[robot] = False
+                # self.move_thread_lock[robot] = False
             for robot in self.available_robots:
                 self.build_core_map(self.available_maps[robot], self.available_odom[robot], robot)
                 data_map.header = self.base_map_header
@@ -128,7 +128,8 @@ class CoreMapBuilder:
                     if tmp[int(((map_y + i) * self.base_map_info.width) + (map_x + j))] != -1:
                         tmp[int(((map_y + i) * self.base_map_info.width) + (map_x + j))] = 0
         elif robot_ones > 1:
-            self.build_cmd_thread(robot_id, 3)
+            if not self.move_thread_lock[robot_id]:
+                self.build_cmd_thread(robot_id, 3)
         self.core_map = tmp.astype(np.int8).copy()
         # self.publish_map = self.core_map.copy()
         #############################################
@@ -203,10 +204,11 @@ class CoreMapBuilder:
         past_time = past[0]
         distance = euclidean_distance(map_x, map_y, past[1], past[2])
         if distance < 2:
-            if (time_stomp - past_time) < 2000000:
+            if (time_stomp - past_time) < 10:
                 pass
             else:
-                self.build_cmd_thread(robot, 3)
+                if not self.move_thread_lock[robot]:
+                    self.build_cmd_thread(robot, 3)
         else:
             self.robot_moving[robot] = (time_stomp, map_x, map_y)
 
@@ -232,12 +234,13 @@ class CoreMapBuilder:
                 print(self.node_name + ": " + i + ' is not available')
             if robot is not None:
                 print(self.node_name + ": " + i + ' added to core')
+                self.move_thread_lock[i] = False
                 self.available_robots.add(i)
 
     def build_cmd_thread(self, robot, flag):
         self.move_thread_lock[robot] = True
         cmd_thread = threading.Thread(target=move_forward, name=robot + "_move_forward",
-                                      args=(robot, self.cmd_controller, self.move_thread_lock, flag, self))
+                                      args=(robot, self.cmd_controller, self.move_thread_lock, flag))
         cmd_thread.start()
 
     # Callbacks
@@ -269,7 +272,7 @@ class CoreMapBuilder:
         return map_y, map_x
 
 
-def move_with_check(robot, cmd_controller, move_thread_lock, self):
+def move_with_check(robot, cmd_controller, move_thread_lock):
     odom = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
     core_map = rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid)
     twist = geometry_msgs.msg.Twist()
@@ -323,9 +326,9 @@ def move_with_check(robot, cmd_controller, move_thread_lock, self):
     move_thread_lock[robot] = False
 
 
-def move_forward(robot, cmd_controller, move_thread_lock, flag, self):
+def move_forward(robot, cmd_controller, move_thread_lock, flag):
     if flag == 3:
-        move_with_check(robot, cmd_controller, move_thread_lock, self)
+        move_with_check(robot, cmd_controller, move_thread_lock)
         return
     twist = geometry_msgs.msg.Twist()
     if flag == 1:
@@ -360,10 +363,10 @@ def euclidean_distance(x1, y1, x2, y2):
     return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
 
 
-def convert_from_robot_to_map(map, robot_y, robot_x):
-    map_x = round((robot_x - map.info.origin.position.x) / map.info.resolution)
-    map_y = round((robot_y - map.info.origin.position.y) / map.info.resolution)
-    return (map_y * map.info.width) + map_x
+def convert_from_robot_to_map(core_map, robot_y, robot_x):
+    map_x = round((robot_x - core_map.info.origin.position.x) / core_map.info.resolution)
+    map_y = round((robot_y - core_map.info.origin.position.y) / core_map.info.resolution)
+    return (map_y * core_map.info.width) + map_x
 
 
 if __name__ == '__main__':
