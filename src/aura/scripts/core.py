@@ -43,11 +43,11 @@ class CoreMapBuilder:
         self.node_name = node_name
         rospy.init_node(node_name)
         self.check_robots(map_topic, core_topic)
-        # for robot in self.available_robots:
-        #     self.available_odom[robot] = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
-        #     rospy.Subscriber('/' + robot + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map, robot,
-        #                      queue_size=100000)
-        #     rospy.Subscriber('/' + robot + '/odom', nav_msgs.msg.Odometry, self.get_odom, robot, queue_size=100000)
+        for robot in self.available_robots:
+            self.available_odom[robot] = rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry)
+            rospy.Subscriber('/' + robot + '/map', nav_msgs.msg.OccupancyGrid, self.get_robots_map, robot,
+                             queue_size=100000)
+            rospy.Subscriber('/' + robot + '/odom', nav_msgs.msg.Odometry, self.get_odom, robot, queue_size=100000)
         # self.core_publisher = rospy.Publisher('/core/map', nav_msgs.msg.OccupancyGrid, queue_size=1000)
         # self.rate = rospy.Rate(10)
         # self.publish_thread = threading.Thread(target=self.publish_to_core)
@@ -66,28 +66,19 @@ class CoreMapBuilder:
         data_map = nav_msgs.msg.OccupancyGrid()
         while not rospy.is_shutdown():
             for robot in self.available_robots:
-                self.get_odom(rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry), robot)
-                self.available_maps[robot] = rospy.wait_for_message('/' + robot + '/map', nav_msgs.msg.OccupancyGrid)
                 self.move_thread_lock[robot] = False
-            for robot in self.available_robots:
                 self.build_core_map(self.available_maps[robot], self.available_odom[robot], robot)
-                data_map.header = self.base_map_header
-                data_map.info = self.base_map_info
-                data_map.header.stamp = rospy.Time.now()
-                data_map.data = self.core_map.tolist()
-                self.core_publisher.publish(data_map)
-            for robot in self.available_odom.keys():
                 odom = self.available_odom[robot]
                 map_y, map_x = self.convert_from_robot_to_map1(odom.pose.pose.position.y, odom.pose.pose.position.x)
                 if self.core_map[int((map_y * self.base_map_info.width) + map_x)] != -1:
                     self.core_map[int((map_y * self.base_map_info.width) + map_x)] = 0
                 if self.auto_move_lock:
                     self.check_robot_moving(robot, map_x, map_y, self.available_odom[robot].header.stamp.secs)
-            data_map.header = self.base_map_header
-            data_map.info = self.base_map_info
-            data_map.header.stamp = rospy.Time.now()
-            data_map.data = self.core_map.tolist()
-            self.core_publisher.publish(data_map)
+                data_map.header = self.base_map_header
+                data_map.info = self.base_map_info
+                data_map.header.stamp = rospy.Time.now()
+                data_map.data = self.core_map.tolist()
+                self.core_publisher.publish(data_map)
             # self.rate.sleep()
 
     def build_core_map(self, robot_map, odom, robot_id):
@@ -136,69 +127,23 @@ class CoreMapBuilder:
                 self.build_cmd_thread(robot_id, 3)
         self.core_map = tmp.astype(np.int8).copy()
         # self.publish_map = self.core_map.copy()
-        #############################################
-        ############# replace with c++ ##############
-        # for coordinate in new_zero_coo.tolist():
-        #     # if coordinate in self.close_list:
-        #     #     continue
-        #     distance = abs(robot_pose - coordinate)
-        #     if self.core_map[coordinate] == -1:
-        #         self.core_map[coordinate] = 0
-        #         self.node_map[coordinate] = (robot_id, distance)
-        #         # self.robot_evolution[coordinate] = robot_id
-        #         # self.node_distance[coordinate] = distance
-        #     elif self.core_map[coordinate] == 100:
-        #         # if self.robot_evolution[coordinate] == robot_id:
-        #         if self.node_map[coordinate][0] == robot_id:
-        #             # if self.node_distance[coordinate][1] > distance:
-        #             self.core_map[coordinate] = 0
-        #             # self.node_distance[coordinate] = distance
-        #             self.node_map[coordinate] = (robot_id, distance)
-        #         else:
-        #             # if self.node_distance[coordinate] > distance:
-        #             if self.node_map[coordinate][1] > distance:
-        #                 # self.close_list.add(coordinate)
-        #                 self.core_map[coordinate] = 0
-        #                 # self.node_distance[coordinate] = distance
-        #                 # self.robot_evolution[coordinate] = robot_id
-        #                 self.node_map[coordinate] = (robot_id, distance)
-        #     else:
-        #         # if self.node_distance[coordinate] > distance:
-        #         #     self.node_distance[coordinate] = distance
-        #         if self.node_map[coordinate][1] > distance:
-        #             self.node_map[coordinate] = (robot_id, distance)
-        # for coordinate in new_zero_coo.tolist():
-        #     # if coordinate in self.close_list:
-        #     #     continue
-        #     distance = abs(robot_pose - coordinate)
-        #     if self.core_map[coordinate] == -1:
-        #         self.core_map[coordinate] = 100
-        #         self.node_map[coordinate] = (robot_id, distance)
-        #         # self.robot_evolution[coordinate] = robot_id
-        #         # self.node_distance[coordinate] = distance
-        #     elif self.core_map[coordinate] == 0:
-        #         # if self.robot_evolution[coordinate] == robot_id:
-        #         if self.node_map[coordinate][0] == robot_id:
-        #             # if self.node_distance[coordinate][1] > distance:
-        #             self.core_map[coordinate] = 100
-        #             # self.node_distance[coordinate] = distance
-        #             del self.node_map[coordinate]
-        #             self.node_map[coordinate] = (robot_id, distance)
-        #         else:
-        #             # if self.node_distance[coordinate] > distance:
-        #             if self.node_map[coordinate][1] > distance:
-        #                 # self.close_list.add(coordinate)
-        #                 self.core_map[coordinate] = 100
-        #                 # self.node_distance[coordinate] = distance
-        #                 # self.robot_evolution[coordinate] = robot_id
-        #                 self.node_map[coordinate] = (robot_id, distance)
-        #     else:
-        #         # if self.node_distance[coordinate] > distance:
-        #         #     self.node_distance[coordinate] = distance
-        #         if self.node_map[coordinate][1] > distance:
-        #             new_id = self.node_map[coordinate][0]
-        #             self.node_map[coordinate] = (new_one_coo, distance)
-        ######################################################
+
+    # Callbacks
+    def get_odom(self, odom, robot_id):
+        self.available_odom[robot_id] = odom
+        q = (
+            odom.pose.pose.orientation.x,
+            odom.pose.pose.orientation.y,
+            odom.pose.pose.orientation.z,
+            odom.pose.pose.orientation.w
+        )
+        robot_yaw = tf.transformations.euler_from_quaternion(q)
+        robot_angle = (robot_yaw[0] * 180 / math.pi, robot_yaw[1] * 180 / math.pi, robot_yaw[2] * 180 / math.pi)
+        self.robot_angle[robot_id] = robot_angle
+
+    def get_robots_map(self, robot_map, robot_id):
+        # self.build_core_map(robot_map, self.available_odom[robot_id], robot_id)
+        self.available_maps[robot_id] = robot_map
 
     def check_robot_moving(self, robot, map_x, map_y, time_stomp):
         if robot not in self.robot_moving:
@@ -216,10 +161,6 @@ class CoreMapBuilder:
         else:
             self.robot_moving[robot] = (time_stomp, map_x, map_y)
 
-    def wait_for_click(self):
-        rospy.wait_for_message('/clicked_point', geometry_msgs.msg.PointStamped)
-        self.auto_move_lock = True
-
     def publish_to_core(self):
         while not rospy.is_shutdown():
             if not self.start or self.publish_map is None:
@@ -231,6 +172,10 @@ class CoreMapBuilder:
             data_map.header.stamp = rospy.Time.now()
             self.core_publisher.publish(data_map)
             self.rate.sleep()
+
+    def wait_for_click(self):
+        rospy.wait_for_message('/clicked_point', geometry_msgs.msg.PointStamped)
+        self.auto_move_lock = True
 
     def check_robots(self, map_topic, core_topic):
         robots = functions.get_topics(map_topic, core_topic)
@@ -250,22 +195,6 @@ class CoreMapBuilder:
         cmd_thread = threading.Thread(target=move_forward, name=robot + "_move_forward",
                                       args=(robot, self.cmd_controller, self.move_thread_lock, flag))
         cmd_thread.start()
-
-    # Callbacks
-    def get_odom(self, odom, robot_id):
-        self.available_odom[robot_id] = odom
-        q = (
-            odom.pose.pose.orientation.x,
-            odom.pose.pose.orientation.y,
-            odom.pose.pose.orientation.z,
-            odom.pose.pose.orientation.w
-        )
-        robot_yaw = tf.transformations.euler_from_quaternion(q)
-        robot_angle = (robot_yaw[0] * 180 / math.pi, robot_yaw[1] * 180 / math.pi, robot_yaw[2] * 180 / math.pi)
-        self.robot_angle[robot_id] = robot_angle
-
-    def get_robots_map(self, robot_map, robot_id):
-        self.build_core_map(robot_map, self.available_odom[robot_id], robot_id)
 
     #############
     # Converts
