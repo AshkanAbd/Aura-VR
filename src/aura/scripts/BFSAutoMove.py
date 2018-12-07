@@ -46,10 +46,19 @@ class BFSAutoMove(auto_move_base.AutoMoveBase, object):
             return
         map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
         if self.reshaped_map[int(map_goal_y), int(map_goal_x)] != -1:
-            self.client.cancel_all_goals()
+            if self.verify_goal(map_goal_x, map_goal_y):
+                self.client.cancel_all_goals()
         if not self.da_sihdir_da((map_goal_y, map_goal_x)):
             self.aborted_list.add((self.goal_x, self.goal_y))
             self.client.cancel_all_goals()
+
+    def verify_goal(self, x, y):
+        r_y, r_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y,
+                                                  self.robot_odometry.pose.pose.position.x)
+        dis = math.sqrt(math.pow(r_y - y, 2) + math.pow(r_x - x, 2))
+        if dis < 10:
+            return True
+        return False
 
     def generating_goal(self, target):
         map_goal_x = target[1]

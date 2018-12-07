@@ -16,7 +16,7 @@ std::string name_space = "aura1";
 bool normal_flag = false;
 bool thermal_flag = false;
 ros::Publisher hot_victim_publisher;
-cv::Scalar lower_color(0, 30, 70);
+cv::Scalar lower_color(0, 30, 30);
 cv::Scalar upper_color(20, 255, 255);
 
 void process_img(const cv::UMat &normal_img);

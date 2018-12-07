@@ -18,7 +18,7 @@ bool thermal_flag = false;
 cv::UMat normal_img;
 cv::UMat thermal_img;
 ros::Publisher hot_victim_publisher;
-cv::Scalar lower_color(0, 30, 70);
+cv::Scalar lower_color(0, 30, 30);
 cv::Scalar upper_color(20, 255, 255);
 
 void get_normal_image(const sensor_msgs::Image &img) {
