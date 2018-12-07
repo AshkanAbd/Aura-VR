@@ -107,6 +107,10 @@ class HotVictimFounder:
         new_y1 = self.robot_odom.pose.pose.position.y + r * math.sin(math.radians(theta))
         pose = self.convert_from_robot_to_map(new_y1, new_x1)
         self.add_victim(pose[1], pose[0], 1)
+        if float(split2[0]) == 0.0:
+            pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
+                                                  self.robot_odom.pose.pose.position.x)
+            self.add_victim(pose[1], pose[0], 1)
 
     def victim_tolerance(self):
         try:
@@ -215,6 +219,10 @@ class DeadVictimFounder:
         new_y1 = self.robot_odom.pose.pose.position.y + r * math.sin(math.radians(theta))
         pose = self.convert_from_robot_to_map(new_y1, new_x1)
         self.add_victim(pose[1], pose[0], 2)
+        if float(split2[0]) == 0.0:
+            pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
+                                                  self.robot_odom.pose.pose.position.x)
+            self.add_victim(pose[1], pose[0], 2)
 
     def victim_tolerance(self):
         try:
@@ -323,6 +331,10 @@ class AliveVictimFounder:
         new_y1 = self.robot_odom.pose.pose.position.y + r * math.sin(math.radians(theta))
         pose = self.convert_from_robot_to_map(new_y1, new_x1)
         self.add_victim(pose[1], pose[0], 3)
+        if float(split2[0]) == 0.0:
+            pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
+                                                  self.robot_odom.pose.pose.position.x)
+            self.add_victim(pose[1], pose[0], 3)
 
     def victim_tolerance(self):
         try:

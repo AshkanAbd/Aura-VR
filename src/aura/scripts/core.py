@@ -16,6 +16,7 @@ import functions
 
 
 class CoreMapBuilder:
+    auto_move_lock = False
     available_robots = set()
     available_odom = {}
     available_maps = {}
@@ -34,7 +35,7 @@ class CoreMapBuilder:
     cmd_controller = {}
     move_thread_lock = {}
     start = False
-    publish_thread = None
+    auto_move_lock_thread = None
     node_name = None
     publish_map = None
 
@@ -57,6 +58,8 @@ class CoreMapBuilder:
         for robot in self.available_robots:
             self.cmd_controller[robot] = (
                 rospy.Publisher('/' + robot + '/cmd_vel', geometry_msgs.msg.Twist, queue_size=1000), rospy.Rate(10))
+        self.auto_move_lock_thread = threading.Thread(target=self.wait_for_click)
+        self.auto_move_lock_thread.start()
         self.start_building()
 
     def start_building(self):
@@ -65,7 +68,7 @@ class CoreMapBuilder:
             for robot in self.available_robots:
                 self.get_odom(rospy.wait_for_message('/' + robot + '/odom', nav_msgs.msg.Odometry), robot)
                 self.available_maps[robot] = rospy.wait_for_message('/' + robot + '/map', nav_msgs.msg.OccupancyGrid)
-                # self.move_thread_lock[robot] = False
+                self.move_thread_lock[robot] = False
             for robot in self.available_robots:
                 self.build_core_map(self.available_maps[robot], self.available_odom[robot], robot)
                 data_map.header = self.base_map_header
@@ -78,13 +81,14 @@ class CoreMapBuilder:
                 map_y, map_x = self.convert_from_robot_to_map1(odom.pose.pose.position.y, odom.pose.pose.position.x)
                 if self.core_map[int((map_y * self.base_map_info.width) + map_x)] != -1:
                     self.core_map[int((map_y * self.base_map_info.width) + map_x)] = 0
-                self.check_robot_moving(robot, map_x, map_y, self.available_odom[robot].header.stamp.secs)
+                if self.auto_move_lock:
+                    self.check_robot_moving(robot, map_x, map_y, self.available_odom[robot].header.stamp.secs)
             data_map.header = self.base_map_header
             data_map.info = self.base_map_info
             data_map.header.stamp = rospy.Time.now()
             data_map.data = self.core_map.tolist()
             self.core_publisher.publish(data_map)
-            self.rate.sleep()
+            # self.rate.sleep()
 
     def build_core_map(self, robot_map, odom, robot_id):
         map1 = np.asarray(robot_map.data)
@@ -211,6 +215,10 @@ class CoreMapBuilder:
                     self.build_cmd_thread(robot, 3)
         else:
             self.robot_moving[robot] = (time_stomp, map_x, map_y)
+
+    def wait_for_click(self):
+        rospy.wait_for_message('/clicked_point', geometry_msgs.msg.PointStamped)
+        self.auto_move_lock = True
 
     def publish_to_core(self):
         while not rospy.is_shutdown():

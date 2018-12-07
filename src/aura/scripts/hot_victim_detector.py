@@ -82,7 +82,7 @@ def main():
     bridge = cv_bridge.CvBridge()
     rospy.init_node('hot_victim_detector_' + namespace)
     rospy.Subscriber('/' + namespace + '/camera/thermal/image_raw', sensor_msgs.msg.Image, get_thermal_image)
-    rospy.Subscriber('/' + namespace + '/camera_depth/rgb/image', sensor_msgs.msg.Image, get_normal_image)
+    rospy.Subscriber('/' + namespace + '/camera_ros/image', sensor_msgs.msg.Image, get_normal_image)
     victim_info_pub = rospy.Publisher('/' + namespace + '/victims/hot', std_msgs.msg.Float64MultiArray, queue_size=10)
     process_img()
     rospy.spin()

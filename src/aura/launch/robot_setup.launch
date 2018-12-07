@@ -4,7 +4,7 @@
     <include file="$(find aura)/launch/gmapping2.launch">
         <arg name="robotname" value="$(arg robotname)"/>
     </include>
-    <include file="$(find aura)/launch/move_base2.launch">
+    <include file="$(find aura)/launch/move_base5.launch">
         <arg name="robotname" value="$(arg robotname)"/>
     </include>
 </launch>

@@ -43,9 +43,9 @@ class MarkerController:
 def get_mark_place(place):
     global marker_controller
     pose = convert_from_map_to_robot(place.data[1], place.data[0])
-    if verify_data(place.data[0], place.data[1]):
-        print("Noise")
-        return
+    #if verify_data(place.data[0], place.data[1]):
+    #    print("Noise")
+    #    return
     if place.data[2] == 1:
         print("HOT Received")
         marker_controller.create_and_add_marker(255, 0, 0, pose[1], pose[0])
