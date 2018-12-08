@@ -40,8 +40,8 @@ class BFSAutoMove(auto_move_base.AutoMoveBase, object):
         if not self.victim_lock:
             map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
             if self.reshaped_map[int(map_goal_y), int(map_goal_x)] != -1:
-                if self.verify_goal(map_goal_x, map_goal_y):
-                    self.client.cancel_all_goals()
+                # if self.verify_goal(map_goal_x, map_goal_y):
+                self.client.cancel_all_goals()
             if not self.da_sihdir_da((map_goal_y, map_goal_x)):
                 self.aborted_list.add((self.goal_x, self.goal_y))
                 self.client.cancel_all_goals()
