@@ -22,7 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
         sensor_msgs
         std_msgs
         tf
-        message_generation
+        message_generation 
         )
 
 find_package(OpenCV REQUIRED)

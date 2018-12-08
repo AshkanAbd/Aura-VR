@@ -5,6 +5,8 @@
 #include <cv_bridge/cv_bridge.h>
 #include <cv_bridge/rgb_colors.h>
 #include <std_msgs/Float64MultiArray.h>
+#include <aura/victim_info.h>
+#include <nav_msgs/Odometry.h>
 #include <opencv2/opencv.hpp>
 #include <thread>
 #include <vector>
@@ -65,12 +67,14 @@ void process_img(const cv::UMat &normal_img) {
         std::vector<cv::Point> main_contour = contours_area[areas[0]];
         cv::Rect main_rect = cv::boundingRect(main_contour);
 //            if (main_rect.height < 36) continue;
-        std_msgs::Float64MultiArray info_array;
-        info_array.data.push_back(main_rect.x);
-        info_array.data.push_back(main_rect.y);
-        info_array.data.push_back(main_rect.width);
-        info_array.data.push_back(main_rect.height);
-        hot_victim_publisher.publish(info_array);
+        aura::victim_info victim_info;
+        nav_msgs::Odometry odom = *(ros::topic::waitForMessage<nav_msgs::Odometry>("/" + name_space + "/odom"));
+        victim_info.odom = odom;
+        victim_info.data.data_float.push_back(main_rect.x);
+        victim_info.data.data_float.push_back(main_rect.y);
+        victim_info.data.data_float.push_back(main_rect.width);
+        victim_info.data.data_float.push_back(main_rect.height);
+        hot_victim_publisher.publish(victim_info);
 //            cv::rectangle(frame3, main_rect, cv::Scalar(255, 0, 0), 2);
 //            cv::imshow(name_space, frame3);
     } catch (std::exception &e) {
@@ -86,7 +90,7 @@ int main(int argc, char **argv) {
         node_handle.getParam(ros::this_node::getName() + "/robotname", name_space);
     ros::Subscriber rgb_subscriber = node_handle.subscribe("/" + name_space + "/camera_ros/image", 1000,
                                                            get_normal_image);
-    hot_victim_publisher = node_handle.advertise<std_msgs::Float64MultiArray>("/" + name_space + "/victims/alive",
+    hot_victim_publisher = node_handle.advertise<aura::victim_info>("/" + name_space + "/victims/alive",
                                                                               1000);
     ros::spin();
 }

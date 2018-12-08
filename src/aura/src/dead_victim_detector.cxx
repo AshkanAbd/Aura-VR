@@ -10,6 +10,8 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <nav_msgs/Odometry.h>
+#include <aura/victim_info.h>
 
 
 std::string name_space = "aura1";
@@ -59,13 +61,21 @@ void get_image(const sensor_msgs::Image &img) {
     std::sort(areas.rbegin(), areas.rend());
     std::vector<cv::Point> main_contour = contours_area[areas[0]];
     cv::Rect main_rect = cv::boundingRect(main_contour);
-    if (main_rect.height < 24) return;
-    std_msgs::Float64MultiArray info_array;
-    info_array.data.push_back(main_rect.x);
-    info_array.data.push_back(main_rect.y);
-    info_array.data.push_back(main_rect.width);
-    info_array.data.push_back(main_rect.height);
-    dead_victim_publisher.publish(info_array);
+//    if (main_rect.height < 24) return;
+    aura::victim_info victim_info;
+    nav_msgs::Odometry odom = *(ros::topic::waitForMessage<nav_msgs::Odometry>("/" + name_space + "/odom"));
+    victim_info.odom = odom;
+    victim_info.data.data_float.push_back(main_rect.x);
+    victim_info.data.data_float.push_back(main_rect.y);
+    victim_info.data.data_float.push_back(main_rect.width);
+    victim_info.data.data_float.push_back(main_rect.height);
+    dead_victim_publisher.publish(victim_info);
+//    std_msgs::Float64MultiArray info_array;
+//    info_array.data.push_back(main_rect.x);
+//    info_array.data.push_back(main_rect.y);
+//    info_array.data.push_back(main_rect.width);
+//    info_array.data.push_back(main_rect.height);
+//    dead_victim_publisher.publish(info_array);
 //    cv::rectangle(frame2, main_rect, cv::Scalar(255, 0, 0), 2);
 //    cv::imshow("dead frame", frame2);
 }
@@ -75,7 +85,7 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "dead_victim_detector");
     ros::NodeHandle node_handler;
     node_handler.getParam(ros::this_node::getName() + "/robotname", name_space);
-    dead_victim_publisher = node_handler.advertise<std_msgs::Float64MultiArray>("/" + name_space + "/victims/dead",
+    dead_victim_publisher = node_handler.advertise<aura::victim_info>("/" + name_space + "/victims/dead",
                                                                                 1000);
     ros::Subscriber rgb_subscriber = node_handler.subscribe("/" + name_space + "/camera_ros/image", 1000, get_image);
     ros::spin();

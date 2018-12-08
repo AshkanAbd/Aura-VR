@@ -9,6 +9,7 @@ import threading
 import tf.transformations
 import geometry_msgs.msg
 import math
+import aura.msg
 import time
 
 sys.path.insert(0, os.getcwd()[0:os.getcwd().index("/", 6) + 1] + 'Aura_VR/src/aura/libs')
@@ -21,6 +22,7 @@ class CoreMapBuilder:
     available_odom = {}
     available_maps = {}
     robot_moving = {}
+    publish_to_auto_move = {}
     robot_angle = {}
     core_map = np.array([])
     node_map = {}
@@ -157,6 +159,11 @@ class CoreMapBuilder:
             else:
                 if not self.move_thread_lock[robot]:
                     self.build_cmd_thread(robot, 3)
+                data = aura.msg.data_float()
+                data.data_float.append(0)
+                data.data_float.append(0)
+                data.data_float.append(0)
+                self.publish_to_auto_move[robot].publish(data)
         else:
             self.robot_moving[robot] = (time_stomp, map_x, map_y)
 
@@ -188,6 +195,8 @@ class CoreMapBuilder:
                 print(self.node_name + ": " + i + ' added to core')
                 self.move_thread_lock[i] = False
                 self.available_robots.add(i)
+                self.publish_to_auto_move[i] = rospy.Publisher('/' + i + '/goto_victim', aura.msg.data_float,
+                                                               queue_size=1000)
 
     def build_cmd_thread(self, robot, flag):
         self.move_thread_lock[robot] = True
@@ -222,7 +231,7 @@ def move_with_check(robot, cmd_controller, move_thread_lock):
     for i in xrange(5):
         cmd_controller[robot][0].publish(twist)
         cmd_controller[robot][1].sleep()
-    time.sleep(4.5)
+    time.sleep(5)
     twist = geometry_msgs.msg.Twist()
     twist.linear.x = 0
     twist.linear.y = 0
@@ -248,7 +257,7 @@ def move_with_check(robot, cmd_controller, move_thread_lock):
         for i in xrange(5):
             cmd_controller[robot][0].publish(twist)
             cmd_controller[robot][1].sleep()
-        time.sleep(6)
+        time.sleep(5)
         twist = geometry_msgs.msg.Twist()
         twist.linear.x = 0
         twist.linear.y = 0
@@ -281,7 +290,7 @@ def move_forward(robot, cmd_controller, move_thread_lock, flag):
     for i in xrange(5):
         cmd_controller[robot][0].publish(twist)
         cmd_controller[robot][1].sleep()
-    time.sleep(4.5)
+    time.sleep(5)
     twist = geometry_msgs.msg.Twist()
     twist.linear.x = 0
     twist.linear.y = 0

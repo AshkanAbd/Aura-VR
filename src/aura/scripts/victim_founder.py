@@ -95,8 +95,8 @@ class HotVictimFounder:
     def get_victim(self, victim_info):
         array = victim_info.data
         self.get_odom(victim_info.odom)
-        data1 = closest_pair(array.data[0], self.x_data_set)
-        data2 = closest_pair(array.data[1], self.y_data_set)
+        data1 = closest_pair(array.data_float[0], self.x_data_set)
+        data2 = closest_pair(array.data_float[1], self.y_data_set)
         split1 = data1.split(' ')
         split2 = data2.split(' ')
         angle_from_x = float(split1[11])
@@ -108,7 +108,7 @@ class HotVictimFounder:
         new_x1 = self.robot_odom.pose.pose.position.x + r * math.cos(math.radians(theta))
         new_y1 = self.robot_odom.pose.pose.position.y + r * math.sin(math.radians(theta))
         pose = self.convert_from_robot_to_map(new_y1, new_x1)
-        res = self.victim_verifier.check_victim(split2, array.data, (pose[1], pose[0]), victim_info.odom)
+        res = self.victim_verifier.check_victim(split2, array.data_float, (pose[1], pose[0]), victim_info.odom)
         # CODES: 1) mark pose , 2) go to pose , 3) mark here
         if res == 1:
             print(rospy.get_name() + " TRUE")
@@ -120,8 +120,8 @@ class HotVictimFounder:
             self.victim_verifier.publish_pose(0, 0, 0)
             pass
         elif res == 2:
-            # print(rospy.get_name() + " GOTO")
-            # self.victim_verifier.publish_pose(1, new_x1, new_y1)
+            print(rospy.get_name() + " GOTO")
+            self.victim_verifier.publish_pose(1, new_x1, new_y1)
             pass
         elif res == 3:
             # print(rospy.get_name() + " MARK HERE")
@@ -198,8 +198,8 @@ class DeadVictimFounder:
     def get_victim(self, victim_info):
         array = victim_info.data
         self.get_odom(victim_info.odom)
-        data1 = closest_pair(array.data[0], self.x_data_set)
-        data2 = closest_pair(array.data[1], self.y_data_set)
+        data1 = closest_pair(array.data_float[0], self.x_data_set)
+        data2 = closest_pair(array.data_float[1], self.y_data_set)
         split1 = data1.split(' ')
         split2 = data2.split(' ')
         angle_from_x = float(split1[11])
@@ -211,7 +211,7 @@ class DeadVictimFounder:
         new_x1 = self.robot_odom.pose.pose.position.x + r * math.cos(math.radians(theta))
         new_y1 = self.robot_odom.pose.pose.position.y + r * math.sin(math.radians(theta))
         pose = self.convert_from_robot_to_map(new_y1, new_x1)
-        res = self.victim_verifier.check_victim(split2, array.data, (pose[1], pose[0]), victim_info.odom)
+        res = self.victim_verifier.check_victim(split2, array.data_float, (pose[1], pose[0]), victim_info.odom)
         if res == 1:
             print(rospy.get_name() + " TRUE")
             publish_data = std_msgs.msg.Float64MultiArray()
@@ -221,8 +221,8 @@ class DeadVictimFounder:
             self.mark_publisher.publish(publish_data)
             self.victim_verifier.publish_pose(0, 0, 0)
         elif res == 2:
-            # print(rospy.get_name() + " GOTO")
-            # self.victim_verifier.publish_pose(1, new_x1, new_y1)
+            print(rospy.get_name() + " GOTO")
+            self.victim_verifier.publish_pose(1, new_x1, new_y1)
             pass
         elif res == 3:
             # print(rospy.get_name() + " MARK HERE")
@@ -331,8 +331,8 @@ class AliveVictimFounder:
     def get_victim(self, victim_info):
         array = victim_info.data
         self.get_odom(victim_info.odom)
-        data1 = closest_pair(array.data[0], self.x_data_set)
-        data2 = closest_pair(array.data[1], self.y_data_set)
+        data1 = closest_pair(array.data_float[0], self.x_data_set)
+        data2 = closest_pair(array.data_float[1], self.y_data_set)
         split1 = data1.split(' ')
         split2 = data2.split(' ')
         angle_from_x = float(split1[11])
@@ -349,7 +349,7 @@ class AliveVictimFounder:
         #     pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
         #                                           self.robot_odom.pose.pose.position.x)
         #     self.add_victim(pose[1], pose[0], 3)
-        res = self.victim_verifier.check_victim(split2, array.data, (pose[1], pose[0]), victim_info.odom)
+        res = self.victim_verifier.check_victim(split2, array.data_float    , (pose[1], pose[0]), victim_info.odom)
         if res == 1:
             print(rospy.get_name() + " TRUE")
             publish_data = std_msgs.msg.Float64MultiArray()
@@ -359,8 +359,8 @@ class AliveVictimFounder:
             self.mark_publisher.publish(publish_data)
             self.victim_verifier.publish_pose(0, 0, 0)
         elif res == 2:
-            # print(rospy.get_name() + " GOTO")
-            # self.victim_verifier.publish_pose(1, new_x1, new_y1)
+            print(rospy.get_name() + " GOTO")
+            self.victim_verifier.publish_pose(1, new_x1, new_y1)
             pass
         elif res == 3:
             # print(rospy.get_name() + " MARK HERE")
