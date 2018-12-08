@@ -9,6 +9,7 @@ import time
 import math
 import sched
 import os
+import aura.msg
 
 
 def in_range(victim, x, y, tolerance=2):
@@ -73,10 +74,10 @@ class HotVictimFounder:
         self.x_data_set = create_data_set(self.x_data_file)
         self.mark_publisher = rospy.Publisher('/core/mark_place', std_msgs.msg.Float64MultiArray, queue_size=1000)
         self.core_map = rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid)
-        self.get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
-        rospy.Subscriber('/' + namespace + '/victims/hot', std_msgs.msg.Float64MultiArray, self.get_victim,
+        # self.get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
+        rospy.Subscriber('/' + namespace + '/victims/hot', aura.msg.victim_info, self.get_victim,
                          queue_size=1000)
-        rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_odom)
+        # rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_odom)
         self.rate = rospy.Rate(10)
 
     def get_odom(self, odometry):
@@ -91,7 +92,9 @@ class HotVictimFounder:
         self.robot_angle = robot_yaw[2] * 180 / math.pi
 
     # codes : 1) hot victim  , 2) dead victim , 3) alive victim
-    def get_victim(self, array):
+    def get_victim(self, victim_info):
+        array = victim_info.data
+        self.get_odom(victim_info.odom)
         data1 = closest_pair(array.data[0], self.x_data_set)
         data2 = closest_pair(array.data[1], self.y_data_set)
         split1 = data1.split(' ')
@@ -105,7 +108,7 @@ class HotVictimFounder:
         new_x1 = self.robot_odom.pose.pose.position.x + r * math.cos(math.radians(theta))
         new_y1 = self.robot_odom.pose.pose.position.y + r * math.sin(math.radians(theta))
         pose = self.convert_from_robot_to_map(new_y1, new_x1)
-        res = self.victim_verifier.check_victim(split2, array.data, (pose[1], pose[0]))
+        res = self.victim_verifier.check_victim(split2, array.data, (pose[1], pose[0]), victim_info.odom)
         # CODES: 1) mark pose , 2) go to pose , 3) mark here
         if res == 1:
             print(rospy.get_name() + " TRUE")
@@ -117,19 +120,19 @@ class HotVictimFounder:
             self.victim_verifier.publish_pose(0, 0, 0)
             pass
         elif res == 2:
-            print(rospy.get_name() + " GOTO")
-            self.victim_verifier.publish_pose(1, new_x1, new_y1)
+            # print(rospy.get_name() + " GOTO")
+            # self.victim_verifier.publish_pose(1, new_x1, new_y1)
             pass
         elif res == 3:
-            print(rospy.get_name() + " MARK HERE")
-            pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
-                                                  self.robot_odom.pose.pose.position.x)
-            publish_data = std_msgs.msg.Float64MultiArray()
-            publish_data.data.append(pose[1])
-            publish_data.data.append(pose[0])
-            publish_data.data.append(1)
-            self.mark_publisher.publish(publish_data)
-            self.victim_verifier.publish_pose(0, 0, 0)
+            # print(rospy.get_name() + " MARK HERE")
+            # pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
+            #                                       self.robot_odom.pose.pose.position.x)
+            # publish_data = std_msgs.msg.Float64MultiArray()
+            # publish_data.data.append(pose[1])
+            # publish_data.data.append(pose[0])
+            # publish_data.data.append(1)
+            # self.mark_publisher.publish(publish_data)
+            # self.victim_verifier.publish_pose(0, 0, 0)
             pass
         else:
             print("NOISE")
@@ -173,10 +176,10 @@ class DeadVictimFounder:
         self.schedule.enter(0.1, 1, self.victim_tolerance, ())
         self.mark_publisher = rospy.Publisher('/core/mark_place', std_msgs.msg.Float64MultiArray, queue_size=1000)
         self.core_map = rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid)
-        self.get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
-        rospy.Subscriber('/' + namespace + '/victims/dead', std_msgs.msg.Float64MultiArray, self.get_victim,
+        # self.get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
+        rospy.Subscriber('/' + namespace + '/victims/dead', aura.msg.victim_info, self.get_victim,
                          queue_size=1000)
-        rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_odom)
+        # rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_odom)
         self.rate = rospy.Rate(10)
         self.schedule.run()
 
@@ -192,7 +195,9 @@ class DeadVictimFounder:
         self.robot_angle = robot_yaw[2] * 180 / math.pi
 
     # codes : 1) hot victim  , 2) dead victim , 3) alive victim
-    def get_victim(self, array):
+    def get_victim(self, victim_info):
+        array = victim_info.data
+        self.get_odom(victim_info.odom)
         data1 = closest_pair(array.data[0], self.x_data_set)
         data2 = closest_pair(array.data[1], self.y_data_set)
         split1 = data1.split(' ')
@@ -206,7 +211,7 @@ class DeadVictimFounder:
         new_x1 = self.robot_odom.pose.pose.position.x + r * math.cos(math.radians(theta))
         new_y1 = self.robot_odom.pose.pose.position.y + r * math.sin(math.radians(theta))
         pose = self.convert_from_robot_to_map(new_y1, new_x1)
-        res = self.victim_verifier.check_victim(split2, array.data, (pose[1], pose[0]))
+        res = self.victim_verifier.check_victim(split2, array.data, (pose[1], pose[0]), victim_info.odom)
         if res == 1:
             print(rospy.get_name() + " TRUE")
             publish_data = std_msgs.msg.Float64MultiArray()
@@ -216,18 +221,20 @@ class DeadVictimFounder:
             self.mark_publisher.publish(publish_data)
             self.victim_verifier.publish_pose(0, 0, 0)
         elif res == 2:
-            print(rospy.get_name() + " GOTO")
-            self.victim_verifier.publish_pose(1, new_x1, new_y1)
+            # print(rospy.get_name() + " GOTO")
+            # self.victim_verifier.publish_pose(1, new_x1, new_y1)
+            pass
         elif res == 3:
-            print(rospy.get_name() + " MARK HERE")
-            pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
-                                                  self.robot_odom.pose.pose.position.x)
-            publish_data = std_msgs.msg.Float64MultiArray()
-            publish_data.data.append(pose[1])
-            publish_data.data.append(pose[0])
-            publish_data.data.append(2)
-            self.mark_publisher.publish(publish_data)
-            self.victim_verifier.publish_pose(0, 0, 0)
+            # print(rospy.get_name() + " MARK HERE")
+            # pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
+            #                                       self.robot_odom.pose.pose.position.x)
+            # publish_data = std_msgs.msg.Float64MultiArray()
+            # publish_data.data.append(pose[1])
+            # publish_data.data.append(pose[0])
+            # publish_data.data.append(2)
+            # self.mark_publisher.publish(publish_data)
+            # self.victim_verifier.publish_pose(0, 0, 0)
+            pass
         else:
             print("NOISE")
 
@@ -304,10 +311,9 @@ class AliveVictimFounder:
         self.x_data_set = create_data_set(self.x_data_file)
         self.mark_publisher = rospy.Publisher('/core/mark_place', std_msgs.msg.Float64MultiArray, queue_size=1000)
         self.core_map = rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid)
-        self.get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
-        rospy.Subscriber('/' + namespace + '/victims/alive', std_msgs.msg.Float64MultiArray, self.get_victim,
+        # self.get_odom(rospy.wait_for_message('/' + namespace + '/odom', nav_msgs.msg.Odometry))
+        rospy.Subscriber('/' + namespace + '/victims/alive', aura.msg.victim_info, self.get_victim,
                          queue_size=1000)
-        rospy.Subscriber('/' + namespace + '/odom', nav_msgs.msg.Odometry, self.get_odom)
         self.rate = rospy.Rate(10)
 
     def get_odom(self, odometry):
@@ -322,7 +328,9 @@ class AliveVictimFounder:
         self.robot_angle = robot_yaw[2] * 180 / math.pi
 
     # codes : 1) hot victim  , 2) dead victim , 3) alive victim
-    def get_victim(self, array):
+    def get_victim(self, victim_info):
+        array = victim_info.data
+        self.get_odom(victim_info.odom)
         data1 = closest_pair(array.data[0], self.x_data_set)
         data2 = closest_pair(array.data[1], self.y_data_set)
         split1 = data1.split(' ')
@@ -341,7 +349,7 @@ class AliveVictimFounder:
         #     pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
         #                                           self.robot_odom.pose.pose.position.x)
         #     self.add_victim(pose[1], pose[0], 3)
-        res = self.victim_verifier.check_victim(split2, array.data, (pose[1], pose[0]))
+        res = self.victim_verifier.check_victim(split2, array.data, (pose[1], pose[0]), victim_info.odom)
         if res == 1:
             print(rospy.get_name() + " TRUE")
             publish_data = std_msgs.msg.Float64MultiArray()
@@ -351,18 +359,20 @@ class AliveVictimFounder:
             self.mark_publisher.publish(publish_data)
             self.victim_verifier.publish_pose(0, 0, 0)
         elif res == 2:
-            print(rospy.get_name() + " GOTO")
-            self.victim_verifier.publish_pose(1, new_x1, new_y1)
+            # print(rospy.get_name() + " GOTO")
+            # self.victim_verifier.publish_pose(1, new_x1, new_y1)
+            pass
         elif res == 3:
-            print(rospy.get_name() + " MARK HERE")
-            pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
-                                                  self.robot_odom.pose.pose.position.x)
-            publish_data = std_msgs.msg.Float64MultiArray()
-            publish_data.data.append(pose[1])
-            publish_data.data.append(pose[0])
-            publish_data.data.append(3)
-            self.mark_publisher.publish(publish_data)
-            self.victim_verifier.publish_pose(0, 0, 0)
+            # print(rospy.get_name() + " MARK HERE")
+            # pose = self.convert_from_robot_to_map(self.robot_odom.pose.pose.position.y,
+            #                                       self.robot_odom.pose.pose.position.x)
+            # publish_data = std_msgs.msg.Float64MultiArray()
+            # publish_data.data.append(pose[1])
+            # publish_data.data.append(pose[0])
+            # publish_data.data.append(3)
+            # self.mark_publisher.publish(publish_data)
+            # self.victim_verifier.publish_pose(0, 0, 0)
+            pass
         else:
             print("NOISE")
 

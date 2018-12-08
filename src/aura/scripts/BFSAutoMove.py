@@ -50,7 +50,7 @@ class BFSAutoMove(auto_move_base.AutoMoveBase, object):
         r_y, r_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y,
                                                   self.robot_odometry.pose.pose.position.x)
         dis = math.sqrt(math.pow(r_y - y, 2) + math.pow(r_x - x, 2))
-        if dis < 30:
+        if dis < 25:
             return True
         return False
 

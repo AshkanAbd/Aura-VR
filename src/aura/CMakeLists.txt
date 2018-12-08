@@ -89,6 +89,7 @@ add_message_files(
 	    group_float.msg
 	    goal.msg
 	    multi_goal.msg
+	    victim_info.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -108,6 +109,7 @@ add_message_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
         DEPENDENCIES
+        nav_msgs
         std_msgs
 )
 

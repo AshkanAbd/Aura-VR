@@ -22,9 +22,8 @@ class VictimVerifier:
         self.get_core_map(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
 
     # CODES: 1) mark pose , 2) go to pose , 3) mark here
-    def check_victim(self, data_line, victim_info, pose):
+    def check_victim(self, data_line, victim_info, pose, odom):
         self.get_core_map(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
-        odom = rospy.wait_for_message('/' + self.namespace + '/odom', nav_msgs.msg.Odometry)
         sub_map = self.reshaped_map[int(pose[1] - 2):int(pose[1] + 3), int(pose[0] - 2):int(pose[0] + 3)]
         one_count = len(np.where(sub_map == 100)[0])
         map_y, map_x = self.convert_from_robot_to_map(odom.pose.pose.position.y, odom.pose.pose.position.x)
