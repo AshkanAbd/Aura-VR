@@ -22,41 +22,35 @@ class BFSAutoMove(auto_move_base.AutoMoveBase, object):
     random_generator = None
     aborted_list = set()
     robots_goal = {}
+    victim_lock = False
     reshaped_map = None
 
     def __init__(self, namespace='robot0', node_name='AutoMoveBase', anonymous=True):
         super(BFSAutoMove, self).__init__(namespace, node_name, anonymous)
+        rospy.Subscriber('/' + namespace + '/goto_victim', aura.msg.data_float, self.goto_victim)
         self.rotate_rate = rospy.Rate(10)
         self.random_generator = random.Random()
         self.get_map(rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid))
-
-    def find_robot_block(self):
-        robot_pose_y = self.robot_odometry.pose.pose.position.y
-        robot_pose_x = self.robot_odometry.pose.pose.position.x
-        robot_pose = self.convert_from_robot_to_map(robot_pose_y, robot_pose_x)
-        y = robot_pose[0] // (self.map_info.info.height // 16)
-        x = robot_pose[1] // (self.map_info.info.width // 16)
-        robot_block_index = int((y * 16) + x)
-        return robot_block_index
 
     def get_map(self, map):
         super(BFSAutoMove, self).get_map(map)
         self.reshaped_map = np.asarray(map.data, np.int8).reshape(map.info.height, map.info.width)
         if self.goal_x == -10000:
             return
-        map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
-        if self.reshaped_map[int(map_goal_y), int(map_goal_x)] != -1:
-            if self.verify_goal(map_goal_x, map_goal_y):
+        if not self.victim_lock:
+            map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
+            if self.reshaped_map[int(map_goal_y), int(map_goal_x)] != -1:
+                if self.verify_goal(map_goal_x, map_goal_y):
+                    self.client.cancel_all_goals()
+            if not self.da_sihdir_da((map_goal_y, map_goal_x)):
+                self.aborted_list.add((self.goal_x, self.goal_y))
                 self.client.cancel_all_goals()
-        if not self.da_sihdir_da((map_goal_y, map_goal_x)):
-            self.aborted_list.add((self.goal_x, self.goal_y))
-            self.client.cancel_all_goals()
 
     def verify_goal(self, x, y):
         r_y, r_x = self.convert_from_robot_to_map(self.robot_odometry.pose.pose.position.y,
                                                   self.robot_odometry.pose.pose.position.x)
         dis = math.sqrt(math.pow(r_y - y, 2) + math.pow(r_x - x, 2))
-        if dis < 10:
+        if dis < 30:
             return True
         return False
 
@@ -152,19 +146,19 @@ class BFSAutoMove(auto_move_base.AutoMoveBase, object):
         return False
 
     def da_sihdir_da(self, k):
-        a = np.empty((5, 5), np.int8)
-        for i in xrange(-2, 3):
-            for j in xrange(-2, 3):
-                a[i + 2, j + 2] = self.reshaped_map[int(k[0] + i), int(k[1] + j)]
+        a = self.reshaped_map[int(k[0] - 2):int(k[0] + 3), int(k[1] - 2):int(k[1] + 3)]
+        # for i in xrange(-2, 3):
+        #     for j in xrange(-2, 3):
+        #         a[i + 2, j + 2] = self.reshaped_map[int(k[0] + i), int(k[1] + j)]
         if a.max() != 100:
             return True
         return False
 
     def fucking_block(self, k):
-        b = np.empty((7, 7), np.int8)
-        for i in xrange(-3, 4):
-            for j in xrange(-3, 4):
-                b[i + 3, j + 3] = self.reshaped_map[(k[0] + i), (k[1] + j)]
+        b = self.reshaped_map[int(k[0] - 3):int(k[0] + 4), int(k[1] - 3):int(k[0] + 4)]
+        # for i in xrange(-3, 4):
+        #     for j in xrange(-3, 4):
+        #         b[i + 3, j + 3] = self.reshaped_map[(k[0] + i), (k[1] + j)]
         n_shown = np.where(b == -1)
         if len(n_shown[0]) >= 10:
             return True
@@ -183,19 +177,33 @@ class BFSAutoMove(auto_move_base.AutoMoveBase, object):
     # RECALLING=7-- RECALLED=8-- LOST=9
     def goal_status(self, data1, data2):
         print(data1)
-        if data1 == 4:
-            map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
-            temp = (self.goal_x, self.goal_y)
-            if self.in_range(self.goal_x, self.goal_y):
-                self.bfsihdir()
-            else:
-                if self.check_around(map_goal_x, map_goal_y):
-                    self.rotate()
-                    self.send_goal(self.goal_x, self.goal_y)
-                else:
-                    self.aborted_list.add(temp)
+        if not self.victim_lock:
+            if data1 == 4:
+                map_goal_y, map_goal_x = self.convert_from_robot_to_map(self.goal_y, self.goal_x)
+                temp = (self.goal_x, self.goal_y)
+                if self.in_range(self.goal_x, self.goal_y):
                     self.bfsihdir()
+                else:
+                    if self.check_around(map_goal_x, map_goal_y):
+                        self.rotate()
+                        self.send_goal(self.goal_x, self.goal_y)
+                    else:
+                        self.aborted_list.add(temp)
+                        self.bfsihdir()
+            else:
+                self.bfsihdir()
+
+    def goto_victim(self, data):
+        if data.data_float[0] == 1:
+            self.victim_lock = True
+            if abs(self.goal_y - data.data_float[2]) < 0.01 and abs(self.goal_x - data.data_float[1]) < 0.01:
+                pass
+            else:
+                self.goal_x = data.data_float[1]
+                self.goal_y = data.data_float[2]
+                self.send_goal(data.data_float[1], data.data_float[2])
         else:
+            self.victim_lock = False
             self.bfsihdir()
 
     def check_around(self, robot_x, robot_y):

@@ -19,9 +19,11 @@ def get_normal_image(image):
     frame_hsv = cv.cvtColor(final_frame, cv.COLOR_BGR2HSV)
     mask = cv.inRange(frame_hsv, lower_hot_color, upper_hot_color)
     final_frame = cv.bitwise_and(final_frame, final_frame, mask=mask)
+    cv.imshow('a', final_frame)
+    cv.waitKey(1)
     # end!!!
     # send to process img
-    normal_img = final_frame
+    # normal_img = final_frame
 
 
 def get_thermal_image(image):
@@ -68,9 +70,9 @@ def process_img():
         cv.imshow('hot_final', final_frame)
 
 
-namespace = 'robot0'
-lower_hot_color = np.array([[[0, 30, 30]]])
-upper_hot_color = np.array([[[20, 255, 255]]])
+namespace = 'aura1'
+lower_hot_color = np.array([[[0, 30, 70]]])
+upper_hot_color = np.array([[[10, 200, 200]]])
 normal_img = None
 thermal_img = None
 bridge = None
@@ -81,7 +83,7 @@ def main():
     global bridge, victim_info_pub
     bridge = cv_bridge.CvBridge()
     rospy.init_node('hot_victim_detector_' + namespace)
-    rospy.Subscriber('/' + namespace + '/camera/thermal/image_raw', sensor_msgs.msg.Image, get_thermal_image)
+    # rospy.Subscriber('/' + namespace + '/camera/thermal/image_raw', sensor_msgs.msg.Image, get_thermal_image)
     rospy.Subscriber('/' + namespace + '/camera_ros/image', sensor_msgs.msg.Image, get_normal_image)
     victim_info_pub = rospy.Publisher('/' + namespace + '/victims/hot', std_msgs.msg.Float64MultiArray, queue_size=10)
     process_img()

@@ -18,8 +18,8 @@ bool thermal_flag = false;
 cv::UMat normal_img;
 cv::UMat thermal_img;
 ros::Publisher hot_victim_publisher;
-cv::Scalar lower_color(0, 30, 30);
-cv::Scalar upper_color(20, 255, 255);
+cv::Scalar lower_color(0, 30, 70);
+cv::Scalar upper_color(10, 200,200);
 
 void get_normal_image(const sensor_msgs::Image &img) {
     cv::Mat frame;
@@ -62,7 +62,9 @@ void process_img() {
             std::vector<std::vector<cv::Point>> contours;
             try {
                 cv::cvtColor(normal_img, normal_gray, cv::COLOR_BGR2GRAY);
-            } catch (std::exception &e) {}
+            } catch (std::exception &e) {
+                normal_img.copyTo(normal_gray);
+            }
             cv::threshold(normal_gray, normal_thresh, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
             cv::pyrUp(thermal_img, thermal_img1);
             cv::bitwise_and(thermal_img1, thermal_img1, frame1, normal_thresh);

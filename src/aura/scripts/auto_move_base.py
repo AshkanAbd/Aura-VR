@@ -64,8 +64,8 @@ class AutoMoveBase:
         pass
 
     def convert_from_robot_to_map(self, robot_y, robot_x):
-        map_x = round((robot_x - self.map_info.info.origin.position.x) // self.map_info.info.resolution)
-        map_y = round((robot_y - self.map_info.info.origin.position.y) // self.map_info.info.resolution)
+        map_x = round((robot_x - self.map_info.info.origin.position.x) / self.map_info.info.resolution)
+        map_y = round((robot_y - self.map_info.info.origin.position.y) / self.map_info.info.resolution)
         return map_y, map_x
 
     def convert_from_map_to_robot(self, map_y, map_x):
