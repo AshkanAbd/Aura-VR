@@ -152,7 +152,7 @@ class CoreMapBuilder:
         past_time = past[0]
         distance = euclidean_distance(map_x, map_y, past[1], past[2])
         if distance < 2:
-            if (time_stomp - past_time) < 10:
+            if (time_stomp - past_time) < 15:
                 pass
             else:
                 if not self.move_thread_lock[robot]:
