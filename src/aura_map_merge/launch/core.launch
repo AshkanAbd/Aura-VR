@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <group ns="core">
+        <node pkg="aura_map_merge" type="core.py" name="core_builder" output="screen" respawn="true"/>
+    </group>
+</launch>

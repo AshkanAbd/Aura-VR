@@ -4,7 +4,7 @@
     <arg name="initialx" default="0" />
     <arg name="initialy" default="0" />
     <group ns="$(arg robotname)">
-    <node pkg="gmapping" type="slam_gmapping" name="gmapping" >
+    <node pkg="gmapping" type="slam_gmapping" name="gmapping" output="log" >
         <remap from="scan" to="/$(arg robotname)/hokuyo" />
         <param name="base_frame" value="$(arg robotname)/base_link" />
         <param name="map_frame" value="/map" />

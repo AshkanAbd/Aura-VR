@@ -177,20 +177,20 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/aura_node.cpp)
-add_executable(odom_transform src/odom_transform.cxx)
-add_executable(laser_transform src/laser_transform.cxx)
-add_executable(hot_victim_detector src/hot_victim_detetor.cxx)
-add_executable(alive_victim_detector src/alive_victim_detector.cxx)
-add_executable(dead_victim_detector src/dead_victim_detector.cxx)
-add_executable(depth_camera src/depth_camera.cxx)
+#add_executable(odom_transform src/odom_transform.cxx)
+#add_executable(laser_transform src/laser_transform.cxx)
+#add_executable(hot_victim_detector src/hot_victim_detetor.cxx)
+#add_executable(alive_victim_detector src/alive_victim_detector.cxx)
+#add_executable(dead_victim_detector src/dead_victim_detector.cxx)
+#add_executable(depth_camera src/depth_camera.cxx)
 
 
-target_link_libraries(odom_transform ${catkin_LIBRARIES})
-target_link_libraries(laser_transform ${catkin_LIBRARIES})
-target_link_libraries(hot_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
-target_link_libraries(alive_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
-target_link_libraries(dead_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
-target_link_libraries(depth_camera ${catkin_LIBRARIES} ${OpenCV_LIBS})
+#target_link_libraries(odom_transform ${catkin_LIBRARIES})
+#target_link_libraries(laser_transform ${catkin_LIBRARIES})
+#target_link_libraries(hot_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
+#target_link_libraries(alive_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
+#target_link_libraries(dead_victim_detector ${catkin_LIBRARIES} ${OpenCV_LIBS})
+#target_link_libraries(depth_camera ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 
 ## Rename C++ executable without prefix

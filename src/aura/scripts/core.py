@@ -152,7 +152,7 @@ class CoreMapBuilder:
         past_time = past[0]
         distance = euclidean_distance(map_x, map_y, past[1], past[2])
         if distance < 2:
-            if (time_stomp - past_time) < 15:
+            if (time_stomp - past_time) < 10:
                 pass
             else:
                 if not self.move_thread_lock[robot]:
@@ -173,7 +173,8 @@ class CoreMapBuilder:
             self.rate.sleep()
 
     def wait_for_click(self):
-        rospy.wait_for_message('/clicked_point', geometry_msgs.msg.PointStamped)
+        # rospy.wait_for_message('/clicked_point', geometry_msgs.msg.PointStamped)
+        time.sleep(30)
         self.auto_move_lock = True
 
     def check_robots(self, map_topic, core_topic):
@@ -213,7 +214,7 @@ def move_with_check(robot, cmd_controller, move_thread_lock):
     core_map = rospy.wait_for_message('/core/map', nav_msgs.msg.OccupancyGrid)
     twist = geometry_msgs.msg.Twist()
     print(robot + " moving forward")
-    twist.linear.x = 0.8
+    twist.linear.x = 1
     twist.linear.y = 0
     twist.linear.z = 0
     twist.angular.x = 0
@@ -222,7 +223,7 @@ def move_with_check(robot, cmd_controller, move_thread_lock):
     for i in xrange(5):
         cmd_controller[robot][0].publish(twist)
         cmd_controller[robot][1].sleep()
-    time.sleep(5)
+    time.sleep(2)
     twist = geometry_msgs.msg.Twist()
     twist.linear.x = 0
     twist.linear.y = 0
@@ -239,7 +240,7 @@ def move_with_check(robot, cmd_controller, move_thread_lock):
     if abs(old_y - new_y) < 2 and abs(old_x - new_x) < 2:
         twist = geometry_msgs.msg.Twist()
         print(robot + " moving backward")
-        twist.linear.x = -0.8
+        twist.linear.x = -1
         twist.linear.y = 0
         twist.linear.z = 0
         twist.angular.x = 0
@@ -248,7 +249,7 @@ def move_with_check(robot, cmd_controller, move_thread_lock):
         for i in xrange(5):
             cmd_controller[robot][0].publish(twist)
             cmd_controller[robot][1].sleep()
-        time.sleep(5)
+        time.sleep(2)
         twist = geometry_msgs.msg.Twist()
         twist.linear.x = 0
         twist.linear.y = 0
@@ -269,10 +270,10 @@ def move_forward(robot, cmd_controller, move_thread_lock, flag):
     twist = geometry_msgs.msg.Twist()
     if flag == 1:
         print(robot + " moving forward")
-        twist.linear.x = 0.8
+        twist.linear.x = 1
     elif flag == 2:
         print(robot + " moving backward")
-        twist.linear.x = -0.8
+        twist.linear.x = -1
     twist.linear.y = 0
     twist.linear.z = 0
     twist.angular.x = 0
@@ -281,7 +282,7 @@ def move_forward(robot, cmd_controller, move_thread_lock, flag):
     for i in xrange(5):
         cmd_controller[robot][0].publish(twist)
         cmd_controller[robot][1].sleep()
-    time.sleep(5)
+    time.sleep(2)
     twist = geometry_msgs.msg.Twist()
     twist.linear.x = 0
     twist.linear.y = 0
