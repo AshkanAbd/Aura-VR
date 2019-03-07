@@ -1,8 +1,0 @@
-prefix=/usr/local
-
-Name: aura_map_merge
-Description: Description of aura_map_merge
-Version: 0.0.0
-Cflags: 
-Libs: -L/usr/local/lib 
-Requires: message_runtime

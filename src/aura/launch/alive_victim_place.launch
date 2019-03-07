@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <arg name="robotname" default="robot0"/>
-    <group ns="$(arg robotname)">
-        <node pkg="aura" type="alive_victim_place.py" name="alive_victim_place" output="screen" args="$(arg robotname)"/>
-    </group>
-</launch>

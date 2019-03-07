@@ -1,8 +1,0 @@
-prefix=/usr/local
-
-Name: aura_core
-Description: Description of aura_core
-Version: 0.0.0
-Cflags: 
-Libs: -L/usr/local/lib 
-Requires: message_runtime

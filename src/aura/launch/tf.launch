@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <arg name="robotname" default="robot0"/>
-    <node pkg="tf" type="static_transform_publisher" name="base_to_laser_broadcaster" args="0 0 0 0 0 0 $(arg robotname)/base_link map 100" />
-</launch>

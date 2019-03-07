@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <group ns="core">
-        <node pkg="aura_exploration" type="goal_handler.py" name="goal_handler" output="screen" respawn="true"/>
-    </group>
-</launch>

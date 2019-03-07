@@ -1,6 +1,0 @@
-<?xml version="1.0" ?>
-<launch>
-    <node name="gazebo" pkg="gazebo_ros" type="gzserver" respawn="false" output="screen" args="-e ode $(find setup)/worlds/map_pre_outdoor_1.world">
-        <remap from="tf" to="gazebo_tf"/>    
-    </node>
-</launch>
