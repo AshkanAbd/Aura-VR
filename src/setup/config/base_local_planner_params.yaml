@@ -1,0 +1,51 @@
+TrajectoryPlannerROS:
+#Robot config
+  acc_lim_x: 0.5
+  acc_lim_y: 0.5
+  acc_lim_thta: .5
+  max_vel_x: 1.0
+  min_vel_x: 0.1
+  max_vel_theta: 2.5
+  min_vel_theta: -2.5
+  min_in_place_vel_theta: 0.5
+  escape_vel: -0.3
+  holonomic_robot: false
+#Goal Tolerance	
+  yaw_goal_tolerance: 0.1
+  xy_goal_tolerance: 0.5
+  latch_xy_goal_tolerance: true
+#Forward simulation
+  sim_time: 2.0
+  sim_granularity: 0.5
+  angular_sim_granularity: 0.52
+  vx_samples: 8
+  vtheata_samples: 20
+#Trajectory Scoring
+  meter_scoring: false
+  pdist_scale: 1
+  gdist_scale: 1
+  occdist_scale: 0.01
+  heading_scoring: true
+  global_frame_id: /map
+  meter_scoring: true  
+
+
+GlobalPlanner:
+  allow_unknown: true
+  default_tolerance: 0.55
+  visualize_potential: true
+  use_dijkstra: false
+  use_quadratic: true
+  use_grid_path: true
+  old_navfn_behavior: false
+  cost_factor: 0.55
+  neutral_cost: 66
+  lethal_cost: 253
+
+
+NavfnROS:
+  allow_unknown: true
+  default_tolerance: 0.25
+  visualize_potential: true
+
+

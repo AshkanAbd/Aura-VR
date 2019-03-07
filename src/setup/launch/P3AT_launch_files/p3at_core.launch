@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="namespace1" default="aura1"/>
+  <arg name="namespace2" default="aura2"/>
+  <arg name="namespace3" default="aura3"/>
+  <arg name="namespace4" default="aura4"/>
+  <arg name="namespace5" default="aura5"/>
+  <arg name="namespace6" default="aura6"/>
+	<node pkg="setup" type="core.py" name="core" output="screen" respawn="true">
+		<param name="namespace1" value="$(arg namespace1)"/>
+		<param name="namespace2" value="$(arg namespace2)"/>
+		<param name="namespace3" value="$(arg namespace3)"/>
+		<param name="namespace4" value="$(arg namespace4)"/>	
+		<param name="namespace5" value="$(arg namespace5)"/>	
+		<param name="namespace6" value="$(arg namespace6)"/>	
+	</node>
+</launch>

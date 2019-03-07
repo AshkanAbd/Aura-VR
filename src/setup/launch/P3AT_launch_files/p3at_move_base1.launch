@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="robotname" default="sos1"/>
+  <group ns="$(arg robotname)">
+		<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		  <rosparam file="$(find setup)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+		  <rosparam file="$(find setup)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+		  <!--rosparam file="$(find setup)/config/local_costmap_params.yaml" command="load" /-->
+		  <!--rosparam file="$(find setup)/config/global_costmap_params.yaml" command="load" /-->
+		  <!--rosparam file="$(find setup)/config/base_local_planner_params.yaml" command="load" /-->
+			<remap from="/cmd_vel" to="cmd_vel"/>
+      <param name="base_global_planner" type="string" value="navfn/NavfnROS" />
+      <param name="conservative_reset_dist" type="double" value="3.0" />
+      <param name="controller_frequency" type="double" value="7.5" />
+      <rosparam>
+        local_costmap:
+          global_frame: odom
+          robot_base_frame: base_link
+          static_map: false
+          rolling_window: true
+          width: 5.0
+          height: 5.0
+          resolution: 0.05
+
+
+          plugins:
+             - {name: static,                    type: "costmap_2d::StaticLayer"}
+             - {name: inflation,                 type: "costmap_2d::InflationLayer"}
+             - {name: obstacle,                 type: "costmap_2d::ObstacleLayer"}
+      </rosparam>
+      <rosparam>
+        global_costmap:
+          global_frame: /map
+          robot_base_frame: base_link
+          resolution: 0.2
+          static_map: true
+          rolling_window: false 
+          width: 15.0
+          height: 15.0
+
+
+          plugins:
+             - {name: static,                    type: "costmap_2d::StaticLayer"}
+             - {name: inflation,                 type: "costmap_2d::InflationLayer"}
+             - {name: obstacle,                 type: "costmap_2d::ObstacleLayer"}
+      </rosparam>
+      <rosparam>
+        TrajectoryPlannerROS:
+        #Robot config
+          acc_lim_x: 1.2
+          acc_lim_y: 0.4
+          acc_lim_thta: 1.5
+          max_vel_x: 1.2
+          min_vel_x: 0.3
+          max_vel_theta: 1.5
+          min_vel_theta: -1.5
+          min_in_place_vel_theta: 1.1
+          escape_vel: -0.25
+          holonomic_robot: false
+        #Goal Tolerance	
+          yaw_goal_tolerance: 0.8
+          xy_goal_tolerance: 0.8
+          latch_xy_goal_tolerance: true
+        #Forward simulation
+          sim_time: 2
+          sim_granularity: 0.05
+          angular_sim_granularity: 0.9
+          vx_samples: 7
+          vtheata_samples: 22
+        #Trajectory Scoring
+          meter_scoring: true
+          pdist_scale: 2.2
+          gdist_scale: 0.85
+          occdist_scale: 0.1
+          heading_scoring: true
+          heading_scoring_timestep: 0.9
+          global_frame_id: /map
+          meter_scoring: true  
+
+
+        GlobalPlanner:
+          allow_unknown: true
+          default_tolerance: 0.00
+          visualize_potential: false
+          use_dijkstra: true
+          use_quadratic: true
+          use_grid_path: true
+          old_navfn_behavior: false
+          cost_factor: 0.55
+          neutral_cost: 66
+          lethal_cost: 253
+
+
+        NavfnROS:
+          allow_unknown: true
+          default_tolerance: 0.25
+          visualize_potential: true
+
+      </rosparam>
+		</node>
+	</group>
+</launch>

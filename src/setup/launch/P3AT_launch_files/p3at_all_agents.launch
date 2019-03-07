@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_gmapping.launch">
+    <arg name="robotname" value="aura1"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_move_base1.launch">
+    <arg name="robotname" value="aura1"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_gmapping.launch">
+    <arg name="robotname" value="aura2"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_move_base1.launch">
+    <arg name="robotname" value="aura2"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_gmapping.launch">
+    <arg name="robotname" value="aura3"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_move_base1.launch">
+    <arg name="robotname" value="aura3"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_gmapping.launch">
+    <arg name="robotname" value="aura4"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_move_base1.launch">
+    <arg name="robotname" value="aura4"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_gmapping.launch">
+    <arg name="robotname" value="aura5"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_move_base1.launch">
+    <arg name="robotname" value="aura5"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_gmapping.launch">
+    <arg name="robotname" value="aura6"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_move_base1.launch">
+    <arg name="robotname" value="aura6"/>
+  </include>
+  <include file="$(find setup)/launch/P3AT_launch_files/p3at_core.launch">
+    <arg name="namespace1" value="aura1"/>  
+    <arg name="namespace2" value="aura2"/>  
+    <arg name="namespace3" value="aura3"/>  
+    <arg name="namespace4" value="aura4"/>  
+    <arg name="namespace4" value="aura5"/>  
+    <arg name="namespace4" value="aura6"/>  
+  </include>
+  <!--include file="$(find setup)/launch/P3AT_launch_files/p3at_automoving.launch"/-->
+  <include file="$(find setup)/launch/utility.launch" />
+</launch>
+

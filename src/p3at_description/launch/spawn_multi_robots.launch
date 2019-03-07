@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<launch>
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="worlds/mud.world"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+  <include file="$(find robot_description)/launch/robot_spawn.launch">
+    <arg name="robot_name" value="sos_rs1"/>
+    <arg name="xcoordinate" value="-11"/>
+    <arg name="ycoordinate" value="9"/>
+  </include>
+
+  <include file="$(find robot_description)/launch/robot_spawn.launch">
+    <arg name="robot_name" value="sos_rs2"/>
+    <arg name="xcoordinate" value="20"/>
+    <arg name="ycoordinate" value="19.5"/>
+  </include> 
+
+  <include file="$(find robot_description)/launch/robot_spawn.launch">
+    <arg name="robot_name" value="sos_rs3"/>
+    <arg name="xcoordinate" value="13"/>
+    <arg name="ycoordinate" value="-24"/>
+  </include>
+  <include file="$(find robot_description)/launch/robot_spawn.launch">
+    <arg name="robot_name" value="sos_rs4"/>
+    <arg name="xcoordinate" value="13"/>
+    <arg name="ycoordinate" value="-27"/>
+  </include>    
+</launch>

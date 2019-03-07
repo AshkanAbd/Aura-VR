@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+<node pkg="setup" type="new_auto_move1.py" name="aura_1" output="screen" respawn="true">
+  </node>
+  <node pkg="setup" type="new_auto_move2.py" name="aura_2" output="screen" respawn="true">
+	</node>
+  <node pkg="setup" type="new_auto_move3.py" name="aura_3" output="screen" respawn="true">
+  </node>
+  <node pkg="setup" type="auto_move4.py" name="aura_4" output="screen" respawn="true">
+  </node>
+</launch>
